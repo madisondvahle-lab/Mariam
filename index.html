@@ -7,239 +7,396 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #fdf9f7;
-    color: #2c2c2a;
-    padding: 20px;
-  }
-  .header {
-    text-align: center;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #f0ebe7;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fdf9f7; color: #2c2c2a; padding: 20px; }
+  .header { text-align: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f0ebe7; }
   .header h1 { font-size: 20px; font-weight: 500; color: #2c2c2a; margin-bottom: 4px; }
   .header p { font-size: 13px; color: #888780; }
-
-  .score-bar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 16px;
-    background: #fff;
-    border: 0.5px solid #e8e3df;
-    border-radius: 10px;
-    font-size: 13px; color: #888780;
-    margin-bottom: 16px;
-  }
+  .score-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fff; border: 0.5px solid #e8e3df; border-radius: 10px; font-size: 13px; color: #888780; margin-bottom: 16px; flex-wrap: wrap; }
   .score-val { font-size: 15px; font-weight: 500; color: #2c2c2a; }
   .badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; }
-  .reset-btn {
-    margin-left: auto; font-size: 12px; padding: 4px 12px;
-    background: transparent; border: 0.5px solid #d4cfc9;
-    border-radius: 6px; cursor: pointer; color: #888780;
-  }
+  .reset-btn { margin-left: auto; font-size: 12px; padding: 4px 12px; background: transparent; border: 0.5px solid #d4cfc9; border-radius: 6px; cursor: pointer; color: #888780; }
   .reset-btn:hover { background: #f5f0ec; }
-
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .zone {
-    background: #fff;
-    border: 0.5px solid #e8e3df;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: border-color .15s;
-  }
-  .zone:hover { border-color: #c4bfba; }
-
-  .zone-header {
-    padding: 12px 16px;
-    display: flex; align-items: center; gap: 10px;
-    user-select: none;
-  }
-  .zone-header i { font-size: 20px; flex-shrink: 0; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+  .zone { background: #fff; border: 0.5px solid #e8e3df; border-radius: 12px; overflow: hidden; }
+  .zone-header { padding: 12px 16px; display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+  .zone-header:hover { filter: brightness(0.97); }
+  .zone-header i.icon { font-size: 20px; flex-shrink: 0; }
   .zone-title { font-size: 14px; font-weight: 500; }
   .zone-sub { font-size: 11px; opacity: .65; margin-top: 2px; }
-  .chevron { margin-left: auto; font-size: 14px; opacity: .4; transition: transform .2s; }
+  .chevron { margin-left: auto; font-size: 14px; opacity: .4; transition: transform .2s; flex-shrink: 0; }
   .chevron.open { transform: rotate(180deg); }
-
   .zone-body { display: none; border-top: 0.5px solid #f0ebe7; }
   .zone-body.open { display: block; }
-
   .branch { padding: 10px 16px 0; }
-  .branch:last-of-type { padding-bottom: 10px; }
-  .branch-label {
-    font-size: 10px; font-weight: 500; color: #aaa9a2;
-    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px;
-  }
-  .tip {
-    font-size: 12px; color: #3d3d3a;
-    padding: 3px 0 3px 10px;
-    border-left: 2px solid;
-    line-height: 1.5; margin: 3px 0;
-  }
-
-  .quiz-btn {
-    display: block; width: calc(100% - 32px); margin: 10px 16px 12px;
-    font-size: 12px; padding: 7px 12px;
-    background: transparent; border: 0.5px solid #d4cfc9;
-    border-radius: 8px; cursor: pointer; color: #888780; text-align: left;
-  }
+  .branch:last-of-type { padding-bottom: 6px; }
+  .branch-label { font-size: 10px; font-weight: 500; color: #aaa9a2; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+  .tip { font-size: 12px; color: #3d3d3a; padding: 3px 0 3px 10px; border-left: 2px solid; line-height: 1.5; margin: 3px 0; }
+  .quiz-btn { display: block; width: calc(100% - 32px); margin: 10px 16px 12px; font-size: 12px; padding: 7px 12px; background: transparent; border: 0.5px solid #d4cfc9; border-radius: 8px; cursor: pointer; color: #888780; text-align: left; }
   .quiz-btn:hover { background: #fdf9f7; }
-
-  .quiz-area {
-    display: none;
-    margin: 0 16px 14px;
-    background: #fdf9f7;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 12px;
-  }
+  .quiz-area { display: none; margin: 0 16px 14px; background: #fdf9f7; border-radius: 8px; padding: 12px; font-size: 12px; }
   .quiz-area.open { display: block; }
+  .q-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: #aaa9a2; margin-bottom: 6px; }
+  .q-label.sata { color: #7F77DD; }
+  .q-label.delegation { color: #0C447C; }
+  .q-label.priority { color: #633806; }
+  .q-label.instinct { color: #72243E; }
   .q-text { font-weight: 500; color: #2c2c2a; margin-bottom: 10px; line-height: 1.6; font-size: 13px; }
-  .q-opt {
-    display: block; width: 100%;
-    padding: 7px 10px; margin: 5px 0;
-    border-radius: 7px; cursor: pointer;
-    color: #2c2c2a; border: 0.5px solid #e0dbd6;
-    background: #fff; font-size: 12px; text-align: left; line-height: 1.4;
-  }
+  .sata-note { font-size: 11px; color: #7F77DD; font-style: italic; margin-bottom: 8px; }
+  .q-opt { display: block; width: 100%; padding: 7px 10px; margin: 5px 0; border-radius: 7px; cursor: pointer; color: #2c2c2a; border: 0.5px solid #e0dbd6; background: #fff; font-size: 12px; text-align: left; line-height: 1.4; }
   .q-opt:hover:not(:disabled) { border-color: #b4b0aa; }
   .q-opt.correct { background: #eaf3de; border-color: #639922; color: #27500a; }
-  .q-opt.wrong   { background: #fcebeb; border-color: #e24b4a; color: #791f1f; }
-  .q-feedback {
-    display: none; margin-top: 8px;
-    font-size: 11px; color: #5f5e5a; line-height: 1.6;
-    padding: 7px 10px; background: #fff;
-    border-radius: 6px; border-left: 2px solid #d4cfc9;
-  }
-  .next-btn {
-    display: none; margin-top: 8px;
-    font-size: 11px; padding: 4px 12px;
-    background: transparent; border: 0.5px solid #d4cfc9;
-    border-radius: 6px; cursor: pointer; color: #888780;
-  }
+  .q-opt.wrong { background: #fcebeb; border-color: #e24b4a; color: #791f1f; }
+  .q-opt.should-be { background: #eaf3de; border-color: #639922; color: #27500a; }
+  .q-feedback { display: none; margin-top: 8px; font-size: 11px; color: #5f5e5a; line-height: 1.6; padding: 7px 10px; background: #fff; border-radius: 6px; border-left: 2px solid #d4cfc9; }
+  .next-btn { display: none; margin-top: 8px; font-size: 11px; padding: 4px 12px; background: transparent; border: 0.5px solid #d4cfc9; border-radius: 6px; cursor: pointer; color: #888780; }
   .next-btn:hover { background: #f0ebe7; }
+  .sata-submit { margin-top: 8px; font-size: 12px; padding: 6px 14px; background: #7F77DD; border: none; border-radius: 6px; cursor: pointer; color: #fff; display: block; }
+  .sata-submit:hover { background: #6b63cc; }
   .done-msg { font-size: 12px; color: #27500a; padding: 6px 0; }
-
-  /* Zone colors */
-  .z1 .zone-header { background: #EEEDFE; } .z1 .zone-header i, .z1 .zone-title { color: #3C3489; } .z1 .tip { border-color: #7F77DD; }
-  .z2 .zone-header { background: #E6F1FB; } .z2 .zone-header i, .z2 .zone-title { color: #0C447C; } .z2 .tip { border-color: #378ADD; }
-  .z3 .zone-header { background: #E1F5EE; } .z3 .zone-header i, .z3 .zone-title { color: #085041; } .z3 .tip { border-color: #1D9E75; }
-  .z4 .zone-header { background: #FAEEDA; } .z4 .zone-header i, .z4 .zone-title { color: #633806; } .z4 .tip { border-color: #EF9F27; }
-  .z5 .zone-header { background: #FAECE7; } .z5 .zone-header i, .z5 .zone-title { color: #712B13; } .z5 .tip { border-color: #D85A30; }
-  .z6 .zone-header { background: #FBEAF0; } .z6 .zone-header i, .z6 .zone-title { color: #72243E; } .z6 .tip { border-color: #D4537E; }
+  .progress { font-size: 11px; color: #aaa9a2; margin-bottom: 8px; }
+  .z1 .zone-header { background: #EEEDFE; } .z1 .zone-header i.icon, .z1 .zone-title { color: #3C3489; } .z1 .tip { border-color: #7F77DD; }
+  .z2 .zone-header { background: #E6F1FB; } .z2 .zone-header i.icon, .z2 .zone-title { color: #0C447C; } .z2 .tip { border-color: #378ADD; }
+  .z3 .zone-header { background: #E1F5EE; } .z3 .zone-header i.icon, .z3 .zone-title { color: #085041; } .z3 .tip { border-color: #1D9E75; }
+  .z4 .zone-header { background: #FAEEDA; } .z4 .zone-header i.icon, .z4 .zone-title { color: #633806; } .z4 .tip { border-color: #EF9F27; }
+  .z5 .zone-header { background: #FAECE7; } .z5 .zone-header i.icon, .z5 .zone-title { color: #712B13; } .z5 .tip { border-color: #D85A30; }
+  .z6 .zone-header { background: #FBEAF0; } .z6 .zone-header i.icon, .z6 .zone-title { color: #72243E; } .z6 .tip { border-color: #D4537E; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>NCLEX Test-Taking Strategies</h1>
-  <p>Tap a zone to review · then quiz yourself</p>
+  <p>Review each zone · then test yourself with real clinical scenarios</p>
 </div>
 
 <div class="score-bar">
   <span>Session score</span>
   <span class="score-val" id="score-display">0 / 0</span>
   <span id="pct-badge" class="badge" style="background:#f0ebe7;color:#888780">—</span>
-  <button class="reset-btn" onclick="resetAll()">Reset</button>
+  <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
 </div>
 
 <div class="grid" id="board"></div>
 
 <script>
-const zones = [
+var zones = [
   {
-    id:'z1', icon:'ti-check', title:'Answer selection',
+    id:'z1', icon:'ti-check', title:'Answer Selection',
     sub:'Elimination · best rules · positive vs negative',
     branches:[
-      {label:'Elimination strategies', tips:['Rule out obviously wrong options','Eliminate similar answers','Choose the most comprehensive option']},
+      {label:'Elimination strategies', tips:['Rule out obviously wrong options','Eliminate similar answers — they cancel out','Choose the most comprehensive option']},
       {label:'Best answer rules', tips:['Most complete and accurate','Follows scope of practice','Promotes client safety first']},
       {label:'Positive vs negative', tips:['Look for therapeutic responses','Avoid punitive or judgmental options','Select client-centered answers']}
     ],
     questions:[
-      {q:'Two answer choices say essentially the same thing in different words. What should you do?', opts:['Pick the one with more detail','Eliminate both — they cancel each other out','Pick the shorter one','Flag and guess'], ans:1, fb:'When two options are near-identical, neither is likely correct. Eliminate both and choose from the remaining options.'},
-      {q:'An answer choice tells the client "You shouldn\'t feel that way." This is best described as:', opts:['Therapeutic communication','A punitive/judgmental response — eliminate it','Scope of practice concern','Best answer'], ans:1, fb:'Dismissing a client\'s feelings is judgmental. Always eliminate options that invalidate the client\'s experience.'}
+      {
+        type:'standard',
+        label:'Answer Selection',
+        q:'A postpartum client is crying and says "I don\'t feel like a good mother." Which response is best?',
+        opts:['You shouldn\'t feel that way — you just had a baby!','Tell me more about what you\'re feeling.','Every new mom feels like this, don\'t worry.','Have you considered talking to a counselor?'],
+        ans:1,
+        fb:'Option B is therapeutic — it invites the client to share without dismissing her feelings. Options A and C minimize her experience. Option D redirects prematurely before the nurse has even assessed the situation.'
+      },
+      {
+        type:'standard',
+        label:'Elimination Strategy',
+        q:'Two answer choices both say the client should "notify the physician immediately." What do you do?',
+        opts:['Pick the one with more detail','Pick the one listed first','Eliminate both — near-identical options cancel each other out','Flag and guess randomly'],
+        ans:2,
+        fb:'When two options say essentially the same thing, neither is likely correct. Eliminate both and choose from the remaining options — this is a core elimination strategy.'
+      },
+      {
+        type:'standard',
+        label:'Scope of Practice',
+        q:'An OB client asks the nurse to promise not to tell anyone what she shares. The nurse should:',
+        opts:['Promise confidentiality to build trust','Explain that some information must be shared if safety is at risk','Leave the room and document the request','Refer the client to a social worker immediately'],
+        ans:1,
+        fb:'Nurses cannot make blanket promises of confidentiality. Safety concerns — like abuse, self-harm, or harm to the newborn — must be reported. This answer follows scope of practice and protects the client.'
+      },
+      {
+        type:'standard',
+        label:'Client-Centered Care',
+        q:'A pediatric client refuses to take oral medication. The nurse\'s best first action is:',
+        opts:['Tell the parent to hold the child down','Document refusal and skip the dose','Assess why the child is refusing and offer choices where safe','Call the physician to change the route'],
+        ans:2,
+        fb:'Assessing first is always the correct move. Children often refuse due to taste or fear — offering choices (e.g., with juice or applesauce if allowed) is client-centered and developmentally appropriate.'
+      },
+      {
+        type:'sata',
+        label:'SATA · Answer Selection',
+        q:'Which of the following are characteristics of a BEST answer on the NCLEX? Select all that apply.',
+        opts:['Promotes client safety','Is client-centered','Is the longest option','Follows nursing scope of practice','Sounds most medical or technical'],
+        ans:[0,1,3],
+        fb:'Best answers promote safety, are client-centered, and stay within nursing scope. Length and medical jargon are NOT reliable indicators — these are common traps on the NCLEX.'
+      }
     ]
   },
   {
-    id:'z2', icon:'ti-clock', title:'Time management',
+    id:'z2', icon:'ti-clock', title:'Time Management',
     sub:'Pacing · computer adaptive · stress',
     branches:[
       {label:'Pacing strategies', tips:['1–2 minutes per question maximum','Flag difficult questions for review','Don\'t spend too long on one item']},
-      {label:'Computer adaptive (CAT)', tips:['Each question builds on previous','Can\'t go back to change answers','Focus on the current question only']},
+      {label:'Computer adaptive (CAT)', tips:['Each question builds on previous performance','Can\'t go back to change answers','Focus on the current question only']},
       {label:'Stress management', tips:['Deep breathing between questions','Positive self-talk throughout','Take breaks when allowed']}
     ],
     questions:[
-      {q:'On the NCLEX CAT, you realize you may have answered question 42 wrong. You should:', opts:['Go back and change it','Skip ahead to easier questions','Let it go — focus on the current question','Flag it for later review'], ans:2, fb:'The CAT does not allow you to go back. Dwelling on past questions wastes time and increases anxiety. Each question is independent.'},
-      {q:'You\'ve spent 3 minutes on a question and are still unsure. Best action:', opts:['Keep re-reading until certain','Make your best choice and move on','Skip it and return later','Pick the longest answer'], ans:1, fb:'Spending more than 2 minutes per question risks running out of time. Make your best choice and move forward.'}
+      {
+        type:'instinct',
+        label:'⚠️ Instinct Check',
+        q:'You answer a question about a postpartum hemorrhage client. You pick option B. Then you re-read it and start to doubt yourself. You\'ve been on this question for 3 minutes. What should you do?',
+        opts:['Keep re-reading until you feel certain','Switch to option D — more detail usually means more correct','Stick with option B and move on — your first instinct is usually right','Skip it and come back later'],
+        ans:2,
+        fb:'This is the #1 trap for overthinkers. Research consistently shows first instincts are more often correct. The longer you sit on a question, the more anxiety — not logic — drives your answer. Commit and move forward.'
+      },
+      {
+        type:'standard',
+        label:'CAT Format',
+        q:'On the NCLEX-RN, you finish a question and realize you likely answered question 30 incorrectly. You should:',
+        opts:['Go back and change it','Flag it and return at the end','Accept it — the CAT does not allow going back','Ask the proctor for help'],
+        ans:2,
+        fb:'The CAT format does not allow you to return to previous questions. Dwelling on past questions increases anxiety without any benefit. Each question is a fresh opportunity.'
+      },
+      {
+        type:'standard',
+        label:'Pacing',
+        q:'You have 145 minutes for 85 questions on the NCLEX. You should budget approximately how long per question?',
+        opts:['30 seconds','1–2 minutes','3–4 minutes','As long as needed'],
+        ans:1,
+        fb:'1–2 minutes per question keeps you on pace. At 2 min/question, 85 questions = 170 min — slightly over, so aim for 1.5 min average. Spending 4+ minutes on one question puts the whole exam at risk.'
+      },
+      {
+        type:'standard',
+        label:'Stress Management',
+        q:'Between questions, you notice your heart racing and your mind going blank. The best immediate action is:',
+        opts:['Review your notes mentally','Take 2–3 slow deep breaths and refocus','Skip ahead to find an easier question','Remind yourself of every question you might have gotten wrong'],
+        ans:1,
+        fb:'Box breathing or slow deep breaths activate the parasympathetic nervous system and reduce acute anxiety. Ruminating on past questions is the worst thing you can do — each question is independent.'
+      },
+      {
+        type:'instinct',
+        label:'⚠️ Instinct Check',
+        q:'You changed 4 answers in the last 10 questions after second-guessing yourself. This pattern suggests:',
+        opts:['Good critical thinking — re-evaluation is smart','Anxiety is driving your decisions, not clinical knowledge','You need to study more content','Your first instincts are wrong'],
+        ans:1,
+        fb:'Repeated answer-changing is almost always anxiety-driven, not knowledge-driven. On test day, commit to a strategy: only change an answer if you have a clear, specific, logical reason — not just a feeling.'
+      }
     ]
   },
   {
-    id:'z3', icon:'ti-zoom-question', title:'Question analysis',
+    id:'z3', icon:'ti-zoom-question', title:'Question Analysis',
     sub:'Keywords · question types · stem analysis',
     branches:[
-      {label:'Keyword recognition', tips:['"First, best, most" → priority questions','"Always, never, all" → usually wrong (absolutes)','"Usually, often, may" → more likely correct']},
+      {label:'Keyword recognition', tips:['"First, best, most" → priority question','"Always, never, all" → absolute — usually wrong','"Usually, often, may" → more likely correct']},
       {label:'Question types', tips:['SATA: Select all correct options','Priority: Which client first?','Delegation: Who can perform this task?','Teaching: What indicates understanding?']},
-      {label:'Stem analysis', tips:['Read the question twice before looking at options','Identify the client condition/situation','Determine what the question is really asking']}
+      {label:'Stem analysis', tips:['Read the question twice before looking at options','Identify the client condition/situation','Determine what the question is REALLY asking']}
     ],
     questions:[
-      {q:'The stem says "Which client should the nurse see FIRST?" This is a:', opts:['Teaching question','SATA question','Priority/triage question','Delegation question'], ans:2, fb:'Words like "first," "most urgent," or "priority" signal a triage question. Apply ABCs and safety principles.'},
-      {q:'An answer option states: "The nurse should NEVER leave the client alone." The word NEVER is:', opts:['A strong cue this answer is correct','An absolute — usually a red flag to eliminate','Irrelevant to answer selection','A sign of a therapeutic response'], ans:1, fb:'Absolute words like never, always, and all are usually incorrect because nursing care has exceptions.'}
+      {
+        type:'standard',
+        label:'Keyword Recognition',
+        q:'The question stem says "Which action should the nurse take FIRST?" In OB, a client is 38 weeks and reports decreased fetal movement. What does "FIRST" tell you?',
+        opts:['Do everything on the list simultaneously','This is a priority/triage question — apply ABCs and safety','Pick the most medical-sounding answer','Choose the most comforting action'],
+        ans:1,
+        fb:'"First" is a priority keyword. In this scenario, decreased fetal movement is a safety concern requiring immediate fetal assessment (non-stress test or kick counts). Safety always drives the "first" answer.'
+      },
+      {
+        type:'standard',
+        label:'Absolute Words',
+        q:'An answer choice states: "The nurse should ALWAYS place a newborn skin-to-skin immediately after delivery." The word ALWAYS is:',
+        opts:['A sign this is the correct answer','An absolute — be cautious, as exceptions exist','Irrelevant to your decision','A therapeutic communication cue'],
+        ans:1,
+        fb:'"Always" is an absolute word. While skin-to-skin is best practice, it is contraindicated when the newborn is compromised and needs resuscitation. Absolute answers are usually wrong because nursing always considers individual client status.'
+      },
+      {
+        type:'standard',
+        label:'Stem Analysis',
+        q:'The stem reads: "A 2-year-old is admitted with RSV. The parent asks if they can stay overnight. What is the nurse\'s best response?" What is this question REALLY asking?',
+        opts:['Whether RSV is contagious','Whether parents are allowed in pediatric units','How to respond therapeutically in a family-centered care model','What medications to give for RSV'],
+        ans:2,
+        fb:'Strip the clinical details and find the core concept: family-centered care is the foundation of pediatric nursing. The question is testing whether you know that parents are encouraged to stay and be part of care — not visiting hours policy.'
+      },
+      {
+        type:'delegation',
+        label:'Delegation Question',
+        q:'The RN is caring for a postpartum unit. Which task is appropriate to delegate to the UAP (unlicensed assistive personnel)?',
+        opts:['Assessing a client\'s fundal height and lochia','Teaching a new mother about breastfeeding','Measuring and recording urine output for a stable client','Administering oral pain medication'],
+        ans:2,
+        fb:'UAPs can measure and record intake/output for stable clients — this is within their scope. Assessment (fundal height), teaching (breastfeeding), and medication administration all require RN licensure and cannot be delegated to UAPs.'
+      },
+      {
+        type:'sata',
+        label:'SATA · Question Types',
+        q:'Which of the following are cues that a question is asking about PRIORITY? Select all that apply.',
+        opts:['The word "first"','The word "best"','The word "most important"','The word "always"','The phrase "which client would you see first"'],
+        ans:[0,1,2,4],
+        fb:'"First," "best," "most important," and "which client first" all signal priority questions. "Always" is an absolute word that signals caution about the answer choices — it\'s not a stem priority cue.'
+      }
     ]
   },
   {
-    id:'z4', icon:'ti-alert-triangle', title:'Priority & safety',
-    sub:'ABCs · Maslow\'s · safety principles',
+    id:'z4', icon:'ti-alert-triangle', title:'Priority & Safety',
+    sub:'ABCs · Maslow\'s · OB/Peds safety',
     branches:[
-      {label:'ABCs framework', tips:['Airway is always the first priority','Breathing assessment second','Circulation third in sequence']},
+      {label:'ABCs framework', tips:['Airway always first priority','Breathing second','Circulation third']},
       {label:'Maslow\'s hierarchy', tips:['Physiological needs first','Safety and security second','Psychosocial needs last']},
-      {label:'Safety principles', tips:['Life-threatening conditions first','Unstable before stable clients','Actual problems over potential']}
+      {label:'OB/Peds safety priorities', tips:['Fetal heart rate drops = immediate action','Newborn airway before warmth','Postpartum hemorrhage = circulation priority','Pediatric: child safety over parent wishes']}
     ],
     questions:[
-      {q:'You have four clients. Which do you assess first?\nA) Fractured hip  B) BP 88/50 post-op  C) Mild anxiety  D) Chest pain with diaphoresis', opts:['Fractured hip','BP 88/50 post-op','Mild anxiety','Chest pain with diaphoresis'], ans:3, fb:'Chest pain with diaphoresis signals possible MI — a life-threatening cardiovascular emergency. ABCs and life-threat trump all others.'},
-      {q:'A client reports difficulty breathing. The next client is crying and asking for pain medication. You should:', opts:['See the crying client first — they asked first','See the breathing client first — airway priority','Call the charge nurse and wait','Give pain med first, then assess breathing'], ans:1, fb:'Airway and breathing always take priority over psychosocial or comfort needs per Maslow and the ABCs.'}
+      {
+        type:'priority',
+        label:'Priority · OB',
+        q:'You are a postpartum RN with 4 clients. Which do you assess FIRST?\nA) Client 1 hr post-delivery with fundus firm, lochia moderate\nB) Client reporting sudden heavy bleeding soaking 2 pads in 30 min\nC) Client requesting pain medication for episiotomy\nD) Client asking when she can eat',
+        opts:['Client A — just delivered, needs routine check','Client B — sudden heavy bleeding is a hemorrhage emergency','Client C — pain is the 5th vital sign','Client D — nutrition is a physiological need'],
+        ans:1,
+        fb:'Postpartum hemorrhage (soaking 2+ pads in 30 min) is a life-threatening circulation emergency. This trumps routine assessment, pain management, and nutrition needs. Apply ABCs: Circulation is at risk.'
+      },
+      {
+        type:'priority',
+        label:'Priority · Peds',
+        q:'A pediatric nurse has 4 patients. Who is seen FIRST?\nA) 4-year-old with croup, barking cough, SpO2 97%\nB) 8-year-old with appendicitis awaiting surgery, pain 6/10\nC) 2-year-old with croup, stridor at rest, SpO2 91%\nD) 10-year-old post-tonsillectomy, eating popsicle',
+        opts:['4-year-old with barking cough','8-year-old with appendicitis pain','2-year-old with stridor and SpO2 91% — airway compromise','10-year-old post-op eating'],
+        ans:2,
+        fb:'The 2-year-old has stridor at rest and SpO2 of 91% — this indicates significant airway obstruction. Airway is always the first priority. The 4-year-old\'s SpO2 is 97% (acceptable). Pain and eating are lower priorities than a compromised airway.'
+      },
+      {
+        type:'standard',
+        label:'Safety · OB',
+        q:'During labor, the fetal heart rate drops to 90 bpm and remains there for 3 minutes. The FIRST nursing action is:',
+        opts:['Call the physician','Document the finding and continue monitoring','Reposition the mother to left lateral, increase IV fluids, apply O2','Prepare for emergency C-section'],
+        ans:2,
+        fb:'The first action is to intervene to improve uteroplacental blood flow: reposition left lateral (takes pressure off vena cava), increase IV fluids, and apply oxygen. THEN notify the physician. Never call before intervening when immediate action can help.'
+      },
+      {
+        type:'standard',
+        label:'Maslow\'s · Psych + OB',
+        q:'A new mother with a history of postpartum depression says "I love my baby but I just feel so empty and sad." Using Maslow\'s, the nurse prioritizes:',
+        opts:['Physiological needs — assess if she is eating and sleeping','Safety — screen for suicidal ideation or thoughts of harming infant','Esteem needs — reassure her she is a good mother','Self-actualization — encourage journaling'],
+        ans:1,
+        fb:'While physiological needs rank first in Maslow\'s, the clinical context of postpartum depression with statements of emotional emptiness requires immediate SAFETY screening — risk of self-harm or harm to the infant. Safety supersedes routine physiological assessment here.'
+      },
+      {
+        type:'sata',
+        label:'SATA · Priority Principles',
+        q:'Which principles guide priority decisions on the NCLEX? Select all that apply.',
+        opts:['Airway before breathing before circulation','Unstable clients before stable clients','Actual problems before potential problems','Psychosocial needs before physiological needs','Life-threatening conditions are seen first'],
+        ans:[0,1,2,4],
+        fb:'ABCs, unstable before stable, actual before potential, and life-threatening first are all correct priority frameworks. Psychosocial needs come AFTER physiological and safety needs in Maslow\'s hierarchy — never before.'
+      }
     ]
   },
   {
-    id:'z5', icon:'ti-brain', title:'Clinical reasoning',
+    id:'z5', icon:'ti-brain', title:'Clinical Reasoning',
     sub:'Nursing process · critical thinking · patho',
     branches:[
-      {label:'Nursing process', tips:['Assessment before intervention — always','Planning includes goal setting','Implementation requires orders','Evaluation measures outcomes']},
-      {label:'Critical thinking', tips:['Consider all client factors','Think beyond obvious answers','Apply evidence-based practice','Consider cultural considerations']},
-      {label:'Pathophysiology links', tips:['Connect symptoms to conditions','Understand medication actions','Know normal vs abnormal values']}
+      {label:'Nursing process', tips:['Assessment ALWAYS before intervention','Planning includes measurable goals','Implementation requires valid orders','Evaluation: did the intervention work?']},
+      {label:'Critical thinking', tips:['Consider ALL client factors','Think beyond the obvious answer','Apply evidence-based practice','Cultural and developmental considerations matter']},
+      {label:'Pathophysiology links', tips:['Connect symptoms to the underlying condition','Know why medications work — not just what they do','Normal vs abnormal values by age group (peds!)','OB vitals differ from standard adult norms']}
     ],
     questions:[
-      {q:'A client returns from surgery with a new drainage tube. Before intervening, the nurse should first:', opts:['Call the surgeon','Document the finding','Assess the drainage output and site','Administer ordered pain medication'], ans:2, fb:'Assessment always comes before intervention in the nursing process. Gather data first, then act.'},
-      {q:'A client with heart failure has crackles, 3+ pitting edema, and JVD. These findings indicate:', opts:['Dehydration','Fluid overload — a core HF finding','Normal post-op status','Infection'], ans:1, fb:'Crackles, edema, and JVD are classic signs of fluid overload in heart failure. Link symptoms to pathophysiology.'}
+      {
+        type:'standard',
+        label:'Nursing Process · Assessment First',
+        q:'A postpartum client reports feeling "weird and lightheaded." Before calling the physician, the nurse should FIRST:',
+        opts:['Call the physician immediately','Increase IV fluid rate','Assess vital signs, fundus, lochia, and IV site','Document the complaint and continue monitoring'],
+        ans:2,
+        fb:'Assessment always comes before intervention. "Lightheaded" in a postpartum client could signal hemorrhage, orthostatic hypotension, or other complications. Gather data first so you have something meaningful to report to the physician.'
+      },
+      {
+        type:'standard',
+        label:'Patho Link · OB',
+        q:'A postpartum client has a boggy uterus and heavy lochia rubra. The nurse understands this is caused by:',
+        opts:['Infection of the uterine lining','Uterine atony — the uterus is not contracting properly','Normal involution process','Retained placenta only'],
+        ans:1,
+        fb:'A boggy (soft, not firm) uterus with heavy bleeding = uterine atony, the most common cause of postpartum hemorrhage. The uterus must contract to compress blood vessels at the placental site. First intervention: fundal massage + oxytocin.'
+      },
+      {
+        type:'standard',
+        label:'Critical Thinking · Peds',
+        q:'A 6-month-old has a heart rate of 155 bpm. The nurse\'s best action is:',
+        opts:['Call the physician — this is bradycardia','Document as abnormal and notify the charge nurse','Recognize this as a normal infant heart rate and continue assessment','Prepare for defibrillation'],
+        ans:2,
+        fb:'Normal HR for a 6-month-old is 80–160 bpm. 155 is within normal range for this age group. Critical thinking on the NCLEX requires knowing that normal values differ by developmental stage — adult norms do NOT apply to pediatric clients.'
+      },
+      {
+        type:'delegation',
+        label:'Delegation · Clinical Reasoning',
+        q:'An RN is planning care for a busy OB unit. Which assignment is appropriate for an LPN?',
+        opts:['Performing the initial admission assessment on a laboring client','Developing the care plan for a postpartum client with hemorrhage','Administering scheduled oral medications to a stable postpartum client','Teaching a new mother how to latch for breastfeeding'],
+        ans:2,
+        fb:'LPNs can administer medications to stable clients — this is within their scope. Initial assessments, care plan development, and client teaching require RN-level licensure. In OB especially, LPN scope is limited due to the complexity of maternal-newborn care.'
+      },
+      {
+        type:'sata',
+        label:'SATA · Clinical Reasoning',
+        q:'The nurse is evaluating a newborn 1 hour after birth. Which findings require immediate intervention? Select all that apply.',
+        opts:['Heart rate of 110 bpm','Respiratory rate of 68 breaths/min','Temperature of 36.0°C (96.8°F)','Acrocyanosis of hands and feet','Grunting with each breath'],
+        ans:[1,2,4],
+        fb:'RR >60 is tachypnea in a newborn and needs assessment. Temp of 36.0°C is hypothermia (normal 36.5–37.5°C) and requires warming. Grunting indicates respiratory distress. HR of 110 is normal (normal: 100–160). Acrocyanosis is expected in the first few hours of life.'
+      }
     ]
   },
   {
-    id:'z6', icon:'ti-heart', title:'Confidence building',
-    sub:'Anxiety control · positive mindset · knowledge',
+    id:'z6', icon:'ti-heart', title:'Confidence Building',
+    sub:'Trust your instincts · first answer · test mindset',
     branches:[
-      {label:'Test anxiety control', tips:['Prepare thoroughly beforehand','Use relaxation techniques','Trust your nursing knowledge']},
-      {label:'Positive mindset', tips:['You know more than you think','First instinct is often correct','Focus on helping the client']},
-      {label:'Knowledge application', tips:['Apply classroom learning','Use clinical experience','Think like a safe nurse']}
+      {label:'Trust yourself', tips:['You know more than you think','First instinct is often correct','You\'ve been training for this moment']},
+      {label:'Positive mindset', tips:['Focus on helping the client — not passing the test','One question at a time — never think about the score','Reframe nerves as readiness']},
+      {label:'On test day', tips:['Read the question twice — answer options once slowly','Commit to your answer with confidence','Think: "What would a SAFE nurse do?"']}
     ],
     questions:[
-      {q:'You\'re between two choices and your gut says option B. You should:', opts:['Always change to the more detailed answer','Stick with your first instinct unless you have a clear reason to change','Pick the option you studied least','Choose the longest answer'], ans:1, fb:'Research shows first instincts are more often correct. Only change answers when you have a specific logical reason.'},
-      {q:'The best mindset for any NCLEX question is:', opts:['"What would impress the physician?"','"What would a safe, competent nurse do?"','"What did I memorize last night?"','"What is the easiest intervention?"'], ans:1, fb:'The NCLEX tests minimum safe competency. Always frame your thinking around client safety and scope of practice.'}
+      {
+        type:'instinct',
+        label:'⚠️ Instinct Check',
+        q:'You read a question about a newborn with jaundice. Your gut immediately says "phototherapy" — but then you start second-guessing because the question mentioned something about feeding. You should:',
+        opts:['Spend more time analyzing — feeding must be the key','Switch your answer to something feeding-related','Ask yourself: does the new detail actually change the answer, or is anxiety talking?','Always go with the most detailed answer'],
+        ans:2,
+        fb:'This is the overthinking trap. Before changing an answer, ask: "Do I have a specific, logical, clinical reason to change?" If you\'re just anxious — stay with your instinct. Jaundice + phototherapy is a strong first-instinct connection that is usually correct.'
+      },
+      {
+        type:'standard',
+        label:'Test Mindset',
+        q:'The best frame of mind for answering every NCLEX question is:',
+        opts:['"What would impress the physician?"','"What would a safe, competent nurse do for this specific client right now?"','"What did I memorize last night?"','"What is the fastest intervention?"'],
+        ans:1,
+        fb:'The NCLEX tests entry-level safe practice. Every answer should be filtered through: safety, scope of practice, and the specific client in the scenario. Speed and impressing doctors are irrelevant — safe care for THIS client is everything.'
+      },
+      {
+        type:'standard',
+        label:'Confidence · OB',
+        q:'You see an OB question and immediately feel anxious because OB is your weakest area. The best strategy is:',
+        opts:['Skip it and come back — you can\'t go back on the CAT','Read carefully, apply ABCs and safety principles — OB is still nursing','Guess quickly so you don\'t waste time','Assume the answer involves the physician'],
+        ans:1,
+        fb:'OB questions still follow the same NCLEX frameworks: ABCs, safety, nursing process, Maslow\'s. You know these. Apply your strategy and trust your clinical reasoning — the content is different but the approach is identical.'
+      },
+      {
+        type:'instinct',
+        label:'⚠️ Instinct Check',
+        q:'You\'ve now changed 3 answers in a row after re-reading questions. You notice you keep changing to longer, more detailed options. This is likely:',
+        opts:['Good test-taking strategy — more detail = more correct','A sign you need to review more content','Anxiety-driven behavior — longer answers are not more correct','Appropriate for OB questions specifically'],
+        ans:2,
+        fb:'Gravitating toward longer answers when anxious is a classic NCLEX trap. Answer length has no correlation with correctness. Recognize this pattern in yourself now so you can catch it on test day and return to your strategy.'
+      },
+      {
+        type:'standard',
+        label:'Growth Mindset',
+        q:'After answering a difficult question you weren\'t sure about, the most helpful thought is:',
+        opts:['"I probably failed that one — I don\'t know anything."','"I need to go back and change it."','"I applied my best clinical reasoning. Next question."','"OB is impossible — I\'ll never pass."'],
+        ans:2,
+        fb:'Negative self-talk after hard questions is the fastest way to spiral. The NCLEX is designed to be challenging — difficult questions often mean you\'re performing well (CAT adjusts up). Acknowledge the question, let it go, and bring full focus to the next one.'
+      }
     ]
   }
 ];
 
-let totalCorrect = 0, totalAnswered = 0;
+var totalCorrect = 0, totalAnswered = 0;
+var sataPending = {};
 
 function updateScore() {
   document.getElementById('score-display').textContent = totalCorrect + ' / ' + totalAnswered;
-  const badge = document.getElementById('pct-badge');
+  var badge = document.getElementById('pct-badge');
   if (totalAnswered === 0) { badge.textContent = '—'; badge.style.background = '#f0ebe7'; badge.style.color = '#888780'; return; }
-  const pct = Math.round(totalCorrect / totalAnswered * 100);
+  var pct = Math.round(totalCorrect / totalAnswered * 100);
   badge.textContent = pct + '%';
   if (pct >= 80) { badge.style.background = '#eaf3de'; badge.style.color = '#27500a'; }
   else if (pct >= 60) { badge.style.background = '#faeeda'; badge.style.color = '#633806'; }
@@ -247,39 +404,39 @@ function updateScore() {
 }
 
 function resetAll() {
-  totalCorrect = 0; totalAnswered = 0; updateScore();
-  document.querySelectorAll('.zone-body').forEach(b => b.classList.remove('open'));
-  document.querySelectorAll('.chevron').forEach(c => c.classList.remove('open'));
-  document.querySelectorAll('.quiz-area').forEach(a => { a.classList.remove('open'); a.innerHTML = ''; });
+  totalCorrect = 0; totalAnswered = 0; sataPending = {}; updateScore();
+  document.querySelectorAll('.zone-body').forEach(function(b){ b.classList.remove('open'); });
+  document.querySelectorAll('.chevron').forEach(function(c){ c.classList.remove('open'); });
+  document.querySelectorAll('.quiz-area').forEach(function(a){ a.classList.remove('open'); a.innerHTML = ''; });
 }
 
-const board = document.getElementById('board');
+var board = document.getElementById('board');
 
 zones.forEach(function(z, zi) {
-  const el = document.createElement('div');
+  var el = document.createElement('div');
   el.className = 'zone ' + z.id;
+  var branchHTML = z.branches.map(function(b) {
+    return '<div class="branch"><div class="branch-label">' + b.label + '</div>' +
+      b.tips.map(function(t){ return '<div class="tip">' + t + '</div>'; }).join('') + '</div>';
+  }).join('');
   el.innerHTML =
     '<div class="zone-header" onclick="toggleZone(' + zi + ')">' +
-      '<i class="ti ' + z.icon + '" aria-hidden="true"></i>' +
+      '<i class="ti ' + z.icon + ' icon" aria-hidden="true"></i>' +
       '<div style="flex:1"><div class="zone-title">' + z.title + '</div><div class="zone-sub">' + z.sub + '</div></div>' +
       '<i class="ti ti-chevron-down chevron" id="chev-' + zi + '" aria-hidden="true"></i>' +
     '</div>' +
     '<div class="zone-body" id="body-' + zi + '">' +
-      z.branches.map(function(b) {
-        return '<div class="branch"><div class="branch-label">' + b.label + '</div>' +
-          b.tips.map(function(t){ return '<div class="tip">' + t + '</div>'; }).join('') +
-          '</div>';
-      }).join('') +
-      '<button class="quiz-btn" onclick="startQuiz(event,' + zi + ',0)">↗ Practice questions</button>' +
+      branchHTML +
+      '<button class="quiz-btn" onclick="startQuiz(event,' + zi + ',0)">↗ Practice questions (' + z.questions.length + ')</button>' +
       '<div class="quiz-area" id="quiz-' + zi + '"></div>' +
     '</div>';
   board.appendChild(el);
 });
 
 function toggleZone(i) {
-  const body = document.getElementById('body-' + i);
-  const chev = document.getElementById('chev-' + i);
-  const isOpen = body.classList.contains('open');
+  var body = document.getElementById('body-' + i);
+  var chev = document.getElementById('chev-' + i);
+  var isOpen = body.classList.contains('open');
   document.querySelectorAll('.zone-body').forEach(function(b){ b.classList.remove('open'); });
   document.querySelectorAll('.chevron').forEach(function(c){ c.classList.remove('open'); });
   if (!isOpen) { body.classList.add('open'); chev.classList.add('open'); }
@@ -287,30 +444,73 @@ function toggleZone(i) {
 
 function startQuiz(e, zi, qi) {
   e.stopPropagation();
-  const area = document.getElementById('quiz-' + zi);
+  var area = document.getElementById('quiz-' + zi);
   area.classList.add('open');
   showQuestion(zi, qi);
 }
 
 function showQuestion(zi, qi) {
-  const area = document.getElementById('quiz-' + zi);
-  const q = zones[zi].questions[qi];
-  if (!q) { area.innerHTML = '<div class="done-msg">✓ All questions done for this zone!</div>'; return; }
+  var area = document.getElementById('quiz-' + zi);
+  var q = zones[zi].questions[qi];
+  var total = zones[zi].questions.length;
+  if (!q) { area.innerHTML = '<div class="done-msg">✓ Zone complete! Great work.</div>'; return; }
+
+  var typeClass = q.type === 'sata' ? 'sata' : q.type === 'delegation' ? 'delegation' : q.type === 'priority' ? 'priority' : q.type === 'instinct' ? 'instinct' : '';
+  var sataNoteHTML = q.type === 'sata' ? '<div class="sata-note">Select ALL that apply, then click Submit.</div>' : '';
+
+  var optsHTML = q.opts.map(function(o, oi) {
+    if (q.type === 'sata') {
+      return '<button class="q-opt" id="opt-' + zi + '-' + qi + '-' + oi + '" onclick="toggleSATA(' + zi + ',' + qi + ',' + oi + ')">' + o + '</button>';
+    }
+    return '<button class="q-opt" id="opt-' + zi + '-' + qi + '-' + oi + '" onclick="answer(' + zi + ',' + qi + ',' + oi + ')">' + o + '</button>';
+  }).join('');
+
+  var submitHTML = q.type === 'sata' ? '<button class="sata-submit" id="submit-' + zi + '-' + qi + '" onclick="submitSATA(' + zi + ',' + qi + ')">Submit Answer</button>' : '';
+
   area.innerHTML =
+    '<div class="progress">Question ' + (qi+1) + ' of ' + total + '</div>' +
+    '<div class="q-label ' + typeClass + '">' + q.label + '</div>' +
     '<div class="q-text">' + q.q.replace(/\n/g,'<br>') + '</div>' +
-    q.opts.map(function(o, oi){
-      return '<button class="q-opt" id="opt-' + zi + '-' + qi + '-' + oi + '" onclick="answer(' + zi + ',' + qi + ',' + oi + ')">' + o + '</button>';
-    }).join('') +
+    sataNoteHTML + optsHTML + submitHTML +
     '<div class="q-feedback" id="fb-' + zi + '-' + qi + '">' + q.fb + '</div>' +
-    '<button class="next-btn" id="next-' + zi + '-' + qi + '" onclick="showQuestion(' + zi + ',' + (qi+1) + ')">Next question →</button>';
+    '<button class="next-btn" id="next-' + zi + '-' + qi + '" onclick="showQuestion(' + zi + ',' + (qi+1) + ')">Next →</button>';
+
+  if (q.type === 'sata') sataPending[zi + '-' + qi] = [];
+}
+
+function toggleSATA(zi, qi, oi) {
+  var key = zi + '-' + qi;
+  var btn = document.getElementById('opt-' + zi + '-' + qi + '-' + oi);
+  var idx = sataPending[key].indexOf(oi);
+  if (idx === -1) { sataPending[key].push(oi); btn.style.background = '#EEEDFE'; btn.style.borderColor = '#7F77DD'; }
+  else { sataPending[key].splice(idx,1); btn.style.background = '#fff'; btn.style.borderColor = '#e0dbd6'; }
+}
+
+function submitSATA(zi, qi) {
+  var q = zones[zi].questions[qi];
+  var key = zi + '-' + qi;
+  var selected = sataPending[key].sort();
+  var correct = q.ans.slice().sort();
+  var isCorrect = JSON.stringify(selected) === JSON.stringify(correct);
+  totalAnswered++; if (isCorrect) totalCorrect++;
+  updateScore();
+  q.opts.forEach(function(_, oi) {
+    var btn = document.getElementById('opt-' + zi + '-' + qi + '-' + oi);
+    btn.disabled = true; btn.style.background = ''; btn.style.borderColor = '';
+    if (correct.indexOf(oi) !== -1) btn.classList.add('correct');
+    else if (selected.indexOf(oi) !== -1) btn.classList.add('wrong');
+  });
+  document.getElementById('submit-' + zi + '-' + qi).style.display = 'none';
+  document.getElementById('fb-' + zi + '-' + qi).style.display = 'block';
+  document.getElementById('next-' + zi + '-' + qi).style.display = 'block';
 }
 
 function answer(zi, qi, chosen) {
-  const q = zones[zi].questions[qi];
+  var q = zones[zi].questions[qi];
   totalAnswered++; if (chosen === q.ans) totalCorrect++;
   updateScore();
   q.opts.forEach(function(_, oi) {
-    const btn = document.getElementById('opt-' + zi + '-' + qi + '-' + oi);
+    var btn = document.getElementById('opt-' + zi + '-' + qi + '-' + oi);
     btn.disabled = true;
     if (oi === q.ans) btn.classList.add('correct');
     else if (oi === chosen && chosen !== q.ans) btn.classList.add('wrong');
