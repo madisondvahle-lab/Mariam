@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCLEX Strategy Tutor · Study with Madison</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #fdf9f7;
+    color: #2c2c2a;
+    padding: 20px;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0ebe7;
+  }
+  .header h1 { font-size: 20px; font-weight: 500; color: #2c2c2a; margin-bottom: 4px; }
+  .header p { font-size: 13px; color: #888780; }
+
+  .score-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    background: #fff;
+    border: 0.5px solid #e8e3df;
+    border-radius: 10px;
+    font-size: 13px; color: #888780;
+    margin-bottom: 16px;
+  }
+  .score-val { font-size: 15px; font-weight: 500; color: #2c2c2a; }
+  .badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; }
+  .reset-btn {
+    margin-left: auto; font-size: 12px; padding: 4px 12px;
+    background: transparent; border: 0.5px solid #d4cfc9;
+    border-radius: 6px; cursor: pointer; color: #888780;
+  }
+  .reset-btn:hover { background: #f5f0ec; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .zone {
+    background: #fff;
+    border: 0.5px solid #e8e3df;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  .zone:hover { border-color: #c4bfba; }
+
+  .zone-header {
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    user-select: none;
+  }
+  .zone-header i { font-size: 20px; flex-shrink: 0; }
+  .zone-title { font-size: 14px; font-weight: 500; }
+  .zone-sub { font-size: 11px; opacity: .65; margin-top: 2px; }
+  .chevron { margin-left: auto; font-size: 14px; opacity: .4; transition: transform .2s; }
+  .chevron.open { transform: rotate(180deg); }
+
+  .zone-body { display: none; border-top: 0.5px solid #f0ebe7; }
+  .zone-body.open { display: block; }
+
+  .branch { padding: 10px 16px 0; }
+  .branch:last-of-type { padding-bottom: 10px; }
+  .branch-label {
+    font-size: 10px; font-weight: 500; color: #aaa9a2;
+    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px;
+  }
+  .tip {
+    font-size: 12px; color: #3d3d3a;
+    padding: 3px 0 3px 10px;
+    border-left: 2px solid;
+    line-height: 1.5; margin: 3px 0;
+  }
+
+  .quiz-btn {
+    display: block; width: calc(100% - 32px); margin: 10px 16px 12px;
+    font-size: 12px; padding: 7px 12px;
+    background: transparent; border: 0.5px solid #d4cfc9;
+    border-radius: 8px; cursor: pointer; color: #888780; text-align: left;
+  }
+  .quiz-btn:hover { background: #fdf9f7; }
+
+  .quiz-area {
+    display: none;
+    margin: 0 16px 14px;
+    background: #fdf9f7;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+  }
+  .quiz-area.open { display: block; }
+  .q-text { font-weight: 500; color: #2c2c2a; margin-bottom: 10px; line-height: 1.6; font-size: 13px; }
+  .q-opt {
+    display: block; width: 100%;
+    padding: 7px 10px; margin: 5px 0;
+    border-radius: 7px; cursor: pointer;
+    color: #2c2c2a; border: 0.5px solid #e0dbd6;
+    background: #fff; font-size: 12px; text-align: left; line-height: 1.4;
+  }
+  .q-opt:hover:not(:disabled) { border-color: #b4b0aa; }
+  .q-opt.correct { background: #eaf3de; border-color: #639922; color: #27500a; }
+  .q-opt.wrong   { background: #fcebeb; border-color: #e24b4a; color: #791f1f; }
+  .q-feedback {
+    display: none; margin-top: 8px;
+    font-size: 11px; color: #5f5e5a; line-height: 1.6;
+    padding: 7px 10px; background: #fff;
+    border-radius: 6px; border-left: 2px solid #d4cfc9;
+  }
+  .next-btn {
+    display: none; margin-top: 8px;
+    font-size: 11px; padding: 4px 12px;
+    background: transparent; border: 0.5px solid #d4cfc9;
+    border-radius: 6px; cursor: pointer; color: #888780;
+  }
+  .next-btn:hover { background: #f0ebe7; }
+  .done-msg { font-size: 12px; color: #27500a; padding: 6px 0; }
+
+  /* Zone colors */
+  .z1 .zone-header { background: #EEEDFE; } .z1 .zone-header i, .z1 .zone-title { color: #3C3489; } .z1 .tip { border-color: #7F77DD; }
+  .z2 .zone-header { background: #E6F1FB; } .z2 .zone-header i, .z2 .zone-title { color: #0C447C; } .z2 .tip { border-color: #378ADD; }
+  .z3 .zone-header { background: #E1F5EE; } .z3 .zone-header i, .z3 .zone-title { color: #085041; } .z3 .tip { border-color: #1D9E75; }
+  .z4 .zone-header { background: #FAEEDA; } .z4 .zone-header i, .z4 .zone-title { color: #633806; } .z4 .tip { border-color: #EF9F27; }
+  .z5 .zone-header { background: #FAECE7; } .z5 .zone-header i, .z5 .zone-title { color: #712B13; } .z5 .tip { border-color: #D85A30; }
+  .z6 .zone-header { background: #FBEAF0; } .z6 .zone-header i, .z6 .zone-title { color: #72243E; } .z6 .tip { border-color: #D4537E; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>NCLEX Test-Taking Strategies</h1>
+  <p>Tap a zone to review · then quiz yourself</p>
+</div>
+
+<div class="score-bar">
+  <span>Session score</span>
+  <span class="score-val" id="score-display">0 / 0</span>
+  <span id="pct-badge" class="badge" style="background:#f0ebe7;color:#888780">—</span>
+  <button class="reset-btn" onclick="resetAll()">Reset</button>
+</div>
+
+<div class="grid" id="board"></div>
+
+<script>
+const zones = [
+  {
+    id:'z1', icon:'ti-check', title:'Answer selection',
+    sub:'Elimination · best rules · positive vs negative',
+    branches:[
+      {label:'Elimination strategies', tips:['Rule out obviously wrong options','Eliminate similar answers','Choose the most comprehensive option']},
+      {label:'Best answer rules', tips:['Most complete and accurate','Follows scope of practice','Promotes client safety first']},
+      {label:'Positive vs negative', tips:['Look for therapeutic responses','Avoid punitive or judgmental options','Select client-centered answers']}
+    ],
+    questions:[
+      {q:'Two answer choices say essentially the same thing in different words. What should you do?', opts:['Pick the one with more detail','Eliminate both — they cancel each other out','Pick the shorter one','Flag and guess'], ans:1, fb:'When two options are near-identical, neither is likely correct. Eliminate both and choose from the remaining options.'},
+      {q:'An answer choice tells the client "You shouldn\'t feel that way." This is best described as:', opts:['Therapeutic communication','A punitive/judgmental response — eliminate it','Scope of practice concern','Best answer'], ans:1, fb:'Dismissing a client\'s feelings is judgmental. Always eliminate options that invalidate the client\'s experience.'}
+    ]
+  },
+  {
+    id:'z2', icon:'ti-clock', title:'Time management',
+    sub:'Pacing · computer adaptive · stress',
+    branches:[
+      {label:'Pacing strategies', tips:['1–2 minutes per question maximum','Flag difficult questions for review','Don\'t spend too long on one item']},
+      {label:'Computer adaptive (CAT)', tips:['Each question builds on previous','Can\'t go back to change answers','Focus on the current question only']},
+      {label:'Stress management', tips:['Deep breathing between questions','Positive self-talk throughout','Take breaks when allowed']}
+    ],
+    questions:[
+      {q:'On the NCLEX CAT, you realize you may have answered question 42 wrong. You should:', opts:['Go back and change it','Skip ahead to easier questions','Let it go — focus on the current question','Flag it for later review'], ans:2, fb:'The CAT does not allow you to go back. Dwelling on past questions wastes time and increases anxiety. Each question is independent.'},
+      {q:'You\'ve spent 3 minutes on a question and are still unsure. Best action:', opts:['Keep re-reading until certain','Make your best choice and move on','Skip it and return later','Pick the longest answer'], ans:1, fb:'Spending more than 2 minutes per question risks running out of time. Make your best choice and move forward.'}
+    ]
+  },
+  {
+    id:'z3', icon:'ti-zoom-question', title:'Question analysis',
+    sub:'Keywords · question types · stem analysis',
+    branches:[
+      {label:'Keyword recognition', tips:['"First, best, most" → priority questions','"Always, never, all" → usually wrong (absolutes)','"Usually, often, may" → more likely correct']},
+      {label:'Question types', tips:['SATA: Select all correct options','Priority: Which client first?','Delegation: Who can perform this task?','Teaching: What indicates understanding?']},
+      {label:'Stem analysis', tips:['Read the question twice before looking at options','Identify the client condition/situation','Determine what the question is really asking']}
+    ],
+    questions:[
+      {q:'The stem says "Which client should the nurse see FIRST?" This is a:', opts:['Teaching question','SATA question','Priority/triage question','Delegation question'], ans:2, fb:'Words like "first," "most urgent," or "priority" signal a triage question. Apply ABCs and safety principles.'},
+      {q:'An answer option states: "The nurse should NEVER leave the client alone." The word NEVER is:', opts:['A strong cue this answer is correct','An absolute — usually a red flag to eliminate','Irrelevant to answer selection','A sign of a therapeutic response'], ans:1, fb:'Absolute words like never, always, and all are usually incorrect because nursing care has exceptions.'}
+    ]
+  },
+  {
+    id:'z4', icon:'ti-alert-triangle', title:'Priority & safety',
+    sub:'ABCs · Maslow\'s · safety principles',
+    branches:[
+      {label:'ABCs framework', tips:['Airway is always the first priority','Breathing assessment second','Circulation third in sequence']},
+      {label:'Maslow\'s hierarchy', tips:['Physiological needs first','Safety and security second','Psychosocial needs last']},
+      {label:'Safety principles', tips:['Life-threatening conditions first','Unstable before stable clients','Actual problems over potential']}
+    ],
+    questions:[
+      {q:'You have four clients. Which do you assess first?\nA) Fractured hip  B) BP 88/50 post-op  C) Mild anxiety  D) Chest pain with diaphoresis', opts:['Fractured hip','BP 88/50 post-op','Mild anxiety','Chest pain with diaphoresis'], ans:3, fb:'Chest pain with diaphoresis signals possible MI — a life-threatening cardiovascular emergency. ABCs and life-threat trump all others.'},
+      {q:'A client reports difficulty breathing. The next client is crying and asking for pain medication. You should:', opts:['See the crying client first — they asked first','See the breathing client first — airway priority','Call the charge nurse and wait','Give pain med first, then assess breathing'], ans:1, fb:'Airway and breathing always take priority over psychosocial or comfort needs per Maslow and the ABCs.'}
+    ]
+  },
+  {
+    id:'z5', icon:'ti-brain', title:'Clinical reasoning',
+    sub:'Nursing process · critical thinking · patho',
+    branches:[
+      {label:'Nursing process', tips:['Assessment before intervention — always','Planning includes goal setting','Implementation requires orders','Evaluation measures outcomes']},
+      {label:'Critical thinking', tips:['Consider all client factors','Think beyond obvious answers','Apply evidence-based practice','Consider cultural considerations']},
+      {label:'Pathophysiology links', tips:['Connect symptoms to conditions','Understand medication actions','Know normal vs abnormal values']}
+    ],
+    questions:[
+      {q:'A client returns from surgery with a new drainage tube. Before intervening, the nurse should first:', opts:['Call the surgeon','Document the finding','Assess the drainage output and site','Administer ordered pain medication'], ans:2, fb:'Assessment always comes before intervention in the nursing process. Gather data first, then act.'},
+      {q:'A client with heart failure has crackles, 3+ pitting edema, and JVD. These findings indicate:', opts:['Dehydration','Fluid overload — a core HF finding','Normal post-op status','Infection'], ans:1, fb:'Crackles, edema, and JVD are classic signs of fluid overload in heart failure. Link symptoms to pathophysiology.'}
+    ]
+  },
+  {
+    id:'z6', icon:'ti-heart', title:'Confidence building',
+    sub:'Anxiety control · positive mindset · knowledge',
+    branches:[
+      {label:'Test anxiety control', tips:['Prepare thoroughly beforehand','Use relaxation techniques','Trust your nursing knowledge']},
+      {label:'Positive mindset', tips:['You know more than you think','First instinct is often correct','Focus on helping the client']},
+      {label:'Knowledge application', tips:['Apply classroom learning','Use clinical experience','Think like a safe nurse']}
+    ],
+    questions:[
+      {q:'You\'re between two choices and your gut says option B. You should:', opts:['Always change to the more detailed answer','Stick with your first instinct unless you have a clear reason to change','Pick the option you studied least','Choose the longest answer'], ans:1, fb:'Research shows first instincts are more often correct. Only change answers when you have a specific logical reason.'},
+      {q:'The best mindset for any NCLEX question is:', opts:['"What would impress the physician?"','"What would a safe, competent nurse do?"','"What did I memorize last night?"','"What is the easiest intervention?"'], ans:1, fb:'The NCLEX tests minimum safe competency. Always frame your thinking around client safety and scope of practice.'}
+    ]
+  }
+];
+
+let totalCorrect = 0, totalAnswered = 0;
+
+function updateScore() {
+  document.getElementById('score-display').textContent = totalCorrect + ' / ' + totalAnswered;
+  const badge = document.getElementById('pct-badge');
+  if (totalAnswered === 0) { badge.textContent = '—'; badge.style.background = '#f0ebe7'; badge.style.color = '#888780'; return; }
+  const pct = Math.round(totalCorrect / totalAnswered * 100);
+  badge.textContent = pct + '%';
+  if (pct >= 80) { badge.style.background = '#eaf3de'; badge.style.color = '#27500a'; }
+  else if (pct >= 60) { badge.style.background = '#faeeda'; badge.style.color = '#633806'; }
+  else { badge.style.background = '#fcebeb'; badge.style.color = '#791f1f'; }
+}
+
+function resetAll() {
+  totalCorrect = 0; totalAnswered = 0; updateScore();
+  document.querySelectorAll('.zone-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.chevron').forEach(c => c.classList.remove('open'));
+  document.querySelectorAll('.quiz-area').forEach(a => { a.classList.remove('open'); a.innerHTML = ''; });
+}
+
+const board = document.getElementById('board');
+
+zones.forEach(function(z, zi) {
+  const el = document.createElement('div');
+  el.className = 'zone ' + z.id;
+  el.innerHTML =
+    '<div class="zone-header" onclick="toggleZone(' + zi + ')">' +
+      '<i class="ti ' + z.icon + '" aria-hidden="true"></i>' +
+      '<div style="flex:1"><div class="zone-title">' + z.title + '</div><div class="zone-sub">' + z.sub + '</div></div>' +
+      '<i class="ti ti-chevron-down chevron" id="chev-' + zi + '" aria-hidden="true"></i>' +
+    '</div>' +
+    '<div class="zone-body" id="body-' + zi + '">' +
+      z.branches.map(function(b) {
+        return '<div class="branch"><div class="branch-label">' + b.label + '</div>' +
+          b.tips.map(function(t){ return '<div class="tip">' + t + '</div>'; }).join('') +
+          '</div>';
+      }).join('') +
+      '<button class="quiz-btn" onclick="startQuiz(event,' + zi + ',0)">↗ Practice questions</button>' +
+      '<div class="quiz-area" id="quiz-' + zi + '"></div>' +
+    '</div>';
+  board.appendChild(el);
+});
+
+function toggleZone(i) {
+  const body = document.getElementById('body-' + i);
+  const chev = document.getElementById('chev-' + i);
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.zone-body').forEach(function(b){ b.classList.remove('open'); });
+  document.querySelectorAll('.chevron').forEach(function(c){ c.classList.remove('open'); });
+  if (!isOpen) { body.classList.add('open'); chev.classList.add('open'); }
+}
+
+function startQuiz(e, zi, qi) {
+  e.stopPropagation();
+  const area = document.getElementById('quiz-' + zi);
+  area.classList.add('open');
+  showQuestion(zi, qi);
+}
+
+function showQuestion(zi, qi) {
+  const area = document.getElementById('quiz-' + zi);
+  const q = zones[zi].questions[qi];
+  if (!q) { area.innerHTML = '<div class="done-msg">✓ All questions done for this zone!</div>'; return; }
+  area.innerHTML =
+    '<div class="q-text">' + q.q.replace(/\n/g,'<br>') + '</div>' +
+    q.opts.map(function(o, oi){
+      return '<button class="q-opt" id="opt-' + zi + '-' + qi + '-' + oi + '" onclick="answer(' + zi + ',' + qi + ',' + oi + ')">' + o + '</button>';
+    }).join('') +
+    '<div class="q-feedback" id="fb-' + zi + '-' + qi + '">' + q.fb + '</div>' +
+    '<button class="next-btn" id="next-' + zi + '-' + qi + '" onclick="showQuestion(' + zi + ',' + (qi+1) + ')">Next question →</button>';
+}
+
+function answer(zi, qi, chosen) {
+  const q = zones[zi].questions[qi];
+  totalAnswered++; if (chosen === q.ans) totalCorrect++;
+  updateScore();
+  q.opts.forEach(function(_, oi) {
+    const btn = document.getElementById('opt-' + zi + '-' + qi + '-' + oi);
+    btn.disabled = true;
+    if (oi === q.ans) btn.classList.add('correct');
+    else if (oi === chosen && chosen !== q.ans) btn.classList.add('wrong');
+  });
+  document.getElementById('fb-' + zi + '-' + qi).style.display = 'block';
+  document.getElementById('next-' + zi + '-' + qi).style.display = 'block';
+}
+</script>
+</body>
+</html>
