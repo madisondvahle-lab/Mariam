@@ -975,7 +975,224 @@ const BANK = [
   unit:"mg",
   correctValue:6.8,
   tolerance:0.1,
-  rationale:"3,400 g = 3.4 kg. 3.4 kg \u00d7 2 mg/kg = 6.8 mg." }
+  rationale:"3,400 g = 3.4 kg. 3.4 kg \u00d7 2 mg/kg = 6.8 mg." },
+
+// ---------------- TODAY'S LIVE SESSION QUESTIONS ----------------
+{ id:"live1", cat:"Pharmacology", type:"mc",
+  stem:"A client receiving IV vancomycin develops flushing, a rash on the upper body, and hypotension during the infusion. What is the nurse's priority action?",
+  options:["Administer diphenhydramine and continue the infusion.","Slow the infusion rate and notify the HCP.","Stop the infusion and assess the client.","Increase the infusion rate to finish it quickly."],
+  correct:[2],
+  rationale:"These findings describe \u201cRed Man Syndrome,\u201d a histamine reaction from infusing vancomycin too quickly. The priority sequence is always stop first, then assess, then notify \u2014 not continue with a medication on board, not slow down while still infusing, and never speed up." },
+
+{ id:"live2", cat:"Med-Surg", type:"mc",
+  stem:"A client is 18 hours post below-the-knee amputation. Which nursing action is most important?",
+  options:["Notify the HCP of increased drainage.","Elevate the residual limb on a pillow.","Encourage the client to lie in a prone position.","Perform active ROM on the unaffected leg daily."],
+  correct:[2],
+  rationale:"By 18 hours post-op, the priority has shifted from edema control to preventing hip flexion contracture. Prone positioning extends the hip and counteracts the limb's tendency to fall into flexion. Elevation is only appropriate in the first 24 hours \u2014 past that window it increases contracture risk rather than helping, which is the trap in this question." },
+
+// ---------------- CARDIAC (new category) ----------------
+{ id:"cv1", cat:"Cardiac", type:"mc",
+  stem:"A nurse is assessing a client 2 hours after a myocardial infarction. The client suddenly becomes confused, BP drops from 128/78 to 84/52, and skin becomes cool and clammy. What is the nurse's priority concern?",
+  options:["Normal post-MI anxiety response.","Cardiogenic shock.","Vasovagal response to pain medication.","Expected medication side effect."],
+  correct:[1],
+  rationale:"Sudden hypotension, confusion, and cool/clammy skin following an MI are classic signs of cardiogenic shock \u2014 the heart's pumping ability has been critically compromised. This is a life-threatening emergency requiring immediate intervention, not a benign anxiety or medication response." },
+
+{ id:"cv2", cat:"Cardiac", type:"sata",
+  stem:"A nurse is caring for a client with heart failure. Which findings indicate worsening left-sided heart failure? (Select all that apply.)",
+  options:["Crackles in the lung bases.","Jugular vein distension only.","Dyspnea on exertion.","Pink, frothy sputum.","Peripheral edema in the lower extremities only."],
+  correct:[0,2,3],
+  rationale:"Left-sided heart failure causes pulmonary congestion: crackles, dyspnea, and pink frothy sputum (a sign of pulmonary edema) are classic findings. Jugular vein distension and peripheral edema alone are more associated with right-sided heart failure (systemic congestion)." },
+
+{ id:"cv3", cat:"Cardiac", type:"mc",
+  stem:"A client's cardiac monitor shows a wide, bizarre QRS complex with no identifiable P waves at a rate of 160 bpm. The client is unresponsive with no pulse. What is the nurse's immediate action?",
+  options:["Administer adenosine IV push.","Begin CPR and prepare for defibrillation.","Perform synchronized cardioversion.","Administer atropine IV push."],
+  correct:[1],
+  rationale:"A pulseless client with this rhythm (ventricular tachycardia/fibrillation pattern) is in cardiac arrest. CPR and defibrillation (unsynchronized) are required immediately \u2014 synchronized cardioversion and antiarrhythmics like adenosine are used for clients WITH a pulse, not pulseless arrest." },
+
+{ id:"cv4", cat:"Cardiac", type:"mc",
+  stem:"A nurse is caring for a client following an MI. The client says, \u201cI feel fine now, I think I can go back to my normal exercise routine like before.\u201d The nurse recognizes this statement reflects which underlying assumption that needs to be addressed?",
+  options:["That cardiac rehabilitation is unnecessary if symptoms have resolved.","That the client wants to change medications.","That the client is non-compliant intentionally.","That exercise is contraindicated permanently after an MI."],
+  correct:[0],
+  rationale:"This client is assuming that feeling well means full recovery and a return to baseline activity is safe \u2014 a common and risky misconception. The nurse needs to address that cardiac healing and safe activity progression take time and require a structured rehab approach, regardless of how the client currently feels." },
+
+{ id:"cv5", cat:"Cardiac", type:"sata",
+  stem:"A nurse is caring for a client immediately after a cardiac catheterization via the femoral approach. Which assessments are priorities? (Select all that apply.)",
+  options:["Assess the insertion site for bleeding or hematoma.","Check pedal pulses and color/temperature of the affected leg.","Encourage immediate ambulation to prevent stiffness.","Keep the affected leg straight as ordered.","Monitor for back pain, which could indicate retroperitoneal bleeding."],
+  correct:[0,1,3,4],
+  rationale:"Post-catheterization priorities include site assessment, distal circulation checks, keeping the leg straight to prevent bleeding at the access site, and monitoring for retroperitoneal bleeding (back pain is a key sign). Immediate ambulation is contraindicated; clients typically remain flat with the leg straight for a prescribed period." },
+
+{ id:"cv6", cat:"Cardiac", type:"calc",
+  stem:"A client is prescribed a dopamine infusion at 5 mcg/kg/min. The client weighs 70 kg. The pharmacy supplies a premixed bag of 400 mg dopamine in 250 mL D5W. What is the infusion rate in mL/hr? (Round to the nearest whole number.)",
+  unit:"mL/hr",
+  correctValue:13,
+  tolerance:1,
+  rationale:"Dose needed: 5 mcg/kg/min \u00d7 70 kg = 350 mcg/min. Concentration: 400 mg in 250 mL = 1,600 mcg/mL. Rate (mL/min) = 350 \u00f7 1,600 = 0.21875 mL/min. Convert to mL/hr: 0.21875 \u00d7 60 = 13.1, rounds to 13 mL/hr." },
+
+{ id:"cv7", cat:"Cardiac", type:"mc",
+  stem:"A nurse reviews a client's ECG showing peaked T waves and a widened QRS. The client's most recent potassium level is 7.2 mEq/L. What should the nurse anticipate as the FIRST intervention?",
+  options:["Administer sodium polystyrene sulfonate (Kayexalate) orally.","Administer IV calcium gluconate to stabilize the cardiac membrane.","Restrict dietary potassium intake.","Schedule the client for dialysis later in the day."],
+  correct:[1],
+  rationale:"With ECG changes present (peaked T waves, widened QRS) from severe hyperkalemia, the immediate priority is stabilizing the cardiac membrane with IV calcium gluconate. This acts fast to protect the heart, while other treatments (Kayexalate, dietary changes, dialysis) work over a longer timeframe to actually lower the potassium level." },
+
+{ id:"cv8", cat:"Cardiac", type:"mc",
+  stem:"A telemetry nurse notes a client's rhythm has changed from sinus rhythm to atrial fibrillation with a rate of 140 bpm. The client reports feeling \u201cfluttery\u201d but is alert with a BP of 118/76. What is the nurse's priority action?",
+  options:["Prepare for immediate defibrillation.","Notify the HCP and continue to monitor the client closely.","Administer epinephrine per protocol.","Reassure the client this is not significant and continue routine care."],
+  correct:[1],
+  rationale:"A stable client (alert, adequate BP) with new-onset rapid atrial fibrillation needs prompt HCP notification and close monitoring, but this is not an immediate defibrillation situation since the client has a pulse and is hemodynamically stable. This is also not a finding to dismiss as insignificant \u2014 new-onset afib requires evaluation and likely treatment." },
+
+{ id:"cv9", cat:"Cardiac", type:"mc",
+  stem:"A nurse is evaluating the effectiveness of furosemide given to a client with heart failure and pulmonary edema 2 hours ago. Which finding best indicates the medication was effective?",
+  options:["Client reports decreased appetite.","Urine output of 800 mL since the dose, with decreased crackles on lung auscultation.","Client's heart rate has increased from 88 to 100 bpm.","Client reports feeling thirsty."],
+  correct:[1],
+  rationale:"The goal of furosemide in this context is diuresis to relieve fluid overload. Increased urine output paired with improved lung sounds (decreased crackles) directly demonstrates the intervention achieved its physiological goal. The other findings are unrelated or potentially concerning, not indicators of therapeutic effectiveness." },
+
+// ---------------- RENAL (new category) ----------------
+{ id:"rn1", cat:"Renal", type:"mc",
+  stem:"A nurse is caring for a client with acute kidney injury. Urine output has been 15 mL/hour for the past 3 hours. Which phase of AKI is this client most likely experiencing?",
+  options:["Onset phase.","Oliguric phase.","Diuretic phase.","Recovery phase."],
+  correct:[1],
+  rationale:"Urine output this low (under 400 mL/day, or roughly under 20 mL/hr sustained) is characteristic of the oliguric phase of AKI, where the kidneys are significantly failing to filter and excrete fluid." },
+
+{ id:"rn2", cat:"Renal", type:"sata",
+  stem:"A nurse is caring for a client in the oliguric phase of acute kidney injury. Which findings require close monitoring due to risk of complications? (Select all that apply.)",
+  options:["Serum potassium of 6.2 mEq/L.","Serum potassium of 4.0 mEq/L.","Fluid overload with crackles in lung bases.","Decreased BUN and creatinine.","Metabolic acidosis."],
+  correct:[0,2,4],
+  rationale:"In the oliguric phase, the kidneys cannot excrete potassium, fluid, or acid effectively, so hyperkalemia, fluid overload, and metabolic acidosis are expected complications requiring close monitoring. A normal potassium and decreasing BUN/creatinine would be reassuring, not concerning, findings." },
+
+{ id:"rn3", cat:"Renal", type:"mc",
+  stem:"A client receiving hemodialysis returns from a dialysis session. Which finding requires immediate nursing intervention?",
+  options:["Mild fatigue after the session.","BP of 88/56, down from a pre-dialysis BP of 142/88.","Slight soreness at the vascular access site.","Client reports feeling cold."],
+  correct:[1],
+  rationale:"A significant BP drop after dialysis may indicate intradialytic hypotension from excessive fluid removal, requiring prompt intervention. Mild fatigue, soreness, and feeling cold are common, expected post-dialysis experiences." },
+
+{ id:"rn4", cat:"Renal", type:"mc",
+  stem:"A nurse is assessing a client's arteriovenous (AV) fistula used for hemodialysis. Which finding indicates the fistula is patent and functioning?",
+  options:["Absence of a bruit on auscultation.","A palpable thrill and audible bruit over the site.","Cool, pale skin distal to the fistula.","Significant swelling and pain at the site."],
+  correct:[1],
+  rationale:"A palpable thrill (vibration) and audible bruit (whooshing sound) over an AV fistula indicate adequate blood flow and patency. Their absence would suggest possible clotting or occlusion, which is an emergency requiring prompt evaluation." },
+
+{ id:"rn5", cat:"Renal", type:"calc",
+  stem:"A client with chronic kidney disease is prescribed a fluid restriction of 1,500 mL/day. The client has already had 200 mL of juice, 350 mL of coffee, and 100 mL of soup today. How many more mL of fluid can the client have for the rest of the day?",
+  unit:"mL",
+  correctValue:850,
+  tolerance:0,
+  rationale:"200 + 350 + 100 = 650 mL consumed so far. 1,500 \u2013 650 = 850 mL remaining for the day." },
+
+{ id:"rn6", cat:"Renal", type:"mc",
+  stem:"A nurse is caring for a client newly diagnosed with nephrotic syndrome. The client asks why their legs are so swollen. What is the best explanation for the nurse to provide?",
+  options:["\u201cYour kidneys are filtering too much protein out of your blood, causing fluid to leak into your tissues.\u201d","\u201cThis is caused by too much salt in your diet recently.\u201d","\u201cThis swelling is unrelated to your kidney condition.\u201d","\u201cThis is a normal side effect of your blood pressure medication.\u201d"],
+  correct:[0],
+  rationale:"Nephrotic syndrome causes massive proteinuria, lowering blood oncotic pressure and allowing fluid to shift into tissues (edema). This is the pathophysiology the nurse should explain, connecting the kidney process directly to the visible symptom." },
+
+{ id:"rn7", cat:"Renal", type:"mc",
+  stem:"A client post-renal transplant develops a fever, decreased urine output, and tenderness over the graft site 5 days after surgery. What is the nurse's priority concern?",
+  options:["Normal post-surgical healing process.","Acute graft rejection.","Expected immunosuppressant side effect.","Urinary tract infection only, no further concern needed."],
+  correct:[1],
+  rationale:"Fever, decreased urine output, and graft site tenderness in the early post-transplant period are classic signs of acute rejection \u2014 a serious complication requiring immediate evaluation, not a normal or low-priority finding." },
+
+{ id:"rn8", cat:"Renal", type:"sata",
+  stem:"A nurse is teaching a client with chronic kidney disease about dietary modifications. Which foods should the nurse instruct the client to limit? (Select all that apply.)",
+  options:["Bananas.","White bread.","Oranges.","Processed deli meats.","Potatoes."],
+  correct:[0,2,3,4],
+  rationale:"CKD clients typically need to limit high-potassium foods (bananas, oranges, potatoes) and high-sodium/high-phosphorus processed foods (deli meats). White bread is comparatively lower in potassium, phosphorus, and sodium and is not a primary restriction target in most CKD diets." },
+
+{ id:"rn9", cat:"Renal", type:"mc",
+  stem:"A nurse is caring for a client immediately following a kidney biopsy. Which assessment finding requires immediate notification of the HCP?",
+  options:["Mild bruising at the biopsy site.","Gross hematuria with a drop in blood pressure.","Microscopic hematuria expected for 24 hours.","Mild discomfort at the biopsy site."],
+  correct:[1],
+  rationale:"Gross (visible) hematuria combined with hypotension suggests significant bleeding from the biopsy site \u2014 a potential emergency. Microscopic hematuria, mild bruising, and mild discomfort are expected, lower-concern findings after this procedure." },
+
+// ---------------- LEADERSHIP & DELEGATION (new category) ----------------
+{ id:"ld1", cat:"Leadership & Delegation", type:"mc",
+  stem:"A charge nurse is making client assignments for the shift. Which client should be assigned to the most experienced RN on the unit?",
+  options:["A stable client scheduled for discharge teaching.","A client who is 2 days post-op from an appendectomy with no complications.","A client with multiple comorbidities who is hemodynamically unstable.","A client requesting routine pain medication."],
+  correct:[2],
+  rationale:"Assignments should match client acuity and complexity with nurse experience level. The hemodynamically unstable client with multiple comorbidities requires the most advanced clinical judgment and should go to the most experienced RN, while more stable clients can be appropriately assigned to less experienced staff." },
+
+{ id:"ld2", cat:"Leadership & Delegation", type:"sata",
+  stem:"A nurse is delegating tasks to a licensed practical nurse (LPN) on the team. Which tasks are appropriate to delegate to the LPN? (Select all that apply.)",
+  options:["Administering oral medications to a stable client.","Performing the initial admission assessment.","Reinforcing previously taught education with a client.","Developing the client's initial plan of care.","Changing a stable client's wound dressing per protocol."],
+  correct:[0,2,4],
+  rationale:"LPNs can administer many medications, reinforce existing teaching, and perform routine procedures like dressing changes within their scope. Initial assessments and care plan development require the broader scope and critical thinking of an RN and cannot be delegated to an LPN." },
+
+{ id:"ld3", cat:"Leadership & Delegation", type:"mc",
+  stem:"A new graduate nurse asks an experienced nurse for help prioritizing four assigned clients at the start of the shift. Which client should the nurse address FIRST?",
+  options:["A client requesting a scheduled pain medication that is due in 30 minutes.","A client who just returned from surgery 1 hour ago with stable vital signs.","A client reporting new-onset shortness of breath and chest tightness.","A client awaiting discharge paperwork to go home today."],
+  correct:[2],
+  rationale:"New-onset shortness of breath and chest tightness could indicate a life-threatening event (PE, MI, etc.) and must be assessed immediately. The other three clients have time-flexible or already-stable needs that can wait briefly." },
+
+{ id:"ld4", cat:"Leadership & Delegation", type:"mc",
+  stem:"A nurse manager learns that a staff nurse made a medication error that did not harm the client. What is the most appropriate FIRST action for the manager?",
+  options:["Terminate the nurse immediately to prevent future errors.","Complete an incident report and review the error with the nurse in a non-punitive, educational manner.","Avoid discussing it to prevent embarrassing the nurse.","Report the nurse to the state board immediately without internal review."],
+  correct:[1],
+  rationale:"Modern just-culture approaches to error management emphasize non-punitive review focused on system and process improvement, paired with proper incident documentation. Immediate termination or state board reporting without due process, or ignoring the error entirely, are not appropriate first responses for a non-harmful error." },
+
+{ id:"ld5", cat:"Leadership & Delegation", type:"sata",
+  stem:"A nurse is identifying which clients can be appropriately assigned to a nursing assistant (NA). Which tasks fall within the NA's scope? (Select all that apply.)",
+  options:["Obtaining routine vital signs on a stable client.","Assisting a stable client with bathing and hygiene.","Administering a scheduled IV antibiotic.","Ambulating a stable post-op client per care plan.","Assessing a new client's pain level for the first time."],
+  correct:[0,1,3],
+  rationale:"Vital signs, hygiene assistance, and ambulation of stable clients are within an NA's scope of practice. Medication administration and initial assessments require licensed nursing judgment and cannot be delegated to unlicensed assistive personnel." },
+
+{ id:"ld6", cat:"Leadership & Delegation", type:"mc",
+  stem:"A nurse overhears a colleague making a disparaging comment about a client's weight within earshot of other clients. What is the most appropriate action?",
+  options:["Ignore it since it doesn't directly affect patient care.","Address the colleague privately and remind them of professional standards.","Report the colleague to administration without speaking to them first.","Join in the conversation to maintain rapport with the colleague."],
+  correct:[1],
+  rationale:"Professional accountability calls for direct, private feedback first when addressing a colleague's behavior, giving them a chance to correct it, before escalating. Ignoring unprofessional behavior or participating in it are both inappropriate, and skipping direct communication in favor of immediate reporting is usually not the first step for a non-emergent professionalism issue." },
+
+{ id:"ld7", cat:"Leadership & Delegation", type:"mc",
+  stem:"A charge nurse must reassign clients because a staff nurse called in sick. Which client is most appropriate to reassign to a float nurse unfamiliar with the specialty unit?",
+  options:["A client with a complex, evolving cardiac arrhythmia.","A stable client who is 1 day post-op with routine recovery needs.","A client requiring frequent neuro checks after a head injury.","A client receiving a titrating vasoactive medication drip."],
+  correct:[1],
+  rationale:"A float nurse unfamiliar with the specialty unit should be assigned the most stable, routine client to minimize risk. Complex, evolving, or high-acuity clients (arrhythmias, frequent neuro checks, titrating drips) require staff already familiar with the unit's specific protocols and equipment." },
+
+{ id:"ld8", cat:"Leadership & Delegation", type:"sata",
+  stem:"A nurse is using SBAR to hand off a client to the oncoming shift. Which elements should be included? (Select all that apply.)",
+  options:["Situation: current status and reason for concern.","Background: relevant history and context.","Assessment: nurse's clinical interpretation of the data.","Recommendation: suggested next steps or actions needed.","The off-going nurse's personal opinion of the client's family."],
+  correct:[0,1,2,3],
+  rationale:"SBAR (Situation, Background, Assessment, Recommendation) is a structured communication tool designed to convey clinically relevant information efficiently. Personal opinions about family members are not part of this clinical framework and are inappropriate to include in a handoff." },
+
+// ---------------- IMMUNE / INFECTIOUS DISEASE (new category) ----------------
+{ id:"im1", cat:"Immune & Infectious Disease", type:"mc",
+  stem:"A nurse is caring for a client in airborne precautions for suspected tuberculosis. Which action is most important for the nurse to take before entering the room?",
+  options:["Apply a standard surgical mask.","Don an N95 respirator that has been fit-tested.","Apply gloves only, as TB is not airborne.","Wear a gown and gloves, no mask needed."],
+  correct:[1],
+  rationale:"Tuberculosis requires airborne precautions, which mandate a fit-tested N95 respirator (or higher level of protection), not a standard surgical mask, to filter the very small airborne particles that transmit TB." },
+
+{ id:"im2", cat:"Immune & Infectious Disease", type:"sata",
+  stem:"A nurse is caring for a client with neutropenia following chemotherapy. Which interventions are appropriate? (Select all that apply.)",
+  options:["Restrict fresh flowers and plants from the room.","Encourage visits from anyone who wants to see the client.","Avoid invasive procedures unless absolutely necessary.","Ensure all staff and visitors perform hand hygiene before entry.","Serve the client raw fruits and vegetables to maintain a healthy diet."],
+  correct:[0,2,3],
+  rationale:"Neutropenic precautions include avoiding plants/flowers (which can harbor mold/bacteria), minimizing invasive procedures, and strict hand hygiene. Visitors should be screened for illness, not unrestricted, and raw/unwashed produce carries infection risk and should generally be avoided or thoroughly washed." },
+
+{ id:"im3", cat:"Immune & Infectious Disease", type:"mc",
+  stem:"A client with HIV has a CD4 count of 180 cells/mm\u00b3. The nurse should prioritize teaching about prevention of which complication?",
+  options:["Seasonal allergies.","Opportunistic infections such as Pneumocystis pneumonia.","Routine dental caries.","Common cold symptoms only."],
+  correct:[1],
+  rationale:"A CD4 count below 200 cells/mm\u00b3 indicates significant immunosuppression and high risk for opportunistic infections like Pneumocystis pneumonia, which is a priority teaching and prevention focus at this level of immune compromise." },
+
+{ id:"im4", cat:"Immune & Infectious Disease", type:"mc",
+  stem:"A nurse is caring for a client with a systemic lupus erythematosus (SLE) flare. Which finding requires the most immediate follow-up?",
+  options:["Joint pain in the hands.","Butterfly-shaped facial rash.","New onset of confusion and decreased urine output.","Fatigue and mild low-grade fever."],
+  correct:[2],
+  rationale:"New confusion and decreased urine output in an SLE client suggest possible lupus nephritis or CNS involvement, both serious complications requiring immediate evaluation. Joint pain, the classic facial rash, and fatigue are expected lupus symptoms that, while important, are not acute emergencies on their own." },
+
+{ id:"im5", cat:"Immune & Infectious Disease", type:"sata",
+  stem:"A nurse is teaching a client newly prescribed a biologic immunosuppressant (e.g., a TNF inhibitor) for rheumatoid arthritis. Which statements should be included in teaching? (Select all that apply.)",
+  options:["\u201cReport any signs of infection, such as fever, right away.\u201d","\u201cYou should receive any live vaccines you're due for right after starting this medication.\u201d","\u201cYou will need TB screening before starting this medication.\u201d","\u201cAvoid close contact with people who are currently sick.\u201d","\u201cThis medication has no effect on your immune system.\u201d"],
+  correct:[0,2,3],
+  rationale:"TNF inhibitors suppress the immune system, increasing infection risk (including reactivation of latent TB, hence pre-treatment screening) and requiring vigilance for infection signs and avoiding sick contacts. Live vaccines are contraindicated during treatment with these medications, and the medication absolutely does affect immune function \u2014 that's its mechanism." },
+
+{ id:"im6", cat:"Immune & Infectious Disease", type:"mc",
+  stem:"A nurse is caring for a client recently diagnosed with C. difficile infection. Which type of precautions should the nurse implement?",
+  options:["Airborne precautions with an N95 respirator.","Standard precautions only, no additional measures needed.","Contact precautions with gown and gloves, using soap and water for hand hygiene.","Droplet precautions with a surgical mask."],
+  correct:[2],
+  rationale:"C. diff spreads via spores on surfaces and hands, requiring contact precautions (gown, gloves) and importantly, soap and water hand hygiene rather than alcohol-based sanitizer, since alcohol does not effectively kill C. diff spores." },
+
+{ id:"im7", cat:"Immune & Infectious Disease", type:"mc",
+  stem:"A client received an organ transplant 3 months ago and takes tacrolimus for immunosuppression. The client calls the clinic reporting a low-grade fever and mild cough for 2 days. What is the nurse's priority instruction?",
+  options:["\u201cThis is likely just a common cold; rest and fluids should help.\u201d","\u201cCome in to be evaluated today, since even mild symptoms can signal serious infection given your immunosuppression.\u201d","\u201cTake an over-the-counter cold medication and call back if it worsens.\u201d","\u201cThis is an expected side effect of tacrolimus and doesn't need evaluation.\u201d"],
+  correct:[1],
+  rationale:"Immunosuppressed transplant clients can have blunted, atypical, or rapidly progressing infections. Even mild symptoms warrant prompt evaluation rather than the watch-and-wait approach appropriate for a non-immunosuppressed person." }
 
 ];
 
