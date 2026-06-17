@@ -2,522 +2,1488 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NCLEX Strategy Tutor · Study with Madison</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<title>NCLEX Mock Exam Engine</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fdf9f7; color: #2c2c2a; padding: 20px; }
-  .header { text-align: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f0ebe7; }
-  .header h1 { font-size: 20px; font-weight: 500; color: #2c2c2a; margin-bottom: 4px; }
-  .header p { font-size: 13px; color: #888780; }
-  .score-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fff; border: 0.5px solid #e8e3df; border-radius: 10px; font-size: 13px; color: #888780; margin-bottom: 16px; flex-wrap: wrap; }
-  .score-val { font-size: 15px; font-weight: 500; color: #2c2c2a; }
-  .badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; }
-  .reset-btn { margin-left: auto; font-size: 12px; padding: 4px 12px; background: transparent; border: 0.5px solid #d4cfc9; border-radius: 6px; cursor: pointer; color: #888780; }
-  .reset-btn:hover { background: #f5f0ec; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
-  .zone { background: #fff; border: 0.5px solid #e8e3df; border-radius: 12px; overflow: hidden; }
-  .zone-header { padding: 12px 16px; display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
-  .zone-header:hover { filter: brightness(0.97); }
-  .zone-header i.icon { font-size: 20px; flex-shrink: 0; }
-  .zone-title { font-size: 14px; font-weight: 500; }
-  .zone-sub { font-size: 11px; opacity: .65; margin-top: 2px; }
-  .chevron { margin-left: auto; font-size: 14px; opacity: .4; transition: transform .2s; flex-shrink: 0; }
-  .chevron.open { transform: rotate(180deg); }
-  .zone-body { display: none; border-top: 0.5px solid #f0ebe7; }
-  .zone-body.open { display: block; }
-  .branch { padding: 10px 16px 0; }
-  .branch:last-of-type { padding-bottom: 6px; }
-  .branch-label { font-size: 10px; font-weight: 500; color: #aaa9a2; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
-  .tip { font-size: 12px; color: #3d3d3a; padding: 3px 0 3px 10px; border-left: 2px solid; line-height: 1.5; margin: 3px 0; }
-  .quiz-btn { display: block; width: calc(100% - 32px); margin: 10px 16px 12px; font-size: 12px; padding: 7px 12px; background: transparent; border: 0.5px solid #d4cfc9; border-radius: 8px; cursor: pointer; color: #888780; text-align: left; }
-  .quiz-btn:hover { background: #fdf9f7; }
-  .quiz-area { display: none; margin: 0 16px 14px; background: #fdf9f7; border-radius: 8px; padding: 12px; font-size: 12px; }
-  .quiz-area.open { display: block; }
-  .q-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: #aaa9a2; margin-bottom: 6px; }
-  .q-label.sata { color: #7F77DD; }
-  .q-label.delegation { color: #0C447C; }
-  .q-label.priority { color: #633806; }
-  .q-label.instinct { color: #72243E; }
-  .q-text { font-weight: 500; color: #2c2c2a; margin-bottom: 10px; line-height: 1.6; font-size: 13px; }
-  .sata-note { font-size: 11px; color: #7F77DD; font-style: italic; margin-bottom: 8px; }
-  .q-opt { display: block; width: 100%; padding: 7px 10px; margin: 5px 0; border-radius: 7px; cursor: pointer; color: #2c2c2a; border: 0.5px solid #e0dbd6; background: #fff; font-size: 12px; text-align: left; line-height: 1.4; }
-  .q-opt:hover:not(:disabled) { border-color: #b4b0aa; }
-  .q-opt.correct { background: #eaf3de; border-color: #639922; color: #27500a; }
-  .q-opt.wrong { background: #fcebeb; border-color: #e24b4a; color: #791f1f; }
-  .q-opt.should-be { background: #eaf3de; border-color: #639922; color: #27500a; }
-  .q-feedback { display: none; margin-top: 8px; font-size: 11px; color: #5f5e5a; line-height: 1.6; padding: 7px 10px; background: #fff; border-radius: 6px; border-left: 2px solid #d4cfc9; }
-  .next-btn { display: none; margin-top: 8px; font-size: 11px; padding: 4px 12px; background: transparent; border: 0.5px solid #d4cfc9; border-radius: 6px; cursor: pointer; color: #888780; }
-  .next-btn:hover { background: #f0ebe7; }
-  .sata-submit { margin-top: 8px; font-size: 12px; padding: 6px 14px; background: #7F77DD; border: none; border-radius: 6px; cursor: pointer; color: #fff; display: block; }
-  .sata-submit:hover { background: #6b63cc; }
-  .done-msg { font-size: 12px; color: #27500a; padding: 6px 0; }
-  .progress { font-size: 11px; color: #aaa9a2; margin-bottom: 8px; }
-  .z1 .zone-header { background: #EEEDFE; } .z1 .zone-header i.icon, .z1 .zone-title { color: #3C3489; } .z1 .tip { border-color: #7F77DD; }
-  .z2 .zone-header { background: #E6F1FB; } .z2 .zone-header i.icon, .z2 .zone-title { color: #0C447C; } .z2 .tip { border-color: #378ADD; }
-  .z3 .zone-header { background: #E1F5EE; } .z3 .zone-header i.icon, .z3 .zone-title { color: #085041; } .z3 .tip { border-color: #1D9E75; }
-  .z4 .zone-header { background: #FAEEDA; } .z4 .zone-header i.icon, .z4 .zone-title { color: #633806; } .z4 .tip { border-color: #EF9F27; }
-  .z5 .zone-header { background: #FAECE7; } .z5 .zone-header i.icon, .z5 .zone-title { color: #712B13; } .z5 .tip { border-color: #D85A30; }
-  .z6 .zone-header { background: #FBEAF0; } .z6 .zone-header i.icon, .z6 .zone-title { color: #72243E; } .z6 .tip { border-color: #D4537E; }
+  :root {
+    --teal-dark: #0F4C4C;
+    --teal-mid: #1D7A6E;
+    --teal-light: #E1F0EE;
+    --bone: #FAF7F2;
+    --bone-deep: #F0EBE2;
+    --ink: #1C2826;
+    --ink-soft: #5A6663;
+    --amber: #C8841E;
+    --amber-light: #FBEFDD;
+    --sage: #5C8C66;
+    --sage-light: #E7F0E8;
+    --brick: #A6443A;
+    --brick-light: #F7E6E3;
+    --line: #D8D2C5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Georgia', 'Source Serif Pro', serif;
+    background: var(--bone);
+    color: var(--ink);
+  }
+  .app { max-width: 920px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  /* ===== HEADER / CHART BAR ===== */
+  .chartbar {
+    background: var(--teal-dark);
+    color: var(--bone);
+    border-radius: 10px;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    font-family: 'Courier New', monospace;
+  }
+  .chartbar h1 {
+    font-family: Georgia, serif;
+    font-size: 22px;
+    margin: 0;
+    font-weight: normal;
+    letter-spacing: 0.3px;
+  }
+  .chartbar .sub {
+    font-size: 12px;
+    opacity: 0.75;
+    margin-top: 4px;
+  }
+  .chartbar .readout {
+    text-align: right;
+    font-size: 13px;
+  }
+  .chartbar .readout .big {
+    font-size: 26px;
+    font-weight: bold;
+  }
+
+  /* ===== SETUP SCREEN ===== */
+  .setup-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px;
+  }
+  .setup-card h2 {
+    font-size: 18px;
+    margin: 0 0 4px;
+    color: var(--teal-dark);
+  }
+  .setup-card .desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    font-family: Arial, sans-serif;
+  }
+  .setup-row { margin-bottom: 18px; }
+  .setup-row label {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .pill-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--bone);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .pill.active {
+    background: var(--teal-dark);
+    color: white;
+    border-color: var(--teal-dark);
+  }
+  .pill:hover:not(.active) { border-color: var(--teal-mid); }
+  .start-btn {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 13px 28px;
+    background: var(--teal-dark);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .start-btn:hover { background: var(--teal-mid); }
+
+  /* ===== EXAM LAYOUT ===== */
+  .exam-grid {
+    display: grid;
+    grid-template-columns: 1fr 160px;
+    gap: 18px;
+  }
+  @media (max-width: 700px) {
+    .exam-grid { grid-template-columns: 1fr; }
+    .navigator { order: -1; }
+  }
+
+  .question-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px;
+    min-height: 360px;
+  }
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .q-meta .cat-tag {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+  }
+  .q-stem {
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .q-instruction {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--amber);
+    margin-bottom: 18px;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .option:hover { border-color: var(--teal-mid); background: var(--teal-light); }
+  .option.selected { border-color: var(--teal-dark); background: var(--teal-light); }
+  .option-marker {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--ink-soft);
+    border-radius: 4px;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: bold; color: white;
+  }
+  .option.checkbox-style .option-marker { border-radius: 4px; }
+  .option.radio-style .option-marker { border-radius: 50%; }
+  .option.selected .option-marker { background: var(--teal-dark); border-color: var(--teal-dark); }
+
+  .calc-input {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    width: 200px;
+  }
+  .calc-input:focus { outline: 2px solid var(--teal-mid); border-color: var(--teal-mid); }
+  .calc-unit { font-family: Arial, sans-serif; font-size: 14px; color: var(--ink-soft); margin-left: 10px; }
+
+  /* feedback (rationale) */
+  .rationale {
+    margin-top: 20px;
+    padding: 16px 18px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .rationale.correct { background: var(--sage-light); border-left: 4px solid var(--sage); }
+  .rationale.incorrect { background: var(--brick-light); border-left: 4px solid var(--brick); }
+  .rationale .verdict { font-weight: bold; margin-bottom: 6px; display: block; }
+  .rationale.correct .verdict { color: var(--sage); }
+  .rationale.incorrect .verdict { color: var(--brick); }
+
+  /* ===== CONTROLS ===== */
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 18px;
+    font-family: Arial, sans-serif;
+  }
+  .btn {
+    font-size: 14px;
+    padding: 10px 20px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+  }
+  .btn:hover { border-color: var(--teal-mid); }
+  .btn.primary { background: var(--teal-dark); color: white; border-color: var(--teal-dark); }
+  .btn.primary:hover { background: var(--teal-mid); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-group { display: flex; gap: 10px; }
+
+  /* ===== NAVIGATOR (chart strip - signature element) ===== */
+  .navigator {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    font-family: Arial, sans-serif;
+  }
+  .nav-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .nav-cell {
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    cursor: pointer;
+    background: var(--bone);
+    color: var(--ink-soft);
+  }
+  .nav-cell.current { border: 2px solid var(--teal-dark); font-weight: bold; color: var(--teal-dark); }
+  .nav-cell.answered { background: var(--teal-light); color: var(--teal-dark); }
+  .nav-cell.flagged { background: var(--amber-light); border-color: var(--amber); }
+  .nav-legend { margin-top: 14px; font-size: 11px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 6px; }
+  .nav-legend .row { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  .flag-btn {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .flag-btn.active { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
+
+  /* ===== RESULTS SCREEN ===== */
+  .results-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 32px;
+  }
+  .score-hero {
+    text-align: center;
+    padding: 20px 0 28px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+  .score-hero .pct {
+    font-size: 56px;
+    font-weight: bold;
+    color: var(--teal-dark);
+    line-height: 1;
+  }
+  .score-hero .frac {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+  .score-hero .readiness {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    margin-top: 14px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+  .readiness.strong { background: var(--sage-light); color: var(--sage); }
+  .readiness.moderate { background: var(--amber-light); color: var(--amber); }
+  .readiness.needs-work { background: var(--brick-light); color: var(--brick); }
+
+  .export-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    font-family: Arial, sans-serif;
+  }
+  .export-reminder {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    text-align: center;
+    background: var(--amber-light);
+    color: var(--amber);
+    border: 1px solid var(--amber);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 14px;
+    font-weight: bold;
+  }
+  .export-reminder.saved {
+    background: var(--sage-light);
+    color: var(--sage);
+    border-color: var(--sage);
+  }
+  .export-btn { font-size: 13px; padding: 9px 16px; }
+  .copy-confirm {
+    font-size: 13px;
+    color: var(--sage);
+    font-weight: bold;
+  }
+
+  .breakdown-title {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .cat-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+  }
+  .cat-row .label { width: 130px; flex-shrink: 0; color: var(--ink); }
+  .cat-row .bar-track {
+    flex: 1;
+    height: 10px;
+    background: var(--bone-deep);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .cat-row .bar-fill { height: 100%; border-radius: 5px; }
+  .cat-row .pct-label { width: 40px; text-align: right; color: var(--ink-soft); }
+
+  .review-list { margin-top: 24px; }
+  .review-item {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+  }
+  .review-item .q-num { font-weight: bold; color: var(--ink-soft); margin-right: 6px; }
+  .review-item.wrong { border-left: 3px solid var(--brick); }
+  .review-item.right { border-left: 3px solid var(--sage); }
+
+  .empty-note {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+    padding: 16px;
+  }
+
+  .progress-note {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 4px;
+  }
+  .progress-note .reset-link {
+    color: var(--teal-mid);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .progress-note .reset-link:hover { color: var(--teal-dark); }
+
+  .hidden { display: none !important; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>NCLEX Test-Taking Strategies</h1>
-  <p>Review each zone · then test yourself with real clinical scenarios</p>
-</div>
+<div class="app">
+  <h2 class="sr-only">NCLEX-style mock exam engine with multiple choice, select-all-that-apply, and calculation questions across med-surg, pharmacology, pediatrics, OB, and mental health, with timed mode and category performance breakdown.</h2>
 
-<div class="score-bar">
-  <span>Session score</span>
-  <span class="score-val" id="score-display">0 / 0</span>
-  <span id="pct-badge" class="badge" style="background:#f0ebe7;color:#888780">—</span>
-  <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
-</div>
+  <div class="chartbar">
+    <div>
+      <h1>NCLEX Mock Exam Engine</h1>
+      <div class="sub" id="header-sub">Setup &middot; choose your exam</div>
+    </div>
+    <div class="readout" id="header-readout"></div>
+  </div>
 
-<div class="grid" id="board"></div>
+  <!-- ===================== SETUP SCREEN ===================== -->
+  <div class="setup-card" id="screen-setup">
+    <h2>Build your mock exam</h2>
+    <p class="desc">Pick categories, question count, and mode. Questions are pulled at random from the bank each time.</p>
+
+    <div class="setup-row">
+      <label>Categories (select one or more)</label>
+      <div class="pill-group" id="category-pills"></div>
+    </div>
+
+    <div class="setup-row">
+      <label>Number of questions</label>
+      <div class="pill-group" id="count-pills">
+        <div class="pill" data-count="10">10</div>
+        <div class="pill active" data-count="25">25</div>
+        <div class="pill" data-count="50">50</div>
+        <div class="pill" data-count="75">75</div>
+      </div>
+    </div>
+
+    <div class="setup-row">
+      <label>Mode</label>
+      <div class="pill-group" id="mode-pills">
+        <div class="pill active" data-mode="practice">Practice (instant rationale)</div>
+        <div class="pill" data-mode="timed">Timed test (review at end)</div>
+      </div>
+    </div>
+
+    <button class="start-btn" id="start-btn">Start exam &rarr;</button>
+    <div class="empty-note" id="setup-warning"></div>
+    <div class="progress-note" id="progress-note"></div>
+  </div>
+
+  <!-- ===================== EXAM SCREEN ===================== -->
+  <div class="exam-grid hidden" id="screen-exam">
+    <div>
+      <div class="question-card">
+        <div class="q-meta">
+          <span class="cat-tag" id="q-category"></span>
+          <span id="q-progress"></span>
+        </div>
+        <div class="q-stem" id="q-stem"></div>
+        <div class="q-instruction hidden" id="q-instruction"></div>
+        <div class="options" id="q-options"></div>
+        <div id="calc-area" class="hidden"></div>
+        <div class="rationale hidden" id="q-rationale"></div>
+      </div>
+
+      <div class="controls">
+        <div class="btn-group">
+          <button class="btn" id="btn-prev">&larr; Previous</button>
+          <button class="flag-btn" id="btn-flag"><i></i>Flag for review</button>
+        </div>
+        <div class="btn-group">
+          <button class="btn primary" id="btn-submit">Submit answer</button>
+          <button class="btn primary hidden" id="btn-next">Next &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="navigator">
+      <div class="nav-title">Question navigator</div>
+      <div class="nav-grid" id="nav-grid"></div>
+      <div class="nav-legend">
+        <div class="row"><span class="swatch" style="background:var(--teal-light)"></span>Answered</div>
+        <div class="row"><span class="swatch" style="background:var(--amber-light)"></span>Flagged</div>
+        <div class="row"><span class="swatch" style="background:var(--bone)"></span>Unanswered</div>
+      </div>
+      <button class="btn primary" id="btn-finish" style="width:100%; margin-top:14px;">Finish exam</button>
+    </div>
+  </div>
+
+  <!-- ===================== RESULTS SCREEN ===================== -->
+  <div class="results-card hidden" id="screen-results">
+    <div class="score-hero">
+      <div class="pct" id="result-pct">0%</div>
+      <div class="frac" id="result-frac">0 / 0 correct</div>
+      <div class="readiness" id="result-readiness"></div>
+    </div>
+
+    <div class="export-reminder" id="export-reminder">
+      \uD83D\uDCE9 Send this to your tutor: tap a button below, then paste or attach it in your usual text or email to her.
+    </div>
+    <div class="export-row">
+      <button class="btn export-btn" id="btn-copy-results"><i></i>Copy results to clipboard</button>
+      <button class="btn export-btn" id="btn-download-results"><i></i>Download results as text file</button>
+      <span class="copy-confirm hidden" id="copy-confirm">Copied! Paste into a text or email to send.</span>
+    </div>
+
+    <div class="breakdown-title">Performance by category</div>
+    <div id="breakdown-rows"></div>
+
+    <div class="review-list">
+      <div class="breakdown-title" style="margin-top:24px;">Question review</div>
+      <div id="review-rows"></div>
+    </div>
+
+    <button class="start-btn" id="btn-restart" style="margin-top:24px;">Build another exam &rarr;</button>
+  </div>
+
+</div>
 
 <script>
-var zones = [
-  {
-    id:'z1', icon:'ti-check', title:'Answer Selection',
-    sub:'Elimination · best rules · positive vs negative',
-    branches:[
-      {label:'Elimination strategies', tips:['Rule out obviously wrong options','Eliminate similar answers — they cancel out','Choose the most comprehensive option']},
-      {label:'Best answer rules', tips:['Most complete and accurate','Follows scope of practice','Promotes client safety first']},
-      {label:'Positive vs negative', tips:['Look for therapeutic responses','Avoid punitive or judgmental options','Select client-centered answers']}
-    ],
-    questions:[
-      {
-        type:'standard',
-        label:'Answer Selection',
-        q:'A postpartum client is crying and says "I don\'t feel like a good mother." Which response is best?',
-        opts:['You shouldn\'t feel that way — you just had a baby!','Tell me more about what you\'re feeling.','Every new mom feels like this, don\'t worry.','Have you considered talking to a counselor?'],
-        ans:1,
-        fb:'Option B is therapeutic — it invites the client to share without dismissing her feelings. Options A and C minimize her experience. Option D redirects prematurely before the nurse has even assessed the situation.'
-      },
-      {
-        type:'standard',
-        label:'Elimination Strategy',
-        q:'Two answer choices both say the client should "notify the physician immediately." What do you do?',
-        opts:['Pick the one with more detail','Pick the one listed first','Eliminate both — near-identical options cancel each other out','Flag and guess randomly'],
-        ans:2,
-        fb:'When two options say essentially the same thing, neither is likely correct. Eliminate both and choose from the remaining options — this is a core elimination strategy.'
-      },
-      {
-        type:'standard',
-        label:'Scope of Practice',
-        q:'An OB client asks the nurse to promise not to tell anyone what she shares. The nurse should:',
-        opts:['Promise confidentiality to build trust','Explain that some information must be shared if safety is at risk','Leave the room and document the request','Refer the client to a social worker immediately'],
-        ans:1,
-        fb:'Nurses cannot make blanket promises of confidentiality. Safety concerns — like abuse, self-harm, or harm to the newborn — must be reported. This answer follows scope of practice and protects the client.'
-      },
-      {
-        type:'standard',
-        label:'Client-Centered Care',
-        q:'A pediatric client refuses to take oral medication. The nurse\'s best first action is:',
-        opts:['Tell the parent to hold the child down','Document refusal and skip the dose','Assess why the child is refusing and offer choices where safe','Call the physician to change the route'],
-        ans:2,
-        fb:'Assessing first is always the correct move. Children often refuse due to taste or fear — offering choices (e.g., with juice or applesauce if allowed) is client-centered and developmentally appropriate.'
-      },
-      {
-        type:'sata',
-        label:'SATA · Answer Selection',
-        q:'Which of the following are characteristics of a BEST answer on the NCLEX? Select all that apply.',
-        opts:['Promotes client safety','Is client-centered','Is the longest option','Follows nursing scope of practice','Sounds most medical or technical'],
-        ans:[0,1,3],
-        fb:'Best answers promote safety, are client-centered, and stay within nursing scope. Length and medical jargon are NOT reliable indicators — these are common traps on the NCLEX.'
-      }
-    ]
-  },
-  {
-    id:'z2', icon:'ti-clock', title:'Time Management',
-    sub:'Pacing · computer adaptive · stress',
-    branches:[
-      {label:'Pacing strategies', tips:['1–2 minutes per question maximum','Flag difficult questions for review','Don\'t spend too long on one item']},
-      {label:'Computer adaptive (CAT)', tips:['Each question builds on previous performance','Can\'t go back to change answers','Focus on the current question only']},
-      {label:'Stress management', tips:['Deep breathing between questions','Positive self-talk throughout','Take breaks when allowed']}
-    ],
-    questions:[
-      {
-        type:'instinct',
-        label:'⚠️ Instinct Check',
-        q:'You answer a question about a postpartum hemorrhage client. You pick option B. Then you re-read it and start to doubt yourself. You\'ve been on this question for 3 minutes. What should you do?',
-        opts:['Keep re-reading until you feel certain','Switch to option D — more detail usually means more correct','Stick with option B and move on — your first instinct is usually right','Skip it and come back later'],
-        ans:2,
-        fb:'This is the #1 trap for overthinkers. Research consistently shows first instincts are more often correct. The longer you sit on a question, the more anxiety — not logic — drives your answer. Commit and move forward.'
-      },
-      {
-        type:'standard',
-        label:'CAT Format',
-        q:'On the NCLEX-RN, you finish a question and realize you likely answered question 30 incorrectly. You should:',
-        opts:['Go back and change it','Flag it and return at the end','Accept it — the CAT does not allow going back','Ask the proctor for help'],
-        ans:2,
-        fb:'The CAT format does not allow you to return to previous questions. Dwelling on past questions increases anxiety without any benefit. Each question is a fresh opportunity.'
-      },
-      {
-        type:'standard',
-        label:'Pacing',
-        q:'You have 145 minutes for 85 questions on the NCLEX. You should budget approximately how long per question?',
-        opts:['30 seconds','1–2 minutes','3–4 minutes','As long as needed'],
-        ans:1,
-        fb:'1–2 minutes per question keeps you on pace. At 2 min/question, 85 questions = 170 min — slightly over, so aim for 1.5 min average. Spending 4+ minutes on one question puts the whole exam at risk.'
-      },
-      {
-        type:'standard',
-        label:'Stress Management',
-        q:'Between questions, you notice your heart racing and your mind going blank. The best immediate action is:',
-        opts:['Review your notes mentally','Take 2–3 slow deep breaths and refocus','Skip ahead to find an easier question','Remind yourself of every question you might have gotten wrong'],
-        ans:1,
-        fb:'Box breathing or slow deep breaths activate the parasympathetic nervous system and reduce acute anxiety. Ruminating on past questions is the worst thing you can do — each question is independent.'
-      },
-      {
-        type:'instinct',
-        label:'⚠️ Instinct Check',
-        q:'You changed 4 answers in the last 10 questions after second-guessing yourself. This pattern suggests:',
-        opts:['Good critical thinking — re-evaluation is smart','Anxiety is driving your decisions, not clinical knowledge','You need to study more content','Your first instincts are wrong'],
-        ans:1,
-        fb:'Repeated answer-changing is almost always anxiety-driven, not knowledge-driven. On test day, commit to a strategy: only change an answer if you have a clear, specific, logical reason — not just a feeling.'
-      }
-    ]
-  },
-  {
-    id:'z3', icon:'ti-zoom-question', title:'Question Analysis',
-    sub:'Keywords · question types · stem analysis',
-    branches:[
-      {label:'Keyword recognition', tips:['"First, best, most" → priority question','"Always, never, all" → absolute — usually wrong','"Usually, often, may" → more likely correct']},
-      {label:'Question types', tips:['SATA: Select all correct options','Priority: Which client first?','Delegation: Who can perform this task?','Teaching: What indicates understanding?']},
-      {label:'Stem analysis', tips:['Read the question twice before looking at options','Identify the client condition/situation','Determine what the question is REALLY asking']}
-    ],
-    questions:[
-      {
-        type:'standard',
-        label:'Keyword Recognition',
-        q:'The question stem says "Which action should the nurse take FIRST?" In OB, a client is 38 weeks and reports decreased fetal movement. What does "FIRST" tell you?',
-        opts:['Do everything on the list simultaneously','This is a priority/triage question — apply ABCs and safety','Pick the most medical-sounding answer','Choose the most comforting action'],
-        ans:1,
-        fb:'"First" is a priority keyword. In this scenario, decreased fetal movement is a safety concern requiring immediate fetal assessment (non-stress test or kick counts). Safety always drives the "first" answer.'
-      },
-      {
-        type:'standard',
-        label:'Absolute Words',
-        q:'An answer choice states: "The nurse should ALWAYS place a newborn skin-to-skin immediately after delivery." The word ALWAYS is:',
-        opts:['A sign this is the correct answer','An absolute — be cautious, as exceptions exist','Irrelevant to your decision','A therapeutic communication cue'],
-        ans:1,
-        fb:'"Always" is an absolute word. While skin-to-skin is best practice, it is contraindicated when the newborn is compromised and needs resuscitation. Absolute answers are usually wrong because nursing always considers individual client status.'
-      },
-      {
-        type:'standard',
-        label:'Stem Analysis',
-        q:'The stem reads: "A 2-year-old is admitted with RSV. The parent asks if they can stay overnight. What is the nurse\'s best response?" What is this question REALLY asking?',
-        opts:['Whether RSV is contagious','Whether parents are allowed in pediatric units','How to respond therapeutically in a family-centered care model','What medications to give for RSV'],
-        ans:2,
-        fb:'Strip the clinical details and find the core concept: family-centered care is the foundation of pediatric nursing. The question is testing whether you know that parents are encouraged to stay and be part of care — not visiting hours policy.'
-      },
-      {
-        type:'delegation',
-        label:'Delegation Question',
-        q:'The RN is caring for a postpartum unit. Which task is appropriate to delegate to the UAP (unlicensed assistive personnel)?',
-        opts:['Assessing a client\'s fundal height and lochia','Teaching a new mother about breastfeeding','Measuring and recording urine output for a stable client','Administering oral pain medication'],
-        ans:2,
-        fb:'UAPs can measure and record intake/output for stable clients — this is within their scope. Assessment (fundal height), teaching (breastfeeding), and medication administration all require RN licensure and cannot be delegated to UAPs.'
-      },
-      {
-        type:'sata',
-        label:'SATA · Question Types',
-        q:'Which of the following are cues that a question is asking about PRIORITY? Select all that apply.',
-        opts:['The word "first"','The word "best"','The word "most important"','The word "always"','The phrase "which client would you see first"'],
-        ans:[0,1,2,4],
-        fb:'"First," "best," "most important," and "which client first" all signal priority questions. "Always" is an absolute word that signals caution about the answer choices — it\'s not a stem priority cue.'
-      }
-    ]
-  },
-  {
-    id:'z4', icon:'ti-alert-triangle', title:'Priority & Safety',
-    sub:'ABCs · Maslow\'s · OB/Peds safety',
-    branches:[
-      {label:'ABCs framework', tips:['Airway always first priority','Breathing second','Circulation third']},
-      {label:'Maslow\'s hierarchy', tips:['Physiological needs first','Safety and security second','Psychosocial needs last']},
-      {label:'OB/Peds safety priorities', tips:['Fetal heart rate drops = immediate action','Newborn airway before warmth','Postpartum hemorrhage = circulation priority','Pediatric: child safety over parent wishes']}
-    ],
-    questions:[
-      {
-        type:'priority',
-        label:'Priority · OB',
-        q:'You are a postpartum RN with 4 clients. Which do you assess FIRST?\nA) Client 1 hr post-delivery with fundus firm, lochia moderate\nB) Client reporting sudden heavy bleeding soaking 2 pads in 30 min\nC) Client requesting pain medication for episiotomy\nD) Client asking when she can eat',
-        opts:['Client A — just delivered, needs routine check','Client B — sudden heavy bleeding is a hemorrhage emergency','Client C — pain is the 5th vital sign','Client D — nutrition is a physiological need'],
-        ans:1,
-        fb:'Postpartum hemorrhage (soaking 2+ pads in 30 min) is a life-threatening circulation emergency. This trumps routine assessment, pain management, and nutrition needs. Apply ABCs: Circulation is at risk.'
-      },
-      {
-        type:'priority',
-        label:'Priority · Peds',
-        q:'A pediatric nurse has 4 patients. Who is seen FIRST?\nA) 4-year-old with croup, barking cough, SpO2 97%\nB) 8-year-old with appendicitis awaiting surgery, pain 6/10\nC) 2-year-old with croup, stridor at rest, SpO2 91%\nD) 10-year-old post-tonsillectomy, eating popsicle',
-        opts:['4-year-old with barking cough','8-year-old with appendicitis pain','2-year-old with stridor and SpO2 91% — airway compromise','10-year-old post-op eating'],
-        ans:2,
-        fb:'The 2-year-old has stridor at rest and SpO2 of 91% — this indicates significant airway obstruction. Airway is always the first priority. The 4-year-old\'s SpO2 is 97% (acceptable). Pain and eating are lower priorities than a compromised airway.'
-      },
-      {
-        type:'standard',
-        label:'Safety · OB',
-        q:'During labor, the fetal heart rate drops to 90 bpm and remains there for 3 minutes. The FIRST nursing action is:',
-        opts:['Call the physician','Document the finding and continue monitoring','Reposition the mother to left lateral, increase IV fluids, apply O2','Prepare for emergency C-section'],
-        ans:2,
-        fb:'The first action is to intervene to improve uteroplacental blood flow: reposition left lateral (takes pressure off vena cava), increase IV fluids, and apply oxygen. THEN notify the physician. Never call before intervening when immediate action can help.'
-      },
-      {
-        type:'standard',
-        label:'Maslow\'s · Psych + OB',
-        q:'A new mother with a history of postpartum depression says "I love my baby but I just feel so empty and sad." Using Maslow\'s, the nurse prioritizes:',
-        opts:['Physiological needs — assess if she is eating and sleeping','Safety — screen for suicidal ideation or thoughts of harming infant','Esteem needs — reassure her she is a good mother','Self-actualization — encourage journaling'],
-        ans:1,
-        fb:'While physiological needs rank first in Maslow\'s, the clinical context of postpartum depression with statements of emotional emptiness requires immediate SAFETY screening — risk of self-harm or harm to the infant. Safety supersedes routine physiological assessment here.'
-      },
-      {
-        type:'sata',
-        label:'SATA · Priority Principles',
-        q:'Which principles guide priority decisions on the NCLEX? Select all that apply.',
-        opts:['Airway before breathing before circulation','Unstable clients before stable clients','Actual problems before potential problems','Psychosocial needs before physiological needs','Life-threatening conditions are seen first'],
-        ans:[0,1,2,4],
-        fb:'ABCs, unstable before stable, actual before potential, and life-threatening first are all correct priority frameworks. Psychosocial needs come AFTER physiological and safety needs in Maslow\'s hierarchy — never before.'
-      }
-    ]
-  },
-  {
-    id:'z5', icon:'ti-brain', title:'Clinical Reasoning',
-    sub:'Nursing process · critical thinking · patho',
-    branches:[
-      {label:'Nursing process', tips:['Assessment ALWAYS before intervention','Planning includes measurable goals','Implementation requires valid orders','Evaluation: did the intervention work?']},
-      {label:'Critical thinking', tips:['Consider ALL client factors','Think beyond the obvious answer','Apply evidence-based practice','Cultural and developmental considerations matter']},
-      {label:'Pathophysiology links', tips:['Connect symptoms to the underlying condition','Know why medications work — not just what they do','Normal vs abnormal values by age group (peds!)','OB vitals differ from standard adult norms']}
-    ],
-    questions:[
-      {
-        type:'standard',
-        label:'Nursing Process · Assessment First',
-        q:'A postpartum client reports feeling "weird and lightheaded." Before calling the physician, the nurse should FIRST:',
-        opts:['Call the physician immediately','Increase IV fluid rate','Assess vital signs, fundus, lochia, and IV site','Document the complaint and continue monitoring'],
-        ans:2,
-        fb:'Assessment always comes before intervention. "Lightheaded" in a postpartum client could signal hemorrhage, orthostatic hypotension, or other complications. Gather data first so you have something meaningful to report to the physician.'
-      },
-      {
-        type:'standard',
-        label:'Patho Link · OB',
-        q:'A postpartum client has a boggy uterus and heavy lochia rubra. The nurse understands this is caused by:',
-        opts:['Infection of the uterine lining','Uterine atony — the uterus is not contracting properly','Normal involution process','Retained placenta only'],
-        ans:1,
-        fb:'A boggy (soft, not firm) uterus with heavy bleeding = uterine atony, the most common cause of postpartum hemorrhage. The uterus must contract to compress blood vessels at the placental site. First intervention: fundal massage + oxytocin.'
-      },
-      {
-        type:'standard',
-        label:'Critical Thinking · Peds',
-        q:'A 6-month-old has a heart rate of 155 bpm. The nurse\'s best action is:',
-        opts:['Call the physician — this is bradycardia','Document as abnormal and notify the charge nurse','Recognize this as a normal infant heart rate and continue assessment','Prepare for defibrillation'],
-        ans:2,
-        fb:'Normal HR for a 6-month-old is 80–160 bpm. 155 is within normal range for this age group. Critical thinking on the NCLEX requires knowing that normal values differ by developmental stage — adult norms do NOT apply to pediatric clients.'
-      },
-      {
-        type:'delegation',
-        label:'Delegation · Clinical Reasoning',
-        q:'An RN is planning care for a busy OB unit. Which assignment is appropriate for an LPN?',
-        opts:['Performing the initial admission assessment on a laboring client','Developing the care plan for a postpartum client with hemorrhage','Administering scheduled oral medications to a stable postpartum client','Teaching a new mother how to latch for breastfeeding'],
-        ans:2,
-        fb:'LPNs can administer medications to stable clients — this is within their scope. Initial assessments, care plan development, and client teaching require RN-level licensure. In OB especially, LPN scope is limited due to the complexity of maternal-newborn care.'
-      },
-      {
-        type:'sata',
-        label:'SATA · Clinical Reasoning',
-        q:'The nurse is evaluating a newborn 1 hour after birth. Which findings require immediate intervention? Select all that apply.',
-        opts:['Heart rate of 110 bpm','Respiratory rate of 68 breaths/min','Temperature of 36.0°C (96.8°F)','Acrocyanosis of hands and feet','Grunting with each breath'],
-        ans:[1,2,4],
-        fb:'RR >60 is tachypnea in a newborn and needs assessment. Temp of 36.0°C is hypothermia (normal 36.5–37.5°C) and requires warming. Grunting indicates respiratory distress. HR of 110 is normal (normal: 100–160). Acrocyanosis is expected in the first few hours of life.'
-      }
-    ]
-  },
-  {
-    id:'z6', icon:'ti-heart', title:'Confidence Building',
-    sub:'Trust your instincts · first answer · test mindset',
-    branches:[
-      {label:'Trust yourself', tips:['You know more than you think','First instinct is often correct','You\'ve been training for this moment']},
-      {label:'Positive mindset', tips:['Focus on helping the client — not passing the test','One question at a time — never think about the score','Reframe nerves as readiness']},
-      {label:'On test day', tips:['Read the question twice — answer options once slowly','Commit to your answer with confidence','Think: "What would a SAFE nurse do?"']}
-    ],
-    questions:[
-      {
-        type:'instinct',
-        label:'⚠️ Instinct Check',
-        q:'You read a question about a newborn with jaundice. Your gut immediately says "phototherapy" — but then you start second-guessing because the question mentioned something about feeding. You should:',
-        opts:['Spend more time analyzing — feeding must be the key','Switch your answer to something feeding-related','Ask yourself: does the new detail actually change the answer, or is anxiety talking?','Always go with the most detailed answer'],
-        ans:2,
-        fb:'This is the overthinking trap. Before changing an answer, ask: "Do I have a specific, logical, clinical reason to change?" If you\'re just anxious — stay with your instinct. Jaundice + phototherapy is a strong first-instinct connection that is usually correct.'
-      },
-      {
-        type:'standard',
-        label:'Test Mindset',
-        q:'The best frame of mind for answering every NCLEX question is:',
-        opts:['"What would impress the physician?"','"What would a safe, competent nurse do for this specific client right now?"','"What did I memorize last night?"','"What is the fastest intervention?"'],
-        ans:1,
-        fb:'The NCLEX tests entry-level safe practice. Every answer should be filtered through: safety, scope of practice, and the specific client in the scenario. Speed and impressing doctors are irrelevant — safe care for THIS client is everything.'
-      },
-      {
-        type:'standard',
-        label:'Confidence · OB',
-        q:'You see an OB question and immediately feel anxious because OB is your weakest area. The best strategy is:',
-        opts:['Skip it and come back — you can\'t go back on the CAT','Read carefully, apply ABCs and safety principles — OB is still nursing','Guess quickly so you don\'t waste time','Assume the answer involves the physician'],
-        ans:1,
-        fb:'OB questions still follow the same NCLEX frameworks: ABCs, safety, nursing process, Maslow\'s. You know these. Apply your strategy and trust your clinical reasoning — the content is different but the approach is identical.'
-      },
-      {
-        type:'instinct',
-        label:'⚠️ Instinct Check',
-        q:'You\'ve now changed 3 answers in a row after re-reading questions. You notice you keep changing to longer, more detailed options. This is likely:',
-        opts:['Good test-taking strategy — more detail = more correct','A sign you need to review more content','Anxiety-driven behavior — longer answers are not more correct','Appropriate for OB questions specifically'],
-        ans:2,
-        fb:'Gravitating toward longer answers when anxious is a classic NCLEX trap. Answer length has no correlation with correctness. Recognize this pattern in yourself now so you can catch it on test day and return to your strategy.'
-      },
-      {
-        type:'standard',
-        label:'Growth Mindset',
-        q:'After answering a difficult question you weren\'t sure about, the most helpful thought is:',
-        opts:['"I probably failed that one — I don\'t know anything."','"I need to go back and change it."','"I applied my best clinical reasoning. Next question."','"OB is impossible — I\'ll never pass."'],
-        ans:2,
-        fb:'Negative self-talk after hard questions is the fastest way to spiral. The NCLEX is designed to be challenging — difficult questions often mean you\'re performing well (CAT adjusts up). Acknowledge the question, let it go, and bring full focus to the next one.'
-      }
-    ]
-  }
+(function () {
+
+// ========================================================================
+// QUESTION BANK
+// ========================================================================
+const BANK = [
+
+// ---------------- MED-SURG ----------------
+{ id:"ms1", cat:"Med-Surg", type:"mc",
+  stem:"A client is 18 hours post below-the-knee amputation. Which nursing action is most important?",
+  options:["Notify the HCP of increased drainage.","Elevate the residual limb on a pillow.","Encourage the client to lie in a prone position.","Perform active ROM on the unaffected leg daily."],
+  correct:[2],
+  rationale:"After the first 24 hours, the priority shifts to preventing hip flexion contracture. Prone positioning extends the hip and counteracts the flexed position the limb tends to fall into. Elevation on a pillow is only appropriate in the first 24 hours; beyond that it increases contracture risk." },
+
+{ id:"ms2", cat:"Med-Surg", type:"sata",
+  stem:"A client with diabetes mellitus and asthma takes high-dose corticosteroids. Which dermatologic complications will the nurse assess for? (Select all that apply.)",
+  options:["Delayed wound healing.","Skin pigmentation changes.","Alopecia.","Erythematous plaques on legs.","Decreased subcutaneous fat over extremities."],
+  correct:[0,1,4],
+  rationale:"Corticosteroids impair collagen synthesis and immune response, causing delayed wound healing. They also cause skin thinning with pigmentation changes and redistribute fat away from the extremities toward the trunk and face. Alopecia and erythematous plaques are not typical corticosteroid skin effects." },
+
+{ id:"ms3", cat:"Med-Surg", type:"mc",
+  stem:"The nurse is caring for a client with a chest tube. The water seal chamber shows continuous bubbling. What does this indicate?",
+  options:["Normal functioning of the chest tube.","An air leak in the system.","The lung has fully re-expanded.","The suction is set too high."],
+  correct:[1],
+  rationale:"Continuous bubbling in the water seal chamber indicates an air leak somewhere in the system, not normal lung re-expansion. Intermittent bubbling that decreases over time is the expected, normal finding as the lung re-expands." },
+
+{ id:"ms4", cat:"Med-Surg", type:"mc",
+  stem:"A client with a new colostomy asks the nurse when stool output is expected to begin. What is the nurse's best response?",
+  options:["\u201cWithin the first 24 hours after surgery.\u201d","\u201cTypically 2 to 4 days after surgery.\u201d","\u201cNot until you resume a full solid diet.\u201d","\u201cOnly after the staples are removed.\u201d"],
+  correct:[1],
+  rationale:"Bowel motility is slowed after abdominal surgery; colostomy output typically begins 2 to 4 days postoperatively as peristalsis returns, not immediately." },
+
+{ id:"ms5", cat:"Med-Surg", type:"sata",
+  stem:"A nurse is assessing a client for early signs of compartment syndrome following a tibial fracture. Which findings are consistent with this complication? (Select all that apply.)",
+  options:["Pain unrelieved by opioids.","Paresthesia distal to the injury.","Bounding pedal pulses.","Pallor of the affected limb.","Warmth and redness over the fracture site."],
+  correct:[0,1,3],
+  rationale:"Compartment syndrome classically presents with the 5 P's: pain out of proportion (unrelieved by opioids), paresthesia, pallor, pulselessness (not bounding pulses), and paralysis. Warmth and redness suggest infection or inflammation, not compartment syndrome." },
+
+{ id:"ms6", cat:"Med-Surg", type:"calc",
+  stem:"A client is prescribed an IV infusion of 1,000 mL of normal saline to run over 8 hours. The drop factor is 15 gtt/mL. Calculate the drip rate in gtt/min.",
+  unit:"gtt/min",
+  correctValue:31.25,
+  tolerance:1,
+  rationale:"Flow rate = (Volume \u00d7 Drop factor) \u00f7 Time in minutes. (1,000 mL \u00d7 15 gtt/mL) \u00f7 480 min = 15,000 \u00f7 480 = 31.25, rounded to 31 gtt/min." },
+
+{ id:"ms7", cat:"Med-Surg", type:"mc",
+  stem:"A client recovering from a CVA has expressive aphasia. Which communication strategy is most appropriate?",
+  options:["Finish the client's sentences to reduce frustration.","Ask only open-ended questions.","Allow extra time and use yes/no questions when needed.","Speak loudly and slowly to ensure understanding."],
+  correct:[2],
+  rationale:"Expressive aphasia impairs the ability to produce speech, not comprehension. Giving extra time and offering yes/no questions reduces frustration without being condescending. Speaking loudly assumes a hearing deficit, which is not present here." },
+
+// ---------------- PHARMACOLOGY ----------------
+{ id:"ph1", cat:"Pharmacology", type:"mc",
+  stem:"A client taking warfarin has an INR of 6.0. Which medication should the nurse anticipate administering?",
+  options:["Protamine sulfate.","Vitamin K (phytonadione).","Vitamin B12.","Calcium gluconate."],
+  correct:[1],
+  rationale:"Vitamin K is the reversal agent for warfarin toxicity. Protamine sulfate reverses heparin, not warfarin." },
+
+{ id:"ph2", cat:"Pharmacology", type:"sata",
+  stem:"A nurse is teaching a client newly prescribed lithium. Which statements indicate a need for further teaching? (Select all that apply.)",
+  options:["\u201cI will reduce my salt intake while taking this medication.\u201d","\u201cI should drink plenty of water throughout the day.\u201d","\u201cI can take ibuprofen as needed for headaches.\u201d","\u201cI will have my blood levels checked regularly.\u201d","\u201cI should stop the medication immediately if I have diarrhea.\u201d"],
+  correct:[0,2],
+  rationale:"Reducing sodium intake increases lithium reabsorption and risk of toxicity \u2014 sodium intake should stay consistent, not reduced. NSAIDs like ibuprofen decrease renal lithium clearance and increase toxicity risk, so they should be avoided. Adequate hydration, regular blood level monitoring, and reporting diarrhea (a toxicity sign) promptly are all correct teaching points." },
+
+{ id:"ph3", cat:"Pharmacology", type:"calc",
+  stem:"A child weighing 22 lbs is prescribed amoxicillin 40 mg/kg/day divided into 3 doses. How many mg should the child receive per dose?",
+  unit:"mg/dose",
+  correctValue:133.3,
+  tolerance:1.5,
+  rationale:"22 lbs \u00f7 2.2 = 10 kg. 10 kg \u00d7 40 mg/kg/day = 400 mg/day. 400 mg \u00f7 3 doses = 133.3 mg per dose." },
+
+{ id:"ph4", cat:"Pharmacology", type:"mc",
+  stem:"A client receiving IV vancomycin develops flushing, a rash on the upper body, and hypotension during the infusion. What is the nurse's priority action?",
+  options:["Administer diphenhydramine and continue the infusion.","Slow the infusion rate and notify the HCP.","Stop the infusion and assess the client.","Increase the infusion rate to finish it quickly."],
+  correct:[2],
+  rationale:"These are signs of \u201cRed Man Syndrome,\u201d caused by rapid vancomycin infusion histamine release. The priority is to stop the infusion and assess the client first, then notify the HCP \u2014 not to continue or speed it up." },
+
+{ id:"ph5", cat:"Pharmacology", type:"mc",
+  stem:"A client taking levothyroxine should be taught to take the medication:",
+  options:["With food to reduce stomach upset.","At bedtime with a snack.","On an empty stomach, 30-60 minutes before breakfast.","With calcium or iron supplements for better absorption."],
+  correct:[2],
+  rationale:"Levothyroxine absorption is significantly reduced by food and by calcium or iron supplements. It should be taken on an empty stomach, 30-60 minutes before food or other medications." },
+
+{ id:"ph6", cat:"Pharmacology", type:"sata",
+  stem:"A nurse is caring for a client receiving heparin therapy. Which assessment findings require immediate notification of the HCP? (Select all that apply.)",
+  options:["Platelet count of 90,000/mm\u00b3.","Blood in the urine.","aPTT of 65 seconds (therapeutic range 60-80).","Bruising at the injection site.","Sudden onset of back pain and hypotension."],
+  correct:[0,1,4],
+  rationale:"A platelet count of 90,000 may indicate heparin-induced thrombocytopenia (HIT) and warrants notification. Hematuria signals bleeding. Sudden back pain with hypotension suggests retroperitoneal bleeding, an emergency. A therapeutic aPTT and minor bruising at injection sites are expected, non-urgent findings." },
+
+// ---------------- PEDIATRICS ----------------
+{ id:"pd1", cat:"Pediatrics", type:"mc",
+  stem:"A 6-month-old is brought to the clinic for a routine visit. Which developmental milestone should the nurse expect this infant to have achieved?",
+  options:["Walking independently.","Sitting without support.","Saying first words.","Pincer grasp."],
+  correct:[1],
+  rationale:"Sitting without support is an expected milestone around 6 months. Walking independently (12-15 months), first words (around 12 months), and pincer grasp (9-10 months) occur later." },
+
+{ id:"pd2", cat:"Pediatrics", type:"sata",
+  stem:"A nurse is assessing an infant for signs of dehydration. Which findings indicate dehydration? (Select all that apply.)",
+  options:["Sunken fontanel.","Capillary refill less than 2 seconds.","Decreased urine output.","Moist mucous membranes.","Tachycardia."],
+  correct:[0,2,4],
+  rationale:"Sunken fontanel, decreased urine output, and tachycardia are classic signs of dehydration in infants. Capillary refill under 2 seconds and moist mucous membranes are normal, hydrated findings." },
+
+{ id:"pd3", cat:"Pediatrics", type:"calc",
+  stem:"A child weighing 15 kg is prescribed acetaminophen 15 mg/kg per dose. How many mg is the correct single dose?",
+  unit:"mg",
+  correctValue:225,
+  tolerance:0,
+  rationale:"15 kg \u00d7 15 mg/kg = 225 mg per dose." },
+
+{ id:"pd4", cat:"Pediatrics", type:"mc",
+  stem:"The nurse is caring for a child with suspected epiglottitis. Which action should the nurse avoid?",
+  options:["Keeping the child in an upright position.","Preparing for possible emergency intubation.","Inspecting the throat with a tongue depressor.","Allowing the parent to remain with the child."],
+  correct:[2],
+  rationale:"Examining the throat or attempting to visualize the epiglottis directly can trigger complete airway obstruction in a child with epiglottitis. This should be avoided; airway management equipment should be ready instead." },
+
+{ id:"pd5", cat:"Pediatrics", type:"mc",
+  stem:"A toddler is diagnosed with intussusception. Which assessment finding is most consistent with this diagnosis?",
+  options:["Currant jelly-like stools.","Projectile vomiting after every feeding.","Olive-shaped mass in the right upper quadrant.","Ribbon-like stools."],
+  correct:[0],
+  rationale:"Currant jelly stools (mixed with blood and mucus) are a classic sign of intussusception. An olive-shaped RUQ mass and projectile vomiting describe pyloric stenosis; ribbon-like stools suggest Hirschsprung disease." },
+
+// ---------------- OB / MATERNITY ----------------
+{ id:"ob1", cat:"OB / Maternity", type:"mc",
+  stem:"A client at 32 weeks gestation reports a sudden gush of clear fluid. Fetal heart rate is 90 bpm. What is the nurse's first action?",
+  options:["Document the finding and continue monitoring.","Perform a sterile speculum exam to confirm rupture.","Reposition the client and reassess fetal heart rate.","Prepare the client for immediate discharge teaching."],
+  correct:[2],
+  rationale:"A fetal heart rate of 90 bpm is a sign of fetal distress, possibly from cord compression after rupture of membranes. The priority is to reposition the client (often to relieve cord compression) and reassess the FHR immediately, rather than documentation or exams that can wait." },
+
+{ id:"ob2", cat:"OB / Maternity", type:"sata",
+  stem:"A nurse is caring for a postpartum client at risk for hemorrhage. Which findings indicate excessive bleeding? (Select all that apply.)",
+  options:["Boggy, poorly contracted uterus.","Saturating a pad within 15 minutes.","Fundus firm and at the level of the umbilicus.","Heart rate increasing from 80 to 120 bpm.","Lochia rubra with small clots on day 1."],
+  correct:[0,1,3],
+  rationale:"A boggy uterus, rapid pad saturation, and rising heart rate (a compensatory sign of blood loss) all indicate excessive bleeding. A firm fundus at the umbilicus and lochia rubra with small clots on day 1 are both normal postpartum findings." },
+
+{ id:"ob3", cat:"OB / Maternity", type:"mc",
+  stem:"A client in active labor has a fetal heart rate pattern showing late decelerations. What is the nurse's priority action?",
+  options:["Increase the rate of oxytocin infusion.","Reposition the client to her left side and administer oxygen.","Document the finding and continue routine monitoring.","Prepare for immediate forceps-assisted delivery."],
+  correct:[1],
+  rationale:"Late decelerations suggest uteroplacental insufficiency. The priority is to improve oxygenation and placental perfusion \u2014 repositioning to the left side and administering oxygen \u2014 and to discontinue, not increase, oxytocin." },
+
+{ id:"ob4", cat:"OB / Maternity", type:"mc",
+  stem:"A newborn is noted to have a yellow tint to the skin and sclera at 18 hours of life. What is the nurse's priority action?",
+  options:["Document as a normal newborn finding.","Notify the HCP, as jaundice in the first 24 hours is abnormal.","Increase the frequency of breastfeeding only.","Apply a warming light to the newborn's skin."],
+  correct:[1],
+  rationale:"Jaundice appearing within the first 24 hours of life is considered pathologic, not physiologic, and requires prompt evaluation \u2014 it may indicate hemolytic disease or another serious cause." },
+
+// ---------------- MENTAL HEALTH ----------------
+{ id:"mh1", cat:"Mental Health", type:"mc",
+  stem:"A client with major depressive disorder who was withdrawn and tearful suddenly appears calm and is giving away personal belongings. What should the nurse do first?",
+  options:["Document the improved mood and continue routine care.","Assess the client directly for suicidal ideation and a plan.","Allow the client privacy to organize their belongings.","Encourage the client to attend group therapy immediately."],
+  correct:[1],
+  rationale:"A sudden, unexplained lift in mood combined with giving away possessions can indicate the client has made a decision to end their life and feels relief. This requires an immediate, direct suicide risk assessment, not reassurance that the mood has improved." },
+
+{ id:"mh2", cat:"Mental Health", type:"sata",
+  stem:"A nurse is caring for a client experiencing alcohol withdrawal. Which findings require immediate intervention? (Select all that apply.)",
+  options:["Blood pressure 168/100 mmHg.","Visual hallucinations.","Heart rate of 128 bpm.","Mild hand tremors.","Seizure activity."],
+  correct:[0,1,2,4],
+  rationale:"Elevated blood pressure, hallucinations, tachycardia, and seizures are signs of severe alcohol withdrawal (including delirium tremens) and require immediate intervention. Mild tremors are an expected, lower-severity withdrawal symptom." },
+
+{ id:"mh3", cat:"Mental Health", type:"mc",
+  stem:"A client with borderline personality disorder frequently tells the nurse, \u201cYou're the only one who understands me; the other nurses don't care.\u201d What is the nurse's best response?",
+  options:["\u201cThank you, I do care about you a lot.\u201d","\u201cI'm one of several nurses on the team who are here to help you.\u201d","\u201cThe other nurses are very busy with other clients.\u201d","\u201cLet's not discuss the other staff right now.\u201d"],
+  correct:[1],
+  rationale:"This statement reflects splitting, a common defense mechanism in borderline personality disorder. The nurse should maintain consistent boundaries and avoid being drawn into an idealized role, instead reinforcing that care is provided by the whole team." },
+
+{ id:"mh4", cat:"Mental Health", type:"mc",
+  stem:"A client with schizophrenia states, \u201cThe television is sending me secret messages.\u201d Which response by the nurse is most therapeutic?",
+  options:["\u201cThat's not possible, televisions can't send messages.\u201d","\u201cWhat kind of messages is the television sending you?\u201d","\u201cI don't see how that could be happening, but it sounds frightening.\u201d","\u201cLet's turn off the television so it stops.\u201d"],
+  correct:[2],
+  rationale:"The therapeutic approach acknowledges the client's feelings without validating the delusion or directly arguing against it, which can increase defensiveness. Stating the nurse doesn't experience the same thing while validating the emotional impact maintains trust." },
+
+{ id:"mh5", cat:"Mental Health", type:"sata",
+  stem:"A nurse is planning care for a client with anorexia nervosa who is being medically stabilized. Which interventions are appropriate? (Select all that apply.)",
+  options:["Monitor for refeeding syndrome during nutritional rebuilding.","Allow the client to exercise freely to manage anxiety.","Supervise the client during and after meals.","Weigh the client at the same time each day, same clothing.","Discuss calorie counts openly with the client at each meal."],
+  correct:[0,2,3],
+  rationale:"Monitoring for refeeding syndrome, supervising meals to prevent purging or hiding food, and standardized daily weights are all appropriate. Free exercise should be restricted during stabilization, and focusing on calorie counts reinforces the client's preoccupation with numbers rather than recovery." },
+
+// ---------------- MED-SURG (additional) ----------------
+{ id:"ms8", cat:"Med-Surg", type:"mc",
+  stem:"A client with COPD has an oxygen saturation of 88% on room air. The HCP orders supplemental oxygen. What is the most appropriate initial flow rate for this client?",
+  options:["2 L/min via nasal cannula.","6 L/min via nasal cannula.","10 L/min via simple face mask.","15 L/min via non-rebreather mask."],
+  correct:[0],
+  rationale:"Clients with COPD rely on a hypoxic drive to breathe. Low-flow oxygen (1-2 L/min) is used initially to avoid suppressing this drive, which could worsen hypoventilation and CO2 retention." },
+
+{ id:"ms9", cat:"Med-Surg", type:"sata",
+  stem:"A nurse is caring for a client with suspected acute appendicitis. Which assessment findings are consistent with this diagnosis? (Select all that apply.)",
+  options:["Pain that migrates to McBurney's point.","Rebound tenderness in the right lower quadrant.","Pain relief with knees drawn to chest.","Low-grade fever.","Diarrhea with visible blood."],
+  correct:[0,1,3],
+  rationale:"Classic appendicitis presents with pain migrating to McBurney's point, rebound tenderness, and low-grade fever. Pain relief with knees drawn up is more typical of peritonitis in a different context; bloody diarrhea suggests a different GI process such as IBD." },
+
+{ id:"ms10", cat:"Med-Surg", type:"calc",
+  stem:"A client is to receive 2 L of D5W over 24 hours. The drop factor is 10 gtt/mL. Calculate the infusion rate in gtt/min.",
+  unit:"gtt/min",
+  correctValue:13.9,
+  tolerance:0.6,
+  rationale:"(2,000 mL \u00d7 10 gtt/mL) \u00f7 1,440 min (24 hours) = 20,000 \u00f7 1,440 = 13.9 gtt/min." },
+
+{ id:"ms11", cat:"Med-Surg", type:"mc",
+  stem:"A client returns from a cardiac catheterization via the right femoral artery. Which assessment finding requires immediate intervention?",
+  options:["Pedal pulse 2+ bilaterally.","Slight bruising at the insertion site.","Cool, pale right foot with absent pedal pulse.","Client reports mild soreness at the insertion site."],
+  correct:[2],
+  rationale:"A cool, pale extremity with an absent pulse distal to the catheterization site suggests arterial occlusion or hematoma compressing blood flow \u2014 a vascular emergency requiring immediate notification and intervention." },
+
+{ id:"ms12", cat:"Med-Surg", type:"sata",
+  stem:"A nurse is caring for a client immediately following a thyroidectomy. Which assessments are priorities in the immediate postoperative period? (Select all that apply.)",
+  options:["Monitor for signs of laryngeal nerve damage (voice changes, stridor).","Assess for Chvostek's and Trousseau's signs.","Encourage immediate ambulation within the first hour.","Keep the head of bed flat at all times.","Have emergency tracheostomy equipment available at the bedside."],
+  correct:[0,1,4],
+  rationale:"Post-thyroidectomy priorities include monitoring for airway compromise (laryngeal nerve damage, hematoma causing tracheal compression) and hypocalcemia from accidental parathyroid removal (Chvostek's/Trousseau's signs). Emergency airway equipment should be at the bedside. The head of bed should be elevated, not flat, to reduce swelling, and ambulation is not an immediate priority over airway/calcium monitoring." },
+
+{ id:"ms13", cat:"Med-Surg", type:"mc",
+  stem:"A client with a long history of type 2 diabetes presents with confusion, fruity breath odor, and rapid deep breathing. Blood glucose is 420 mg/dL. The nurse should anticipate which finding on arterial blood gas?",
+  options:["Respiratory alkalosis.","Metabolic alkalosis.","Metabolic acidosis with compensatory hyperventilation.","Respiratory acidosis."],
+  correct:[2],
+  rationale:"These findings are consistent with diabetic ketoacidosis (DKA). The buildup of ketone bodies causes metabolic acidosis, and the body compensates with rapid, deep breathing (Kussmaul respirations) to blow off CO2 and raise blood pH." },
+
+// ---------------- PHARMACOLOGY (additional) ----------------
+{ id:"ph7", cat:"Pharmacology", type:"mc",
+  stem:"A client is prescribed digoxin. Which finding should prompt the nurse to hold the dose and notify the HCP?",
+  options:["Heart rate of 68 bpm.","Potassium level of 3.0 mEq/L.","Digoxin level of 1.0 ng/mL.","Blood pressure of 128/76 mmHg."],
+  correct:[1],
+  rationale:"Hypokalemia significantly increases the risk of digoxin toxicity, even at a therapeutic digoxin level. A potassium of 3.0 mEq/L (low) should prompt the nurse to hold the dose and notify the HCP. The other findings are within normal or therapeutic ranges." },
+
+{ id:"ph8", cat:"Pharmacology", type:"sata",
+  stem:"A nurse is teaching a client about a new prescription for an ACE inhibitor. Which statements should be included in the teaching? (Select all that apply.)",
+  options:["\u201cReport any swelling of your face, lips, or tongue immediately.\u201d","\u201cA dry, persistent cough is a possible side effect.\u201d","\u201cAvoid potassium-rich foods and salt substitutes.\u201d","\u201cThis medication is safe to take during pregnancy.\u201d","\u201cChange positions slowly to prevent dizziness.\u201d"],
+  correct:[0,1,2,4],
+  rationale:"ACE inhibitors carry risk of angioedema (facial/airway swelling, a medical emergency), a characteristic dry cough, and hyperkalemia (so potassium-rich foods/substitutes should be limited). Orthostatic hypotension is common, so slow position changes are advised. ACE inhibitors are contraindicated in pregnancy due to fetal harm." },
+
+{ id:"ph9", cat:"Pharmacology", type:"calc",
+  stem:"A client is prescribed 0.125 mg of digoxin daily. The pharmacy supplies tablets at 0.25 mg each. How many tablets should the nurse administer per dose?",
+  unit:"tablet(s)",
+  correctValue:0.5,
+  tolerance:0,
+  rationale:"0.125 mg \u00f7 0.25 mg = 0.5 tablet." },
+
+{ id:"ph10", cat:"Pharmacology", type:"mc",
+  stem:"A client receiving chemotherapy has a white blood cell count of 1,800/mm\u00b3. Which instruction is most important for the nurse to provide?",
+  options:["\u201cIncrease your intake of fresh fruits and vegetables.\u201d","\u201cAvoid crowds and people who are sick.\u201d","\u201cTake your temperature only if you feel unwell.\u201d","\u201cIt's fine to receive live vaccines during this time.\u201d"],
+  correct:[1],
+  rationale:"A WBC of 1,800/mm\u00b3 indicates significant neutropenia, putting the client at high infection risk. Avoiding crowds and sick contacts is a priority. Fresh, unwashed produce can carry bacteria and should be avoided; temperature should be monitored regularly, not only when symptomatic; live vaccines are contraindicated in immunosuppressed clients." },
+
+{ id:"ph11", cat:"Pharmacology", type:"sata",
+  stem:"A nurse is administering insulin to a client. Which actions are appropriate? (Select all that apply.)",
+  options:["Rotate injection sites within the same general body region.","Massage the injection site after administration.","Verify blood glucose prior to administration.","Administer regular insulin IV push for rapid correction if ordered.","Mix NPH and regular insulin by drawing up regular insulin first."],
+  correct:[0,2,3,4],
+  rationale:"Site rotation within a region maintains consistent absorption; checking blood glucose before dosing is standard safety practice; regular insulin (only) can be given IV in specific situations; when mixing, regular (clear) insulin is drawn up before NPH (cloudy) to avoid contaminating the regular insulin vial. Massaging the site is avoided as it can speed absorption unpredictably." },
+
+{ id:"ph12", cat:"Pharmacology", type:"mc",
+  stem:"A client taking phenytoin for seizure control has a level of 35 mcg/mL (therapeutic range 10-20 mcg/mL). Which finding would the nurse expect?",
+  options:["No symptoms, as levels above range are still safe.","Nystagmus, ataxia, and slurred speech.","Increased seizure threshold and improved control.","Hypertension and tachycardia."],
+  correct:[1],
+  rationale:"A phenytoin level of 35 mcg/mL is well above the therapeutic range and indicates toxicity. Classic signs of phenytoin toxicity include nystagmus, ataxia, and slurred speech (cerebellar/vestibular symptoms)." },
+
+// ---------------- PEDIATRICS (additional) ----------------
+{ id:"pd6", cat:"Pediatrics", type:"mc",
+  stem:"A nurse is assessing a 2-year-old. Which finding should be reported as a developmental concern?",
+  options:["Vocabulary of approximately 50 words.","Unable to walk up stairs while holding a rail.","No two-word phrases or combinations.","Parallel play with peers."],
+  correct:[2],
+  rationale:"By age 2, toddlers are typically expected to combine words into simple two-word phrases (\u201cmore juice,\u201d \u201cgo bye-bye\u201d). The absence of any two-word combinations is a developmental red flag. A 50-word vocabulary, parallel play, and needing a rail for stairs are all expected at this age." },
+
+{ id:"pd7", cat:"Pediatrics", type:"sata",
+  stem:"A nurse is caring for a child diagnosed with Kawasaki disease. Which findings are consistent with this diagnosis? (Select all that apply.)",
+  options:["Fever lasting 5 or more days.","Bilateral conjunctival redness without discharge.","Strawberry tongue.","Symmetrical joint pain only, no skin changes.","Peeling of the skin on hands and feet."],
+  correct:[0,1,2,4],
+  rationale:"Kawasaki disease presents with prolonged fever, bilateral non-exudative conjunctivitis, strawberry tongue, rash, and later desquamation (peeling) of the hands and feet. Isolated symmetrical joint pain without other features is not a defining characteristic." },
+
+{ id:"pd8", cat:"Pediatrics", type:"calc",
+  stem:"A child weighing 18 kg is prescribed ibuprofen 10 mg/kg per dose. What is the correct single dose in mg?",
+  unit:"mg",
+  correctValue:180,
+  tolerance:0,
+  rationale:"18 kg \u00d7 10 mg/kg = 180 mg." },
+
+{ id:"pd9", cat:"Pediatrics", type:"mc",
+  stem:"A nurse is caring for an infant diagnosed with respiratory syncytial virus (RSV) bronchiolitis. Which intervention is most appropriate?",
+  options:["Administer routine antibiotics as RSV is bacterial.","Provide supportive care including suctioning, hydration, and oxygen as needed.","Encourage frequent oral feedings regardless of respiratory status.","Place the infant in a supine, flat position for comfort."],
+  correct:[1],
+  rationale:"RSV is a viral infection, so antibiotics are not indicated unless a secondary bacterial infection develops. Treatment is supportive: suctioning secretions, maintaining hydration, and supplemental oxygen as needed. Feeding should be modified if respiratory distress is present, and positioning should support breathing (elevated, not flat)." },
+
+{ id:"pd10", cat:"Pediatrics", type:"mc",
+  stem:"A 4-year-old is admitted with suspected nephrotic syndrome. Which assessment finding is most consistent with this diagnosis?",
+  options:["Hypertension and hematuria.","Generalized edema and frothy, protein-rich urine.","Polyuria and excessive thirst.","Petechiae and joint swelling."],
+  correct:[1],
+  rationale:"Nephrotic syndrome is characterized by massive proteinuria leading to generalized edema (especially periorbital and dependent areas) and frothy urine due to protein content. Hypertension/hematuria is more typical of nephritic syndrome." },
+
+// ---------------- OB / MATERNITY (additional) ----------------
+{ id:"ob5", cat:"OB / Maternity", type:"mc",
+  stem:"A nurse is caring for a client 6 hours postpartum. The fundus is firm but has risen from the umbilicus to 2 cm above and is deviated to the right. The client has not voided since delivery. What should the nurse do first?",
+  options:["Begin vigorous fundal massage.","Assist the client to the bathroom to void, or prepare for catheterization if unable.","Notify the HCP of suspected uterine atony.","Document as an expected postpartum finding."],
+  correct:[1],
+  rationale:"A fundus that rises above the umbilicus and deviates to one side, especially with no voiding since delivery, indicates bladder distension displacing the uterus \u2014 not atony. The appropriate action is addressing the full bladder, not massaging an already-firm fundus." },
+
+{ id:"ob6", cat:"OB / Maternity", type:"sata",
+  stem:"A nurse is assessing a client for signs of magnesium sulfate toxicity during treatment for preeclampsia. Which findings indicate toxicity? (Select all that apply.)",
+  options:["Respiratory rate of 10/min.","Absent deep tendon reflexes.","Urine output of 50 mL/hour.","Serum magnesium level of 9 mEq/L.","Maternal heart rate of 88 bpm."],
+  correct:[0,1,3],
+  rationale:"Respiratory depression (RR below 12), absent DTRs, and a magnesium level well above therapeutic range (typically 4-7 mEq/L) all indicate toxicity. Adequate urine output and a normal heart rate are reassuring, not concerning, findings." },
+
+{ id:"ob7", cat:"OB / Maternity", type:"mc",
+  stem:"A client 3 days postpartum following a cesarean birth reports sudden onset of sharp chest pain and shortness of breath. RR 28, HR 124, SpO2 91%. What is the nurse's priority action?",
+  options:["Reposition to high Fowler's and reassess in 10 minutes.","Administer the client's scheduled pain medication.","Notify the rapid response team; suspect pulmonary embolism.","Encourage slow breathing and offer reassurance."],
+  correct:[2],
+  rationale:"Sudden chest pain with tachypnea, tachycardia, and hypoxia in a postpartum/post-surgical client is a classic presentation of pulmonary embolism \u2014 a life-threatening emergency requiring immediate escalation, not monitoring or symptom management alone." },
+
+{ id:"ob8", cat:"OB / Maternity", type:"mc",
+  stem:"A nurse is evaluating the effectiveness of oxytocin and fundal massage given for postpartum hemorrhage 20 minutes ago. Which finding indicates the interventions were effective?",
+  options:["Fundus remains soft and boggy with heavy lochia.","Fundus firm at the umbilicus with moderate lochia.","Client's anxiety has decreased.","Client reports the IV site no longer hurts."],
+  correct:[1],
+  rationale:"The goal of oxytocin and fundal massage is uterine contraction to control bleeding. A firm fundus with reduced (moderate, not heavy) lochia directly demonstrates the intervention achieved its physiological goal." },
+
+// ---------------- MENTAL HEALTH (additional) ----------------
+{ id:"mh6", cat:"Mental Health", type:"mc",
+  stem:"A client newly diagnosed with generalized anxiety disorder is prescribed buspirone. The client asks the nurse when they can expect relief. What is the nurse's best response?",
+  options:["\u201cYou should feel better within the first few hours.\u201d","\u201cIt may take 2 to 4 weeks to feel the full effect.\u201d","\u201cThis medication only works if taken as needed during panic episodes.\u201d","\u201cYou'll need to double the dose if you don't feel relief in 2 days.\u201d"],
+  correct:[1],
+  rationale:"Unlike benzodiazepines, buspirone does not provide immediate relief and is not used PRN. It typically takes 2 to 4 weeks of consistent dosing to reach full therapeutic effect, which is important patient teaching to set realistic expectations." },
+
+{ id:"mh7", cat:"Mental Health", type:"sata",
+  stem:"A nurse is caring for a client experiencing acute mania. Which interventions are appropriate? (Select all that apply.)",
+  options:["Provide a low-stimulation environment.","Engage the client in competitive group activities.","Offer finger foods that can be eaten while moving.","Set clear, consistent limits on behavior.","Encourage the client to make major financial decisions during this time."],
+  correct:[0,2,3],
+  rationale:"Clients in acute mania benefit from reduced stimulation, portable nutrition options since they may not sit still to eat, and firm consistent limits. Competitive activities can increase agitation, and major decisions should be deferred until the episode resolves due to impaired judgment." },
+
+{ id:"mh8", cat:"Mental Health", type:"mc",
+  stem:"A client with PTSD reports recurring nightmares and hypervigilance since a traumatic car accident 6 months ago. Which nursing approach is most appropriate?",
+  options:["Encourage the client to avoid discussing the accident to prevent distress.","Use a trauma-informed approach, allowing the client to share at their own pace.","Insist the client describe the accident in detail during the first session.","Tell the client the symptoms will resolve on their own without treatment."],
+  correct:[1],
+  rationale:"Trauma-informed care prioritizes client control and pacing, avoiding re-traumatization. Forcing detailed recounting can be harmful, while avoidance entirely is not therapeutic either \u2014 the balance is allowing the client to lead the process safely." },
+
+{ id:"mh9", cat:"Mental Health", type:"mc",
+  stem:"A client with major depressive disorder is started on an SSRI. The nurse should monitor most closely for which finding during the first 1-2 weeks of treatment?",
+  options:["Improved mood and energy.","Increased risk of suicidal ideation, especially with improved energy but unresolved hopelessness.","Significant weight gain.","Resolution of all depressive symptoms."],
+  correct:[1],
+  rationale:"A known risk with SSRIs, especially in the first weeks, is that energy and activation may improve before mood fully lifts, potentially increasing the risk of acting on suicidal thoughts that were previously present but the client lacked energy to act on. Close monitoring during this window is a critical safety priority." },
+
+// ---------------- FUNDAMENTALS & SAFETY (new category) ----------------
+{ id:"fs1", cat:"Fundamentals & Safety", type:"mc",
+  stem:"A nurse is preparing to administer medications. Which action best supports the \u201cright client\u201d check, one of the rights of medication administration?",
+  options:["Asking the client to state their name and date of birth, then verifying against the MAR and ID band.","Asking the client, \u201cAre you Mr. Smith?\u201d","Checking the room number against the medication list.","Relying on staff identification of the client from a previous shift."],
+  correct:[0],
+  rationale:"The correct method uses two identifiers (name and date of birth) stated by the client, verified against the MAR and ID band \u2014 not yes/no questions (clients may answer incorrectly), room numbers (clients can be moved), or secondhand identification." },
+
+{ id:"fs2", cat:"Fundamentals & Safety", type:"sata",
+  stem:"A nurse is implementing fall precautions for a high-risk client. Which interventions are appropriate? (Select all that apply.)",
+  options:["Keep the bed in the lowest position with brakes locked.","Ensure the call light is within reach.","Restrain the client in bed to prevent any movement.","Use non-slip footwear during ambulation.","Place frequently used items within easy reach."],
+  correct:[0,1,3,4],
+  rationale:"Appropriate fall precautions include low bed position, accessible call light, non-slip footwear, and keeping items within reach to reduce unnecessary reaching/standing. Restraints are a last resort, not a routine fall precaution, and carry their own significant risks and legal/ethical considerations." },
+
+{ id:"fs3", cat:"Fundamentals & Safety", type:"mc",
+  stem:"A nurse finds a client on the floor next to the bed. The client is alert and reports no pain. What should the nurse do first?",
+  options:["Immediately assist the client back into bed.","Assess the client for injury before moving them.","Call the family to inform them of the fall.","Document the event and continue with other tasks."],
+  correct:[1],
+  rationale:"The priority after finding a client on the floor is to assess for injury (e.g., fractures, head injury) before attempting to move them, since moving an injured client improperly can cause further harm." },
+
+{ id:"fs4", cat:"Fundamentals & Safety", type:"sata",
+  stem:"A nurse is identifying clients at risk for pressure injuries. Which factors increase this risk? (Select all that apply.)",
+  options:["Immobility.","Adequate nutritional intake.","Incontinence.","Decreased sensory perception.","Frequent repositioning every 2 hours."],
+  correct:[0,2,3],
+  rationale:"Immobility, incontinence (moisture on skin), and decreased sensory perception (inability to feel pressure and reposition) are all major risk factors for pressure injury. Adequate nutrition and frequent repositioning are protective factors, not risk factors." },
+
+{ id:"fs5", cat:"Fundamentals & Safety", type:"mc",
+  stem:"A nurse is delegating tasks to a nursing assistant (NA). Which task is appropriate to delegate?",
+  options:["Assessing a new client's vital signs for the first time.","Teaching a client about a new medication.","Assisting a stable client with ambulation.","Developing the client's plan of care."],
+  correct:[2],
+  rationale:"Assisting a stable client with ambulation is within the scope of a nursing assistant. Initial assessments, client teaching, and care planning require nursing judgment and licensure, and cannot be delegated to unlicensed personnel." },
+
+{ id:"fs6", cat:"Fundamentals & Safety", type:"mc",
+  stem:"A nurse notices a colleague consistently skips hand hygiene between clients but seems overwhelmed with a high patient load. What is the most appropriate first action?",
+  options:["Report the colleague to administration immediately without discussion.","Privately and respectfully address the observation with the colleague directly.","Say nothing since patient assignments are not the nurse's responsibility.","Wait until a patient develops an infection before taking action."],
+  correct:[1],
+  rationale:"Patient safety advocacy calls for direct, respectful communication first, giving a colleague the opportunity to correct behavior, rather than immediate escalation or ignoring a safety concern." },
+
+{ id:"fs7", cat:"Fundamentals & Safety", type:"sata",
+  stem:"A nurse is preparing to transfer a client using a mechanical lift. Which actions ensure safe use of the lift? (Select all that apply.)",
+  options:["Check the weight limit of the lift against the client's weight.","Lock the wheels of the lift during transfer.","Use the lift alone without additional staff present.","Ensure the sling is positioned correctly before lifting.","Lower the client slowly and smoothly."],
+  correct:[0,1,3,4],
+  rationale:"Safe mechanical lift use requires checking weight capacity, locking wheels during the transfer, correct sling positioning, and smooth lowering. Most facility policies require at least two staff members present for lift transfers, not one nurse alone." },
+
+// ---------------- MATERNAL-NEWBORN (new category, deepened beyond OB/Maternity) ----------------
+{ id:"mn1", cat:"Maternal-Newborn", type:"mc",
+  stem:"A nurse is assessing a newborn 2 hours after birth. Which finding requires immediate notification of the HCP?",
+  options:["Acrocyanosis of the hands and feet.","Respiratory rate of 68/min with mild grunting and nasal flaring.","Heart rate of 140 bpm.","Jaundice appearing at 36 hours of age."],
+  correct:[1],
+  rationale:"Grunting, nasal flaring, and a respiratory rate this elevated suggest respiratory distress and require prompt evaluation. Acrocyanosis is a normal newborn finding, 140 bpm is within normal newborn HR range, and jaundice appearing after 24 hours (not within the first 24) is more typical of physiologic jaundice." },
+
+{ id:"mn2", cat:"Maternal-Newborn", type:"sata",
+  stem:"A nurse is caring for a client at 34 weeks gestation with a diagnosis of placenta previa. Which actions are appropriate? (Select all that apply.)",
+  options:["Avoid performing vaginal exams.","Monitor for vaginal bleeding.","Encourage ambulation as tolerated.","Have blood products available/typed and crossed.","Perform a sterile speculum exam to confirm diagnosis."],
+  correct:[0,1,3],
+  rationale:"With placenta previa, vaginal exams (digital or speculum) are avoided due to risk of triggering severe hemorrhage. Monitoring for bleeding and having blood products ready are essential given hemorrhage risk. Activity is often restricted, not encouraged, depending on severity and bleeding history." },
+
+{ id:"mn3", cat:"Maternal-Newborn", type:"mc",
+  stem:"A client at 38 weeks gestation reports decreased fetal movement over the last 24 hours. What is the nurse's priority action?",
+  options:["Reassure the client this is normal as term approaches.","Instruct the client to return in 48 hours if movement doesn't improve.","Arrange for immediate fetal heart rate monitoring and further assessment.","Tell the client to increase fluid intake and recheck tomorrow."],
+  correct:[2],
+  rationale:"Decreased fetal movement is a potential warning sign of fetal compromise and requires prompt evaluation with fetal heart rate monitoring (such as a non-stress test), not reassurance or delay." },
+
+{ id:"mn4", cat:"Maternal-Newborn", type:"mc",
+  stem:"A nurse is caring for a client in active labor. The fetal heart rate tracing shows late decelerations with each contraction. What is the priority nursing action?",
+  options:["Increase the oxytocin infusion rate.","Reposition the client to her left side and administer oxygen.","Continue routine monitoring and document the finding.","Prepare for immediate forceps delivery."],
+  correct:[1],
+  rationale:"Late decelerations suggest uteroplacental insufficiency. The priority is improving oxygenation and perfusion \u2014 repositioning to the left side and giving oxygen \u2014 and discontinuing (not increasing) oxytocin, which can worsen the underlying problem." },
+
+{ id:"mn5", cat:"Maternal-Newborn", type:"sata",
+  stem:"A nurse is teaching a postpartum client about signs of postpartum depression versus expected \u201cbaby blues.\u201d Which statements indicate a need for further evaluation, suggesting depression rather than baby blues? (Select all that apply.)",
+  options:["\u201cI cried a few times this week but feel better after.\u201d","\u201cI haven't felt any connection to my baby in 3 weeks.\u201d","\u201cI'm having thoughts of hurting myself or the baby.\u201d","\u201cI feel exhausted but excited about being a new mom.\u201d","\u201cI've lost interest in things I used to enjoy, and it's been a month.\u201d"],
+  correct:[1,2,4],
+  rationale:"Baby blues are mild, transient mood changes resolving within about 2 weeks. Persistent lack of bonding, intrusive harmful thoughts, and prolonged loss of interest extending beyond 2 weeks are red flags for postpartum depression or a more serious condition requiring prompt evaluation." },
+
+{ id:"mn6", cat:"Maternal-Newborn", type:"mc",
+  stem:"A nurse is caring for a newborn whose mother has poorly controlled gestational diabetes. The nurse should monitor the newborn closely for which complication in the first hours of life?",
+  options:["Hyperglycemia.","Hypoglycemia.","Polycythemia only.","Hypercalcemia."],
+  correct:[1],
+  rationale:"Newborns of mothers with poorly controlled diabetes are at high risk for hypoglycemia after birth. In utero, the fetus produces extra insulin in response to maternal hyperglycemia; once the maternal glucose supply is cut off at birth, the newborn's continued high insulin level can cause a sharp glucose drop." },
+
+{ id:"mn7", cat:"Maternal-Newborn", type:"mc",
+  stem:"A client who is Rh-negative delivers an Rh-positive infant. What should the nurse anticipate administering to the mother?",
+  options:["Rho(D) immune globulin (RhoGAM) within 72 hours postpartum.","Vitamin K to the mother immediately.","An Rh-positive blood transfusion.","No intervention is needed since the infant is unaffected by this pregnancy."],
+  correct:[0],
+  rationale:"Rh-negative mothers who deliver Rh-positive infants should receive RhoGAM within 72 hours to prevent sensitization, which could cause hemolytic disease of the newborn in future pregnancies. Vitamin K is given to the newborn, not the mother, for clotting factor support." },
+
+{ id:"mn8", cat:"Maternal-Newborn", type:"calc",
+  stem:"A newborn weighs 3,400 grams. The HCP orders a medication dosed at 2 mg/kg. What is the correct dose in mg?",
+  unit:"mg",
+  correctValue:6.8,
+  tolerance:0.1,
+  rationale:"3,400 g = 3.4 kg. 3.4 kg \u00d7 2 mg/kg = 6.8 mg." }
+
 ];
 
-var totalCorrect = 0, totalAnswered = 0;
-var sataPending = {};
+const CATEGORIES = [...new Set(BANK.map(q => q.cat))];
 
-function updateScore() {
-  document.getElementById('score-display').textContent = totalCorrect + ' / ' + totalAnswered;
-  var badge = document.getElementById('pct-badge');
-  if (totalAnswered === 0) { badge.textContent = '—'; badge.style.background = '#f0ebe7'; badge.style.color = '#888780'; return; }
-  var pct = Math.round(totalCorrect / totalAnswered * 100);
-  badge.textContent = pct + '%';
-  if (pct >= 80) { badge.style.background = '#eaf3de'; badge.style.color = '#27500a'; }
-  else if (pct >= 60) { badge.style.background = '#faeeda'; badge.style.color = '#633806'; }
-  else { badge.style.background = '#fcebeb'; badge.style.color = '#791f1f'; }
+// ========================================================================
+// STATE
+// ========================================================================
+const SEEN_STORAGE_KEY = "nclex_engine_seen_ids_v1";
+
+function loadSeenIds() {
+  try {
+    const raw = localStorage.getItem(SEEN_STORAGE_KEY);
+    if (raw) return new Set(JSON.parse(raw));
+  } catch (e) {}
+  return new Set();
 }
 
-function resetAll() {
-  totalCorrect = 0; totalAnswered = 0; sataPending = {}; updateScore();
-  document.querySelectorAll('.zone-body').forEach(function(b){ b.classList.remove('open'); });
-  document.querySelectorAll('.chevron').forEach(function(c){ c.classList.remove('open'); });
-  document.querySelectorAll('.quiz-area').forEach(function(a){ a.classList.remove('open'); a.innerHTML = ''; });
+function saveSeenIds(seenSet) {
+  try {
+    localStorage.setItem(SEEN_STORAGE_KEY, JSON.stringify([...seenSet]));
+  } catch (e) {}
 }
 
-var board = document.getElementById('board');
+let state = {
+  selectedCats: new Set(CATEGORIES),
+  count: 25,
+  mode: "practice",
+  questions: [],
+  current: 0,
+  answers: {},      // qid -> {selected: [...], calcValue, correct: bool}
+  flagged: new Set(),
+  finished: false,
+  seenIds: loadSeenIds()
+};
 
-zones.forEach(function(z, zi) {
-  var el = document.createElement('div');
-  el.className = 'zone ' + z.id;
-  var branchHTML = z.branches.map(function(b) {
-    return '<div class="branch"><div class="branch-label">' + b.label + '</div>' +
-      b.tips.map(function(t){ return '<div class="tip">' + t + '</div>'; }).join('') + '</div>';
-  }).join('');
-  el.innerHTML =
-    '<div class="zone-header" onclick="toggleZone(' + zi + ')">' +
-      '<i class="ti ' + z.icon + ' icon" aria-hidden="true"></i>' +
-      '<div style="flex:1"><div class="zone-title">' + z.title + '</div><div class="zone-sub">' + z.sub + '</div></div>' +
-      '<i class="ti ti-chevron-down chevron" id="chev-' + zi + '" aria-hidden="true"></i>' +
-    '</div>' +
-    '<div class="zone-body" id="body-' + zi + '">' +
-      branchHTML +
-      '<button class="quiz-btn" onclick="startQuiz(event,' + zi + ',0)">↗ Practice questions (' + z.questions.length + ')</button>' +
-      '<div class="quiz-area" id="quiz-' + zi + '"></div>' +
-    '</div>';
-  board.appendChild(el);
+// ========================================================================
+// SETUP SCREEN
+// ========================================================================
+const catPillsEl = document.getElementById("category-pills");
+CATEGORIES.forEach(cat => {
+  const pill = document.createElement("div");
+  pill.className = "pill active";
+  pill.textContent = cat;
+  pill.dataset.cat = cat;
+  pill.onclick = () => {
+    if (state.selectedCats.has(cat)) {
+      state.selectedCats.delete(cat);
+      pill.classList.remove("active");
+    } else {
+      state.selectedCats.add(cat);
+      pill.classList.add("active");
+    }
+    renderProgressNote();
+  };
+  catPillsEl.appendChild(pill);
 });
 
-function toggleZone(i) {
-  var body = document.getElementById('body-' + i);
-  var chev = document.getElementById('chev-' + i);
-  var isOpen = body.classList.contains('open');
-  document.querySelectorAll('.zone-body').forEach(function(b){ b.classList.remove('open'); });
-  document.querySelectorAll('.chevron').forEach(function(c){ c.classList.remove('open'); });
-  if (!isOpen) { body.classList.add('open'); chev.classList.add('open'); }
+function renderProgressNote() {
+  const pool = BANK.filter(q => state.selectedCats.has(q.cat));
+  const seenCount = pool.filter(q => state.seenIds.has(q.id)).length;
+  const el = document.getElementById("progress-note");
+  if (pool.length === 0) { el.innerHTML = ""; return; }
+  el.innerHTML = "You've seen " + seenCount + " of " + pool.length + " questions in this selection. " +
+    '<span class="reset-link" id="reset-progress-link">Reset progress</span>';
+  const resetLink = document.getElementById("reset-progress-link");
+  if (resetLink) {
+    resetLink.onclick = () => {
+      if (confirm("Reset your seen-question history? This means previously seen questions may appear again right away.")) {
+        state.seenIds = new Set();
+        saveSeenIds(state.seenIds);
+        renderProgressNote();
+      }
+    };
+  }
+}
+renderProgressNote();
+
+document.querySelectorAll("#count-pills .pill").forEach(p => {
+  p.onclick = () => {
+    document.querySelectorAll("#count-pills .pill").forEach(x => x.classList.remove("active"));
+    p.classList.add("active");
+    state.count = parseInt(p.dataset.count);
+  };
+});
+
+document.querySelectorAll("#mode-pills .pill").forEach(p => {
+  p.onclick = () => {
+    document.querySelectorAll("#mode-pills .pill").forEach(x => x.classList.remove("active"));
+    p.classList.add("active");
+    state.mode = p.dataset.mode;
+  };
+});
+
+document.getElementById("start-btn").onclick = () => {
+  const pool = BANK.filter(q => state.selectedCats.has(q.cat));
+  if (pool.length === 0) {
+    document.getElementById("setup-warning").textContent = "Select at least one category to continue.";
+    return;
+  }
+
+  // Split pool into unseen and seen, prioritizing unseen questions first
+  const unseen = pool.filter(q => !state.seenIds.has(q.id));
+  const seen = pool.filter(q => state.seenIds.has(q.id));
+
+  let cycleResetNote = "";
+  let combined;
+  if (unseen.length === 0) {
+    // Entire selected pool has been seen before - reset the cycle for this pool
+    pool.forEach(q => state.seenIds.delete(q.id));
+    saveSeenIds(state.seenIds);
+    combined = [...pool].sort(() => Math.random() - 0.5);
+    cycleResetNote = " \u00b7 You've seen every question in this selection at least once \u2014 starting a fresh round!";
+  } else {
+    const shuffledUnseen = [...unseen].sort(() => Math.random() - 0.5);
+    const shuffledSeen = [...seen].sort(() => Math.random() - 0.5);
+    combined = [...shuffledUnseen, ...shuffledSeen];
+  }
+
+  const n = Math.min(state.count, combined.length);
+  state.questions = combined.slice(0, n);
+
+  // Mark these questions as seen for future sessions
+  state.questions.forEach(q => state.seenIds.add(q.id));
+  saveSeenIds(state.seenIds);
+
+  state.current = 0;
+  state.answers = {};
+  state.flagged = new Set();
+  state.finished = false;
+
+  document.getElementById("screen-setup").classList.add("hidden");
+  document.getElementById("screen-exam").classList.remove("hidden");
+  document.getElementById("header-sub").textContent =
+    (state.mode === "timed" ? "Timed test \u00b7 " : "Practice mode \u00b7 ") + n + " questions" + cycleResetNote;
+  renderNav();
+  renderQuestion();
+};
+
+// ========================================================================
+// EXAM SCREEN
+// ========================================================================
+function renderNav() {
+  const grid = document.getElementById("nav-grid");
+  grid.innerHTML = "";
+  state.questions.forEach((q, i) => {
+    const cell = document.createElement("div");
+    cell.className = "nav-cell";
+    cell.textContent = i + 1;
+    if (i === state.current) cell.classList.add("current");
+    if (state.answers[q.id]) cell.classList.add("answered");
+    if (state.flagged.has(q.id)) cell.classList.add("flagged");
+    cell.onclick = () => { state.current = i; renderNav(); renderQuestion(); };
+    grid.appendChild(cell);
+  });
 }
 
-function startQuiz(e, zi, qi) {
-  e.stopPropagation();
-  var area = document.getElementById('quiz-' + zi);
-  area.classList.add('open');
-  showQuestion(zi, qi);
+function renderQuestion() {
+  const q = state.questions[state.current];
+  const existing = state.answers[q.id];
+
+  document.getElementById("q-category").textContent = q.cat;
+  document.getElementById("q-progress").textContent = "Question " + (state.current + 1) + " of " + state.questions.length;
+  document.getElementById("q-stem").textContent = q.stem;
+
+  const instr = document.getElementById("q-instruction");
+  if (q.type === "sata") {
+    instr.textContent = "Select all that apply.";
+    instr.classList.remove("hidden");
+  } else {
+    instr.classList.add("hidden");
+  }
+
+  const optsEl = document.getElementById("q-options");
+  const calcEl = document.getElementById("calc-area");
+  optsEl.innerHTML = "";
+  calcEl.innerHTML = "";
+
+  if (q.type === "calc") {
+    optsEl.classList.add("hidden");
+    calcEl.classList.remove("hidden");
+    calcEl.innerHTML = '<input type="number" step="any" class="calc-input" id="calc-input" placeholder="Enter your answer"><span class="calc-unit">' + q.unit + '</span>';
+    if (existing) document.getElementById("calc-input").value = existing.calcValue;
+    if (existing) document.getElementById("calc-input").disabled = true;
+  } else {
+    optsEl.classList.remove("hidden");
+    calcEl.classList.add("hidden");
+    const styleClass = q.type === "sata" ? "checkbox-style" : "radio-style";
+    q.options.forEach((opt, i) => {
+      const div = document.createElement("div");
+      div.className = "option " + styleClass;
+      const selectedArr = existing ? existing.selected : [];
+      if (selectedArr.includes(i)) div.classList.add("selected");
+      div.innerHTML = '<span class="option-marker">' + (selectedArr.includes(i) ? "&#10003;" : "") + '</span><span>' + opt + '</span>';
+      if (!existing) {
+        div.onclick = () => toggleOption(q, i, div, styleClass);
+      }
+      optsEl.appendChild(div);
+    });
+  }
+
+  // rationale display
+  const rationaleEl = document.getElementById("q-rationale");
+  const submitBtn = document.getElementById("btn-submit");
+  const nextBtn = document.getElementById("btn-next");
+
+  if (existing && state.mode === "practice") {
+    showRationale(q, existing);
+    submitBtn.classList.add("hidden");
+    nextBtn.classList.remove("hidden");
+  } else if (existing && state.mode === "timed") {
+    rationaleEl.classList.add("hidden");
+    submitBtn.classList.add("hidden");
+    nextBtn.classList.remove("hidden");
+  } else {
+    rationaleEl.classList.add("hidden");
+    submitBtn.classList.remove("hidden");
+    nextBtn.classList.add("hidden");
+  }
+
+  // flag button state
+  const flagBtn = document.getElementById("btn-flag");
+  flagBtn.classList.toggle("active", state.flagged.has(q.id));
+  flagBtn.innerHTML = (state.flagged.has(q.id) ? "&#9873; Flagged" : "&#9872; Flag for review");
+
+  document.getElementById("btn-prev").disabled = state.current === 0;
 }
 
-function showQuestion(zi, qi) {
-  var area = document.getElementById('quiz-' + zi);
-  var q = zones[zi].questions[qi];
-  var total = zones[zi].questions.length;
-  if (!q) { area.innerHTML = '<div class="done-msg">✓ Zone complete! Great work.</div>'; return; }
+let pendingSelection = [];
 
-  var typeClass = q.type === 'sata' ? 'sata' : q.type === 'delegation' ? 'delegation' : q.type === 'priority' ? 'priority' : q.type === 'instinct' ? 'instinct' : '';
-  var sataNoteHTML = q.type === 'sata' ? '<div class="sata-note">Select ALL that apply, then click Submit.</div>' : '';
+function toggleOption(q, idx, div, styleClass) {
+  if (q.type === "mc" || q.type === "calc") {
+    document.querySelectorAll("#q-options .option").forEach(o => {
+      o.classList.remove("selected");
+      o.querySelector(".option-marker").innerHTML = "";
+    });
+    div.classList.add("selected");
+    div.querySelector(".option-marker").innerHTML = "&#10003;";
+    pendingSelection = [idx];
+  } else {
+    div.classList.toggle("selected");
+    div.querySelector(".option-marker").innerHTML = div.classList.contains("selected") ? "&#10003;" : "";
+    const set = new Set(pendingSelection);
+    if (set.has(idx)) set.delete(idx); else set.add(idx);
+    pendingSelection = [...set];
+  }
+}
 
-  var optsHTML = q.opts.map(function(o, oi) {
-    if (q.type === 'sata') {
-      return '<button class="q-opt" id="opt-' + zi + '-' + qi + '-' + oi + '" onclick="toggleSATA(' + zi + ',' + qi + ',' + oi + ')">' + o + '</button>';
+function showRationale(q, ans) {
+  const el = document.getElementById("q-rationale");
+  el.classList.remove("hidden");
+  el.className = "rationale " + (ans.correct ? "correct" : "incorrect");
+  el.innerHTML = '<span class="verdict">' + (ans.correct ? "Correct" : "Incorrect") + '</span>' + q.rationale;
+}
+
+document.getElementById("btn-submit").onclick = () => {
+  const q = state.questions[state.current];
+  let answerRecord;
+
+  if (q.type === "calc") {
+    const input = document.getElementById("calc-input");
+    const val = parseFloat(input.value);
+    if (isNaN(val)) return;
+    const correct = Math.abs(val - q.correctValue) <= (q.tolerance || 0.01);
+    answerRecord = { calcValue: val, correct: correct };
+    input.disabled = true;
+  } else {
+    if (pendingSelection.length === 0) return;
+    const sel = [...pendingSelection].sort();
+    const correctSet = [...q.correct].sort();
+    const correct = sel.length === correctSet.length && sel.every((v, i) => v === correctSet[i]);
+    answerRecord = { selected: sel, correct: correct };
+  }
+
+  state.answers[q.id] = answerRecord;
+  pendingSelection = [];
+  renderNav();
+  renderQuestion();
+};
+
+document.getElementById("btn-next").onclick = () => {
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    pendingSelection = [];
+    renderNav();
+    renderQuestion();
+  }
+};
+
+document.getElementById("btn-prev").onclick = () => {
+  if (state.current > 0) {
+    state.current--;
+    pendingSelection = [];
+    renderNav();
+    renderQuestion();
+  }
+};
+
+document.getElementById("btn-flag").onclick = () => {
+  const q = state.questions[state.current];
+  if (state.flagged.has(q.id)) state.flagged.delete(q.id);
+  else state.flagged.add(q.id);
+  renderNav();
+  renderQuestion();
+};
+
+document.getElementById("btn-finish").onclick = () => {
+  if (confirm("Finish the exam and see your results?")) {
+    showResults();
+  }
+};
+
+// ========================================================================
+// RESULTS SCREEN
+// ========================================================================
+function showResults() {
+  document.getElementById("screen-exam").classList.add("hidden");
+  document.getElementById("screen-results").classList.remove("hidden");
+  document.getElementById("header-sub").textContent = "Results";
+
+  const reminderEl = document.getElementById("export-reminder");
+  if (reminderEl) {
+    reminderEl.textContent = "\uD83D\uDCE9 Send this to your tutor: tap a button below, then paste or attach it in your usual text or email to her.";
+    reminderEl.classList.remove("saved");
+  }
+
+  const total = state.questions.length;
+  let correctCount = 0;
+  const catStats = {};
+
+  state.questions.forEach(q => {
+    const ans = state.answers[q.id];
+    const isCorrect = ans ? ans.correct : false;
+    if (isCorrect) correctCount++;
+    if (!catStats[q.cat]) catStats[q.cat] = { correct: 0, total: 0 };
+    catStats[q.cat].total++;
+    if (isCorrect) catStats[q.cat].correct++;
+  });
+
+  const pct = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+  document.getElementById("result-pct").textContent = pct + "%";
+  document.getElementById("result-frac").textContent = correctCount + " / " + total + " correct";
+
+  // store for export
+  state.lastResult = { pct: pct, correctCount: correctCount, total: total, catStats: catStats, exported: false };
+
+  const readinessEl = document.getElementById("result-readiness");
+  let readinessLabel = "";
+  if (pct >= 75) {
+    readinessEl.className = "readiness strong";
+    readinessLabel = "Strong \u2014 likely NCLEX-ready territory";
+  } else if (pct >= 60) {
+    readinessEl.className = "readiness moderate";
+    readinessLabel = "Moderate \u2014 keep practicing weak areas";
+  } else {
+    readinessEl.className = "readiness needs-work";
+    readinessLabel = "Needs more review before testing";
+  }
+  readinessEl.textContent = readinessLabel;
+  state.lastResult.readinessLabel = readinessLabel;
+
+  const breakdownEl = document.getElementById("breakdown-rows");
+  breakdownEl.innerHTML = "";
+  Object.keys(catStats).sort().forEach(cat => {
+    const s = catStats[cat];
+    const catPct = Math.round((s.correct / s.total) * 100);
+    const color = catPct >= 75 ? "var(--sage)" : catPct >= 60 ? "var(--amber)" : "var(--brick)";
+    const row = document.createElement("div");
+    row.className = "cat-row";
+    row.innerHTML =
+      '<span class="label">' + cat + '</span>' +
+      '<span class="bar-track"><span class="bar-fill" style="width:' + catPct + '%; background:' + color + ';"></span></span>' +
+      '<span class="pct-label">' + catPct + '%</span>';
+    breakdownEl.appendChild(row);
+  });
+
+  const reviewEl = document.getElementById("review-rows");
+  reviewEl.innerHTML = "";
+  const reviewData = [];
+  state.questions.forEach((q, i) => {
+    const ans = state.answers[q.id];
+    const isCorrect = ans ? ans.correct : false;
+    const item = document.createElement("div");
+    item.className = "review-item " + (isCorrect ? "right" : "wrong");
+    let yourAnswerText = "Not answered";
+    if (ans) {
+      if (q.type === "calc") {
+        yourAnswerText = ans.calcValue + " " + q.unit + " (correct: " + q.correctValue + " " + q.unit + ")";
+      } else {
+        yourAnswerText = ans.selected.map(idx => q.options[idx]).join("; ");
+      }
     }
-    return '<button class="q-opt" id="opt-' + zi + '-' + qi + '-' + oi + '" onclick="answer(' + zi + ',' + qi + ',' + oi + ')">' + o + '</button>';
-  }).join('');
-
-  var submitHTML = q.type === 'sata' ? '<button class="sata-submit" id="submit-' + zi + '-' + qi + '" onclick="submitSATA(' + zi + ',' + qi + ')">Submit Answer</button>' : '';
-
-  area.innerHTML =
-    '<div class="progress">Question ' + (qi+1) + ' of ' + total + '</div>' +
-    '<div class="q-label ' + typeClass + '">' + q.label + '</div>' +
-    '<div class="q-text">' + q.q.replace(/\n/g,'<br>') + '</div>' +
-    sataNoteHTML + optsHTML + submitHTML +
-    '<div class="q-feedback" id="fb-' + zi + '-' + qi + '">' + q.fb + '</div>' +
-    '<button class="next-btn" id="next-' + zi + '-' + qi + '" onclick="showQuestion(' + zi + ',' + (qi+1) + ')">Next →</button>';
-
-  if (q.type === 'sata') sataPending[zi + '-' + qi] = [];
-}
-
-function toggleSATA(zi, qi, oi) {
-  var key = zi + '-' + qi;
-  var btn = document.getElementById('opt-' + zi + '-' + qi + '-' + oi);
-  var idx = sataPending[key].indexOf(oi);
-  if (idx === -1) { sataPending[key].push(oi); btn.style.background = '#EEEDFE'; btn.style.borderColor = '#7F77DD'; }
-  else { sataPending[key].splice(idx,1); btn.style.background = '#fff'; btn.style.borderColor = '#e0dbd6'; }
-}
-
-function submitSATA(zi, qi) {
-  var q = zones[zi].questions[qi];
-  var key = zi + '-' + qi;
-  var selected = sataPending[key].sort();
-  var correct = q.ans.slice().sort();
-  var isCorrect = JSON.stringify(selected) === JSON.stringify(correct);
-  totalAnswered++; if (isCorrect) totalCorrect++;
-  updateScore();
-  q.opts.forEach(function(_, oi) {
-    var btn = document.getElementById('opt-' + zi + '-' + qi + '-' + oi);
-    btn.disabled = true; btn.style.background = ''; btn.style.borderColor = '';
-    if (correct.indexOf(oi) !== -1) btn.classList.add('correct');
-    else if (selected.indexOf(oi) !== -1) btn.classList.add('wrong');
+    item.innerHTML =
+      '<span class="q-num">Q' + (i + 1) + '.</span>' + q.stem + '<br><br>' +
+      '<strong>Your answer:</strong> ' + yourAnswerText + '<br>' +
+      '<strong>Rationale:</strong> ' + q.rationale;
+    reviewEl.appendChild(item);
+    reviewData.push({ num: i + 1, cat: q.cat, stem: q.stem, yourAnswer: yourAnswerText, correct: isCorrect, rationale: q.rationale });
   });
-  document.getElementById('submit-' + zi + '-' + qi).style.display = 'none';
-  document.getElementById('fb-' + zi + '-' + qi).style.display = 'block';
-  document.getElementById('next-' + zi + '-' + qi).style.display = 'block';
+  state.lastResult.reviewData = reviewData;
 }
 
-function answer(zi, qi, chosen) {
-  var q = zones[zi].questions[qi];
-  totalAnswered++; if (chosen === q.ans) totalCorrect++;
-  updateScore();
-  q.opts.forEach(function(_, oi) {
-    var btn = document.getElementById('opt-' + zi + '-' + qi + '-' + oi);
-    btn.disabled = true;
-    if (oi === q.ans) btn.classList.add('correct');
-    else if (oi === chosen && chosen !== q.ans) btn.classList.add('wrong');
+function buildReportText() {
+  const r = state.lastResult;
+  if (!r) return "";
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  let lines = [];
+  lines.push("NCLEX MOCK EXAM RESULTS");
+  lines.push(dateStr + " at " + timeStr);
+  lines.push("=".repeat(40));
+  lines.push("");
+  lines.push("SCORE: " + r.pct + "%  (" + r.correctCount + " / " + r.total + " correct)");
+  lines.push("Readiness: " + r.readinessLabel);
+  lines.push("");
+  lines.push("PERFORMANCE BY CATEGORY");
+  lines.push("-".repeat(40));
+  Object.keys(r.catStats).sort().forEach(cat => {
+    const s = r.catStats[cat];
+    const catPct = Math.round((s.correct / s.total) * 100);
+    lines.push(cat + ": " + catPct + "%  (" + s.correct + "/" + s.total + ")");
   });
-  document.getElementById('fb-' + zi + '-' + qi).style.display = 'block';
-  document.getElementById('next-' + zi + '-' + qi).style.display = 'block';
+  lines.push("");
+  lines.push("QUESTION REVIEW");
+  lines.push("-".repeat(40));
+  r.reviewData.forEach(item => {
+    lines.push("");
+    lines.push("Q" + item.num + " [" + item.cat + "] \u2014 " + (item.correct ? "CORRECT" : "INCORRECT"));
+    lines.push(item.stem);
+    lines.push("Your answer: " + item.yourAnswer);
+    lines.push("Rationale: " + item.rationale);
+  });
+  lines.push("");
+  lines.push("=".repeat(40));
+  lines.push("End of report");
+  return lines.join("\n");
 }
+
+document.getElementById("btn-copy-results").onclick = () => {
+  const text = buildReportText();
+  const confirmEl = document.getElementById("copy-confirm");
+  function showConfirm() {
+    confirmEl.classList.remove("hidden");
+    setTimeout(() => confirmEl.classList.add("hidden"), 3000);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(showConfirm).catch(() => fallbackCopy(text, showConfirm));
+  } else {
+    fallbackCopy(text, showConfirm);
+  }
+  if (state.lastResult) state.lastResult.exported = true;
+  markExportReminderSaved();
+};
+
+function fallbackCopy(text, cb) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.left = "-9999px";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); cb(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+document.getElementById("btn-download-results").onclick = () => {
+  const text = buildReportText();
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const now = new Date();
+  const fname = "NCLEX_Results_" + now.toISOString().slice(0,10) + ".txt";
+  a.href = url;
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  if (state.lastResult) state.lastResult.exported = true;
+  markExportReminderSaved();
+};
+
+function markExportReminderSaved() {
+  const el = document.getElementById("export-reminder");
+  if (!el) return;
+  el.textContent = "\u2705 Saved! Now send it to your tutor however you normally do \u2014 text, email, etc.";
+  el.classList.add("saved");
+}
+
+document.getElementById("btn-restart").onclick = () => {
+  if (state.lastResult && !state.lastResult.exported) {
+    const proceed = confirm(
+      "You haven't saved these results yet!\n\n" +
+      "Click Cancel, then use \u201cCopy results\u201d or \u201cDownload results\u201d above to send these to your tutor before starting a new exam.\n\n" +
+      "Click OK only if you're sure you don't need to save this attempt."
+    );
+    if (!proceed) return;
+  }
+  document.getElementById("screen-results").classList.add("hidden");
+  document.getElementById("screen-setup").classList.remove("hidden");
+  document.getElementById("header-sub").textContent = "Setup \u00b7 choose your exam";
+  document.getElementById("setup-warning").textContent = "";
+  renderProgressNote();
+};
+
+})();
 </script>
 </body>
 </html>
