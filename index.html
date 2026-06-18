@@ -159,6 +159,26 @@
     border-radius: 12px;
     font-weight: bold;
   }
+  .case-context {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal-mid);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .case-context .case-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: bold;
+    color: var(--teal-dark);
+    display: block;
+    margin-bottom: 6px;
+  }
   .q-stem {
     font-size: 17px;
     line-height: 1.6;
@@ -546,6 +566,7 @@
           <span class="cat-tag" id="q-category"></span>
           <span id="q-progress"></span>
         </div>
+        <div class="case-context hidden" id="q-case-context"></div>
         <div class="q-stem" id="q-stem"></div>
         <div class="q-instruction hidden" id="q-instruction"></div>
         <div class="options" id="q-options"></div>
@@ -1603,7 +1624,630 @@ const BANK = [
   stem:"Which member of the healthcare team is responsible for developing the initial nursing plan of care?",
   options:["Nursing assistant.","Licensed practical nurse.","Registered nurse.","Unit secretary."],
   correct:[2],
-  rationale:"Developing the initial nursing plan of care requires the assessment and clinical judgment scope of a registered nurse and cannot be delegated to LPNs or unlicensed personnel." }
+  rationale:"Developing the initial nursing plan of care requires the assessment and clinical judgment scope of a registered nurse and cannot be delegated to LPNs or unlicensed personnel." },
+
+// ================================================================
+// ENDOCRINE (new category)
+// ================================================================
+
+// --- DKA ---
+{ id:"en1", cat:"Endocrine", type:"mc",
+  difficulty:2,
+  stem:"A client with type 1 diabetes presents with blood glucose of 450 mg/dL, fruity breath odor, and Kussmaul respirations. What is the nurse's priority concern?",
+  options:["Hypoglycemia.","Diabetic ketoacidosis (DKA).","Hyperosmolar hyperglycemic state (HHS).","Normal post-meal glucose elevation."],
+  correct:[1],
+  rationale:"Fruity (acetone) breath, Kussmaul respirations (deep, rapid breathing to compensate for metabolic acidosis), and significantly elevated glucose are classic DKA findings, most common in type 1 diabetes." },
+
+{ id:"en2", cat:"Endocrine", type:"sata",
+  difficulty:3,
+  stem:"A nurse is caring for a client in DKA receiving an IV insulin infusion. Which interventions are appropriate? (Select all that apply.)",
+  options:["Monitor potassium levels closely, as insulin therapy can cause hypokalemia.","Administer IV fluids (typically normal saline) before or with insulin therapy.","Stop the insulin infusion once blood glucose reaches 250 mg/dL regardless of other values.","Monitor for resolution of the anion gap and ketones, not just glucose level.","Withhold all potassium replacement during DKA treatment."],
+  correct:[0,1,3],
+  rationale:"As insulin drives glucose (and potassium) into cells, hypokalemia is a major risk requiring close monitoring \u2014 potassium replacement is often needed, not withheld. Fluids are foundational to DKA treatment. The endpoint of DKA treatment is resolution of acidosis and ketosis, not just hitting a specific glucose number, since insulin must continue at a reduced rate to fully clear ketones even after glucose normalizes." },
+
+{ id:"en3", cat:"Endocrine", type:"calc",
+  difficulty:3,
+  stem:"A client in DKA is prescribed regular insulin at 0.1 units/kg/hour via continuous IV infusion. The client weighs 80 kg. How many units per hour should the nurse infuse?",
+  unit:"units/hr",
+  correctValue:8,
+  tolerance:0,
+  rationale:"80 kg \u00d7 0.1 units/kg/hr = 8 units/hr." },
+
+{ id:"en4", cat:"Endocrine", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client being treated for DKA. Four hours into treatment, the client's blood glucose has dropped from 450 mg/dL to 180 mg/dL, but the client remains tachypneic with a persistent anion gap. What is the nurse's priority understanding of this situation?",
+  options:["DKA is essentially resolved since glucose has normalized; insulin can be discontinued.","The client needs glucose added to the IV fluids and insulin continued at a lower rate, since acidosis has not yet resolved.","This indicates treatment failure requiring an immediate insulin bolus.","The client should be switched to subcutaneous insulin immediately."],
+  correct:[1],
+  rationale:"DKA resolution requires correction of the underlying acidosis and ketosis, not just glucose normalization. Once glucose drops to this range, dextrose is typically added to the IV fluids to prevent hypoglycemia while the insulin infusion continues at a lower rate until the anion gap and acidosis resolve \u2014 stopping insulin too early based on glucose alone is a common and dangerous error." },
+
+// --- HHS ---
+{ id:"en5", cat:"Endocrine", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for an older adult client with type 2 diabetes who presents with blood glucose of 800 mg/dL, severe dehydration, and altered mental status, but no Kussmaul respirations or significant ketones. What does the nurse suspect?",
+  options:["Diabetic ketoacidosis (DKA).","Hyperosmolar hyperglycemic state (HHS).","Hypoglycemic episode.","Normal aging-related glucose changes."],
+  correct:[1],
+  rationale:"HHS is typically seen in type 2 diabetes (often older adults) and presents with extremely high glucose, severe dehydration, and altered mental status \u2014 but without the significant ketosis and Kussmaul respirations seen in DKA, since enough insulin is usually present to prevent significant ketone production." },
+
+{ id:"en6", cat:"Endocrine", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client with HHS. Which nursing priorities are appropriate? (Select all that apply.)",
+  options:["Aggressive IV fluid replacement, often more than in DKA due to severe dehydration.","Monitor neurological status closely, as cerebral edema can occur with overly rapid correction.","Expect ketones to be a major focus of treatment, similar to DKA.","Correct fluid deficit gradually to avoid rapid osmotic shifts.","Recognize this condition typically develops over hours, similarly to DKA."],
+  correct:[0,1,3],
+  rationale:"HHS involves more severe dehydration than DKA, requiring aggressive but carefully monitored fluid replacement (gradual correction to avoid cerebral edema from rapid osmotic shifts). Ketones are not a major feature of HHS, unlike DKA. HHS also typically develops more gradually, over days, rather than the more rapid onset of DKA." },
+
+// --- SIADH ---
+{ id:"en7", cat:"Endocrine", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client with SIADH (syndrome of inappropriate antidiuretic hormone). Which finding is expected?",
+  options:["Dilute urine with high urine output.","Concentrated urine with low urine output, despite dilutional hyponatremia.","Elevated serum sodium.","Excessive thirst with high fluid intake recommended."],
+  correct:[1],
+  rationale:"SIADH causes excess water retention, leading to concentrated, low-volume urine despite the client having dilutional hyponatremia (low serum sodium from excess water, not sodium loss). Fluid restriction, not increased intake, is the priority intervention." },
+
+{ id:"en8", cat:"Endocrine", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client with SIADH and a serum sodium of 118 mEq/L. Which findings would the nurse expect related to this sodium level? (Select all that apply.)",
+  options:["Headache and confusion.","Seizures if severe and untreated.","Polyuria with dilute urine.","Nausea and malaise.","Excessive thirst driving the client to drink more water."],
+  correct:[0,1,3],
+  rationale:"Significant hyponatremia from SIADH causes neurological symptoms (headache, confusion, seizures if severe) and GI symptoms (nausea, malaise) from cellular swelling. Urine remains concentrated and low-volume (not polyuria/dilute) in SIADH, and thirst mechanisms are not the driving issue here \u2014 the problem is ADH-driven water retention, not fluid intake." },
+
+{ id:"en9", cat:"Endocrine", type:"mc",
+  difficulty:2,
+  stem:"What is the primary treatment approach for a client with SIADH and mild hyponatremia?",
+  options:["Encourage increased oral fluid intake.","Restrict fluid intake.","Administer large volumes of IV normal saline rapidly.","Administer desmopressin (DDAVP)."],
+  correct:[1],
+  rationale:"Fluid restriction is the cornerstone of SIADH management for mild-moderate cases, since the problem is water retention from excess ADH. Desmopressin would worsen SIADH (it mimics ADH); rapid saline correction risks dangerous overcorrection." },
+
+// --- Diabetes Insipidus ---
+{ id:"en10", cat:"Endocrine", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client with diabetes insipidus. Which finding is expected?",
+  options:["Concentrated urine with low output.","Dilute urine with extremely high output (often 4-15 L/day) and intense thirst.","Hyponatremia with fluid retention.","Decreased serum sodium with normal urine output."],
+  correct:[1],
+  rationale:"Diabetes insipidus is the opposite physiology of SIADH \u2014 a lack of (or resistance to) ADH causes the kidneys to excrete enormous volumes of dilute urine, leading to intense thirst and risk of severe dehydration and hypernatremia if fluid intake doesn't keep pace." },
+
+{ id:"en11", cat:"Endocrine", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client with central diabetes insipidus being treated with desmopressin (DDAVP). Which assessment findings indicate the medication is working effectively? (Select all that apply.)",
+  options:["Decreased urine output toward a normal range.","Urine specific gravity increasing toward normal.","Continued extreme thirst and high fluid intake.","Stabilizing serum sodium level.","Urine output remaining at 10+ liters per day."],
+  correct:[0,1,3],
+  rationale:"Effective desmopressin therapy reduces the excessive urine output, increases urine concentration (specific gravity) toward normal, and helps stabilize serum sodium. Continued extreme thirst/output would indicate the medication is not yet effective or the dose needs adjustment." },
+
+// --- Addison's Disease ---
+{ id:"en12", cat:"Endocrine", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client with Addison's disease. Which finding is consistent with this diagnosis?",
+  options:["Hypertension and weight gain.","Hyperpigmentation of the skin, hypotension, and weakness.","Moon face and buffalo hump.","Hyperglycemia as the primary presenting symptom."],
+  correct:[1],
+  rationale:"Addison's disease (primary adrenal insufficiency) classically presents with hyperpigmentation (from elevated ACTH), hypotension, weakness, and fatigue due to insufficient cortisol and aldosterone. Moon face/buffalo hump and weight gain describe Cushing's syndrome \u2014 the opposite condition." },
+
+{ id:"en13", cat:"Endocrine", type:"sata",
+  difficulty:5,
+  stem:"A nurse is caring for a client with known Addison's disease who is currently experiencing severe vomiting, hypotension (BP 78/42), and profound weakness after missing several doses of their prescribed corticosteroid. What is the nurse's priority concern, and which findings support it? (Select all that apply.)",
+  options:["This presentation is consistent with an addisonian crisis (acute adrenal insufficiency).","Hyperkalemia is a likely accompanying finding.","Hypoglycemia is a likely accompanying finding.","This is a mild, expected fluctuation not requiring urgent intervention.","Hypernatremia would be the expected sodium finding."],
+  correct:[0,1,2],
+  rationale:"Missed corticosteroid doses in a client with Addison's disease can precipitate addisonian crisis \u2014 a life-threatening emergency with severe hypotension, vomiting, and weakness. Cortisol and aldosterone deficiency cause hyperkalemia (not normal/low) and hypoglycemia (not hyperglycemia), and hyponatremia (not hypernatremia) due to impaired sodium retention. This requires urgent IV corticosteroid replacement, not routine monitoring." },
+
+// --- Cushing's Syndrome ---
+{ id:"en14", cat:"Endocrine", type:"mc",
+  difficulty:2,
+  stem:"A nurse is assessing a client with suspected Cushing's syndrome. Which finding would the nurse expect?",
+  options:["Weight loss and hypotension.","Truncal obesity, moon face, and hypertension.","Hyperpigmentation and hypoglycemia.","Severe dehydration with polyuria."],
+  correct:[1],
+  rationale:"Cushing's syndrome (excess cortisol) classically presents with truncal/central obesity, moon face, buffalo hump, hypertension, and often hyperglycemia \u2014 essentially the opposite presentation of Addison's disease." },
+
+{ id:"en15", cat:"Endocrine", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client with Cushing's syndrome. Which nursing priorities are appropriate? (Select all that apply.)",
+  options:["Monitor blood glucose closely, as hyperglycemia is common.","Implement fall precautions due to muscle wasting and osteoporosis risk.","Monitor for signs of infection, as immune response is suppressed.","Encourage a high-sodium diet to support blood pressure.","Monitor potassium levels, as hypokalemia can occur."],
+  correct:[0,1,2,4],
+  rationale:"Cushing's clients need glucose monitoring (steroid-induced hyperglycemia), fall precautions (muscle wasting, bone loss), infection monitoring (immunosuppression from excess cortisol), and potassium monitoring (excess cortisol can cause hypokalemia). A high-sodium diet would worsen the fluid retention and hypertension already present in Cushing's, not help it." },
+
+// --- Thyroid Storm ---
+{ id:"en16", cat:"Endocrine", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client with hyperthyroidism who develops a fever of 104\u00b0F, HR of 160 bpm, severe agitation, and profuse sweating. What is the nurse's priority concern?",
+  options:["Expected progression of hyperthyroidism requiring no new action.","Thyroid storm, a life-threatening emergency.","A typical anxiety response.","Normal side effect of antithyroid medication."],
+  correct:[1],
+  rationale:"Thyroid storm is a life-threatening exacerbation of hyperthyroidism presenting with severe hyperthermia, tachycardia, agitation, and diaphoresis. It requires immediate, aggressive treatment, not routine monitoring or dismissal as anxiety." },
+
+{ id:"en17", cat:"Endocrine", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client in thyroid storm. Which interventions does the nurse anticipate? (Select all that apply.)",
+  options:["Administering antithyroid medications (e.g., PTU or methimazole).","Administering beta-blockers to control cardiac symptoms.","Active cooling measures for hyperthermia.","Encouraging increased physical activity to reduce agitation.","Administering corticosteroids as part of treatment."],
+  correct:[0,1,2,4],
+  rationale:"Thyroid storm management includes antithyroid medications, beta-blockers (for the severe tachycardia/cardiac symptoms), active cooling for fever, and corticosteroids (which help block conversion of T4 to the more active T3). Increased activity would worsen the hypermetabolic state and is contraindicated; rest and a calm environment are needed instead." },
+
+// --- Myxedema Coma ---
+{ id:"en18", cat:"Endocrine", type:"mc",
+  difficulty:5,
+  stem:"A nurse is caring for an older adult client with a history of hypothyroidism who is found to be severely hypothermic (temp 88\u00b0F), bradycardic, hypotensive, and minimally responsive. What is the nurse's priority concern?",
+  options:["Normal hypothermia from environmental exposure.","Myxedema coma, a life-threatening complication of severe hypothyroidism.","Expected progression of untreated hyperthyroidism.","A typical sedative medication effect."],
+  correct:[1],
+  rationale:"Myxedema coma is a rare but life-threatening complication of severe, often long-untreated hypothyroidism, presenting with profound hypothermia, bradycardia, hypotension, and altered mental status. It requires emergent IV thyroid hormone replacement and supportive care, and carries a high mortality rate if not recognized and treated promptly." },
+
+{ id:"en19", cat:"Endocrine", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client with hypothyroidism. Which finding would the nurse expect?",
+  options:["Tachycardia and weight loss.","Bradycardia, weight gain, and cold intolerance.","Exophthalmos and heat intolerance.","Diarrhea and hyperactivity."],
+  correct:[1],
+  rationale:"Hypothyroidism slows metabolic processes, causing bradycardia, weight gain, cold intolerance, fatigue, and constipation \u2014 the opposite presentation of hyperthyroidism (tachycardia, weight loss, heat intolerance, diarrhea)." },
+
+// --- Hypocalcemia ---
+{ id:"en20", cat:"Endocrine", type:"mc",
+  difficulty:2,
+  stem:"A nurse is assessing a client for hypocalcemia following a thyroidectomy. Which assessment technique would the nurse use to elicit Chvostek's sign?",
+  options:["Inflating a blood pressure cuff on the arm and watching for carpal spasm.","Tapping the facial nerve in front of the ear and observing for facial muscle twitching.","Checking deep tendon reflexes at the knee.","Palpating the thyroid gland for nodules."],
+  correct:[1],
+  rationale:"Chvostek's sign is elicited by tapping the facial nerve (near the ear/cheek area) and observing for facial twitching, indicating neuromuscular irritability from hypocalcemia. Trousseau's sign uses the blood pressure cuff method instead." },
+
+{ id:"en21", cat:"Endocrine", type:"sata",
+  difficulty:3,
+  stem:"A nurse is caring for a client with hypocalcemia. Which findings are consistent with this diagnosis? (Select all that apply.)",
+  options:["Positive Trousseau's sign.","Muscle cramps and tetany.","Decreased deep tendon reflexes.","Numbness and tingling around the mouth and fingertips.","Cardiac dysrhythmias including prolonged QT interval."],
+  correct:[0,1,3,4],
+  rationale:"Hypocalcemia causes increased neuromuscular excitability: positive Trousseau's/Chvostek's signs, tetany, cramping, perioral/fingertip numbness, and prolonged QT predisposing to dysrhythmias. Reflexes are typically increased (hyperreflexia), not decreased, with hypocalcemia." },
+
+// --- Hypercalcemia ---
+{ id:"en22", cat:"Endocrine", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client with hypercalcemia. Which finding would the nurse expect?",
+  options:["Hyperactive bowel sounds and diarrhea.","Decreased deep tendon reflexes, lethargy, and constipation.","Tetany and muscle spasms.","Positive Chvostek's and Trousseau's signs."],
+  correct:[1],
+  rationale:"Hypercalcemia depresses neuromuscular excitability, causing decreased reflexes, lethargy, muscle weakness, and constipation (decreased GI motility) \u2014 the opposite pattern of hypocalcemia's hyperexcitability findings like tetany and positive Chvostek's/Trousseau's signs." },
+
+{ id:"en23", cat:"Endocrine", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client with severe hypercalcemia (calcium 14 mg/dL) related to malignancy. The HCP orders IV fluids and calcitonin. What is the priority nursing rationale for this treatment approach?",
+  options:["IV fluids promote renal excretion of calcium, while calcitonin inhibits bone resorption, both helping to lower serum calcium.","IV fluids are given to thicken the blood and stabilize calcium levels.","Calcitonin is given to raise calcium levels further before stabilizing.","This combination is used primarily to manage pain, not calcium levels."],
+  correct:[0],
+  rationale:"IV fluids (often saline) promote renal calcium excretion and help with the dehydration that often accompanies hypercalcemia, while calcitonin works by inhibiting osteoclast activity (bone breakdown), reducing the release of calcium into the blood \u2014 together lowering serum calcium through complementary mechanisms." },
+
+// --- Mixed/General Endocrine ---
+{ id:"en24", cat:"Endocrine", type:"mc",
+  difficulty:2,
+  stem:"A nurse is teaching a client with type 1 diabetes about sick day management. Which instruction is most important?",
+  options:["Stop taking insulin if you cannot eat normally.","Continue taking insulin even if you cannot eat, and monitor blood glucose more frequently.","Insulin needs decrease significantly during illness.","Only check blood glucose once per day during illness."],
+  correct:[1],
+  rationale:"Illness often increases insulin needs due to stress hormones raising blood glucose, even if oral intake decreases. Insulin should not be stopped, and more frequent glucose monitoring (and often ketone checking) is needed during illness to prevent DKA." },
+
+{ id:"en25", cat:"Endocrine", type:"calc",
+  difficulty:2,
+  stem:"A client's blood glucose is 280 mg/dL. The sliding scale calls for 2 units of regular insulin for every 50 mg/dL over 150 mg/dL. How many units should the nurse administer?",
+  unit:"units",
+  correctValue:5.2,
+  tolerance:0.3,
+  rationale:"280 \u2013 150 = 130 mg/dL over threshold. 130 \u00f7 50 = 2.6 increments. 2.6 \u00d7 2 units = 5.2 units (in practice this would round per the specific sliding scale protocol, but the calculation itself yields 5.2)." },
+
+// ================================================================
+// ENDOCRINE NGN CASE STUDY 1 — DKA unfolding case
+// ================================================================
+{ id:"en_case1_q1", cat:"Endocrine", type:"mc",
+  difficulty:4,
+  caseContext:"A 19-year-old client with type 1 diabetes is brought to the emergency department by a roommate who reports the client has been vomiting for 2 days and \u201cseems out of it.\u201d Vital signs: Temp 99.1\u00b0F, HR 122, RR 32 and deep, BP 96/58, SpO2 98%. Blood glucose: 580 mg/dL. The client is oriented to name only.",
+  casePart: 1, caseTotal: 3,
+  stem:"Recognize Cues: Which finding is the MOST significant indicator that this client requires immediate intervention?",
+  options:["Heart rate of 122 bpm.","Deep, rapid respirations (Kussmaul breathing) at a rate of 32.","Two days of vomiting reported by the roommate.","Temperature of 99.1\u00b0F."],
+  correct:[1],
+  rationale:"Kussmaul respirations are the body's compensatory response to severe metabolic acidosis in DKA \u2014 this finding, combined with the markedly elevated glucose and altered mental status, signals a developing life-threatening acid-base emergency requiring the most urgent recognition and action, beyond the tachycardia or vomiting history alone." },
+
+{ id:"en_case1_q2", cat:"Endocrine", type:"sata",
+  difficulty:5,
+  caseContext:"A 19-year-old client with type 1 diabetes is brought to the emergency department by a roommate who reports the client has been vomiting for 2 days and \u201cseems out of it.\u201d Vital signs: Temp 99.1\u00b0F, HR 122, RR 32 and deep, BP 96/58, SpO2 98%. Blood glucose: 580 mg/dL. The client is oriented to name only.\n\nLab results return: pH 7.18, bicarbonate 9 mEq/L, potassium 5.6 mEq/L, serum ketones positive, anion gap 24.",
+  casePart: 2, caseTotal: 3,
+  stem:"Analyze Cues: Which of these findings support a diagnosis of diabetic ketoacidosis? (Select all that apply.)",
+  options:["pH of 7.18.","Bicarbonate of 9 mEq/L.","Potassium of 5.6 mEq/L.","Positive serum ketones.","Anion gap of 24."],
+  correct:[0,1,3,4],
+  rationale:"The acidotic pH, low bicarbonate (metabolic acidosis), positive ketones, and elevated anion gap are the defining laboratory features of DKA. The potassium of 5.6 is also a real finding (a SATA distractor worth noting: it's actually a consequence of the acidosis, as cells release potassium in exchange for hydrogen ions, but it isn't itself a diagnostic criterion for DKA \u2014 making this the one to exclude from a 'defines DKA' selection if the question is asking specifically about diagnostic criteria.)" },
+
+{ id:"en_case1_q3", cat:"Endocrine", type:"mc",
+  difficulty:5,
+  caseContext:"A 19-year-old client with type 1 diabetes is brought to the emergency department by a roommate who reports the client has been vomiting for 2 days and \u201cseems out of it.\u201d Vital signs: Temp 99.1\u00b0F, HR 122, RR 32 and deep, BP 96/58, SpO2 98%. Blood glucose: 580 mg/dL. The client is oriented to name only.\n\nLab results: pH 7.18, bicarbonate 9 mEq/L, potassium 5.6 mEq/L, serum ketones positive, anion gap 24. The HCP orders IV fluids, a continuous insulin infusion, and frequent potassium monitoring.",
+  casePart: 3, caseTotal: 3,
+  stem:"Generate Solutions / Take Action: The nurse notes the potassium is 5.6 mEq/L (elevated) before insulin therapy begins. What is the most important nursing consideration regarding this potassium level as treatment starts?",
+  options:["The elevated potassium means potassium supplementation should begin immediately, before insulin.","Insulin therapy will drive potassium into cells, so this elevated level will likely drop quickly and require close monitoring to avoid hypokalemia.","The potassium level is unrelated to the DKA treatment plan.","IV fluids alone will correct the potassium without any further monitoring needed."],
+  correct:[1],
+  rationale:"This is a critical and frequently tested DKA concept: the potassium often starts elevated (due to acidosis driving potassium out of cells) but drops rapidly once insulin therapy begins, since insulin pushes both glucose AND potassium back into cells. The nurse must anticipate this drop and monitor closely, often needing to add potassium replacement once levels start falling \u2014 not give it immediately while the level is still high, which could cause dangerous hyperkalemia." },
+
+// ================================================================
+// ENDOCRINE NGN CASE STUDY 2 — Addisonian crisis unfolding case
+// ================================================================
+{ id:"en_case2_q1", cat:"Endocrine", type:"mc",
+  difficulty:4,
+  caseContext:"A 45-year-old client with a known history of Addison's disease is admitted after a car accident 2 days ago. The client has been NPO and has not received their home corticosteroid medication since admission. The nurse notes the client is now hypotensive (82/50), weak, and reports nausea and abdominal pain.",
+  casePart: 1, caseTotal: 3,
+  stem:"Recognize Cues: Which piece of information from this scenario is MOST critical for the nurse to recognize as contributing to the client's current presentation?",
+  options:["The client was in a car accident 2 days ago.","The client has not received their home corticosteroid medication since admission.","The client reports nausea and abdominal pain.","The client is 45 years old."],
+  correct:[1],
+  rationale:"For a client with Addison's disease, missing scheduled corticosteroid replacement is a direct precipitant of adrenal crisis, especially compounded by the physical stress of trauma. This is the key piece of recognition that should immediately raise concern for addisonian crisis, more specific and actionable than the other contextual details." },
+
+{ id:"en_case2_q2", cat:"Endocrine", type:"sata",
+  difficulty:4,
+  caseContext:"A 45-year-old client with a known history of Addison's disease is admitted after a car accident 2 days ago. The client has been NPO and has not received their home corticosteroid medication since admission. The nurse notes the client is now hypotensive (82/50), weak, and reports nausea and abdominal pain.\n\nLab results: sodium 128 mEq/L, potassium 6.1 mEq/L, glucose 58 mg/dL.",
+  casePart: 2, caseTotal: 3,
+  stem:"Prioritize Hypotheses: Which of these lab findings are consistent with addisonian crisis? (Select all that apply.)",
+  options:["Sodium of 128 mEq/L (low).","Potassium of 6.1 mEq/L (high).","Glucose of 58 mg/dL (low).","All three findings are unrelated to adrenal function.","These findings instead suggest diabetic ketoacidosis."],
+  correct:[0,1,2],
+  rationale:"Addisonian crisis (acute adrenal insufficiency) causes hyponatremia and hyperkalemia (from aldosterone deficiency impairing sodium retention and potassium excretion) and hypoglycemia (from cortisol deficiency impairing gluconeogenesis). This triad together strongly supports adrenal crisis rather than DKA, which would show hyperglycemia, not hypoglycemia." },
+
+{ id:"en_case2_q3", cat:"Endocrine", type:"mc",
+  difficulty:5,
+  caseContext:"A 45-year-old client with a known history of Addison's disease is admitted after a car accident 2 days ago. The client has been NPO and has not received their home corticosteroid medication since admission. The nurse notes the client is now hypotensive (82/50), weak, and reports nausea and abdominal pain.\n\nLab results: sodium 128 mEq/L, potassium 6.1 mEq/L, glucose 58 mg/dL. The HCP orders IV hydrocortisone, IV fluids, and dextrose.",
+  casePart: 3, caseTotal: 3,
+  stem:"Take Action: The nurse prepares to administer the ordered IV hydrocortisone. What is the priority rationale for giving this medication urgently in this situation?",
+  options:["Hydrocortisone will primarily treat the client's pain from the accident.","Hydrocortisone replaces the deficient cortisol, which is essential for the client's hemodynamic stability, glucose regulation, and electrolyte balance.","Hydrocortisone is given mainly to prevent infection after the accident.","Hydrocortisone replacement can safely be delayed until oral medications can be resumed."],
+  correct:[1],
+  rationale:"In addisonian crisis, IV corticosteroid replacement is the definitive, urgent treatment \u2014 cortisol is essential for maintaining vascular tone (blood pressure), gluconeogenesis (glucose levels), and supporting the body's stress response. Delaying this treatment risks cardiovascular collapse; it is not primarily for pain or infection prevention, and cannot wait for oral resumption given the severity of this presentation." },
+
+// ================================================================
+// ENDOCRINE NGN CASE STUDY 3 — Thyroid storm unfolding case
+// ================================================================
+{ id:"en_case3_q1", cat:"Endocrine", type:"mc",
+  difficulty:4,
+  caseContext:"A 32-year-old client with a history of Graves' disease (hyperthyroidism) underwent emergency appendectomy yesterday. Today, the nurse notes the client is restless, diaphoretic, and reports feeling \u201cmy heart is racing.\u201d Vital signs: Temp 103.4\u00b0F, HR 152, RR 26, BP 158/94.",
+  casePart: 1, caseTotal: 3,
+  stem:"Recognize Cues: Given this client's history and current presentation, which combination of findings is most concerning?",
+  options:["Temp 103.4\u00b0F and HR 152 in a client with untreated/recent hyperthyroidism history, following the physical stress of surgery.","Restlessness alone, which is common after any surgery.","BP 158/94, which is a routine post-operative finding.","RR 26, which is expected after abdominal surgery."],
+  correct:[0],
+  rationale:"The combination of severe hyperthermia and marked tachycardia, in a client with a hyperthyroid history who just experienced the physiological stress of surgery (a known trigger), should immediately raise concern for thyroid storm \u2014 recognizing this specific combination in this specific clinical context is the key skill being tested, not just treating each vital sign in isolation." },
+
+{ id:"en_case3_q2", cat:"Endocrine", type:"sata",
+  difficulty:4,
+  caseContext:"A 32-year-old client with a history of Graves' disease (hyperthyroidism) underwent emergency appendectomy yesterday. Today, the nurse notes the client is restless, diaphoretic, and reports feeling \u201cmy heart is racing.\u201d Vital signs: Temp 103.4\u00b0F, HR 152, RR 26, BP 158/94. The HCP suspects thyroid storm and orders labs and treatment.",
+  casePart: 2, caseTotal: 3,
+  stem:"Generate Solutions: Which interventions should the nurse anticipate as part of thyroid storm management? (Select all that apply.)",
+  options:["Beta-blocker administration to control heart rate.","Active cooling measures for the fever.","Antithyroid medication administration.","Encouraging ambulation to help metabolize excess thyroid hormone.","A calm, low-stimulation environment."],
+  correct:[0,1,2,4],
+  rationale:"Thyroid storm management includes beta-blockers (cardiac symptom control), cooling measures, antithyroid medications, and a calm environment to reduce sympathetic stimulation. Increased activity would worsen the already dangerously hypermetabolic state and is contraindicated \u2014 rest, not ambulation, is needed." },
+
+{ id:"en_case3_q3", cat:"Endocrine", type:"mc",
+  difficulty:5,
+  caseContext:"A 32-year-old client with a history of Graves' disease underwent emergency appendectomy yesterday. Today, vital signs are Temp 103.4\u00b0F, HR 152, RR 26, BP 158/94, with restlessness and diaphoresis. Thyroid storm is confirmed and treatment has begun with beta-blockers, antithyroid medication, and cooling measures.",
+  casePart: 3, caseTotal: 3,
+  stem:"Evaluate Outcomes: Which finding 4 hours after treatment initiation would best indicate the interventions are effective?",
+  options:["Temp 103.0\u00b0F and HR 150 (essentially unchanged).","Temp 100.8\u00b0F, HR 108, and the client resting calmly.","Temp 99.1\u00b0F but HR has increased to 170.","The client reports feeling 'a little better' with no objective vital sign change."],
+  correct:[1],
+  rationale:"Effective treatment should show measurable improvement across the key parameters being targeted: decreasing temperature, decreasing heart rate, and improved clinical state (calm vs. restless) together. A temp improving while HR worsens, vital signs staying essentially unchanged, or only a subjective report without objective changes would all indicate treatment is not yet adequately effective and needs reassessment." },
+
+// ================================================================
+// RESPIRATORY (new category)
+// ================================================================
+
+// --- COPD exacerbation ---
+{ id:"rs1", cat:"Respiratory", type:"mc",
+  difficulty:2,
+  stem:"A nurse is caring for a client with a COPD exacerbation. Which finding would the nurse expect?",
+  options:["Increased oxygen saturation and slow, deep breathing.","Use of accessory muscles, prolonged expiration, and wheezing.","Bradypnea with regular, unlabored breathing.","Resolution of symptoms with rest alone."],
+  correct:[1],
+  rationale:"COPD exacerbations present with increased work of breathing (accessory muscle use), prolonged expiratory phase due to air trapping, and wheezing from airway narrowing \u2014 not improved oxygenation or unlabored breathing." },
+
+{ id:"rs2", cat:"Respiratory", type:"sata",
+  difficulty:3,
+  stem:"A nurse is caring for a client during a COPD exacerbation. Which interventions are appropriate? (Select all that apply.)",
+  options:["Administer low-flow supplemental oxygen, titrated carefully.","Position the client in high Fowler's or tripod position.","Administer bronchodilators as ordered.","Encourage the client to breathe rapidly and shallowly to reduce work of breathing.","Administer high-flow oxygen at 100% to maximize saturation."],
+  correct:[0,1,2],
+  rationale:"COPD clients need carefully titrated low-flow oxygen (high-flow/high-concentration oxygen can suppress their hypoxic drive to breathe), upright positioning to maximize lung expansion, and bronchodilators. Rapid shallow breathing increases air trapping and is not therapeutic; pursed-lip breathing (slow, controlled) is the actual recommended technique, not rapid shallow breaths." },
+
+{ id:"rs3", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client with severe COPD on 2 L/min oxygen via nasal cannula. The client's SpO2 is 89%. The nurse's colleague suggests increasing oxygen to 6 L/min to improve saturation. What is the nurse's best response?",
+  options:["Agree and increase the oxygen as suggested.","Explain that increasing oxygen too much could suppress this client's hypoxic drive to breathe, and the HCP should be consulted first.","Increase the oxygen to 10 L/min instead for a faster effect.","State that oxygen therapy is not indicated for COPD clients at all."],
+  correct:[1],
+  rationale:"Clients with severe, chronic COPD may rely on a hypoxic (rather than hypercapnic) drive to breathe due to chronic CO2 retention. Rapidly increasing oxygen can suppress this drive and cause respiratory depression. The nurse should advocate for careful titration and HCP consultation rather than unilaterally increasing the flow rate significantly." },
+
+// --- Asthma attack ---
+{ id:"rs4", cat:"Respiratory", type:"mc",
+  difficulty:2,
+  stem:"A nurse is caring for a client during an acute asthma attack. Which finding indicates worsening respiratory status requiring immediate attention?",
+  options:["Loud wheezing on expiration.","The wheezing becomes quiet or absent, and the client appears more fatigued.","Mild shortness of breath with talking.","Respiratory rate of 22/min."],
+  correct:[1],
+  rationale:"A 'silent chest' (wheezing becoming quiet or absent) in an asthma attack is an ominous sign \u2014 it indicates the airways are so severely obstructed that air movement is minimal, not that the attack is resolving. This requires immediate escalation, unlike loud wheezing which, while concerning, indicates more air movement is occurring." },
+
+{ id:"rs5", cat:"Respiratory", type:"sata",
+  difficulty:3,
+  stem:"A nurse is teaching a client about asthma trigger avoidance. Which statements indicate correct understanding? (Select all that apply.)",
+  options:["\u201cI should identify and avoid my specific triggers, like pollen or pet dander.\u201d","\u201cI only need to use my rescue inhaler, not my daily controller medication.\u201d","\u201cI should use my peak flow meter to monitor my baseline lung function.\u201d","\u201cExercise should be avoided completely if I have asthma.\u201d","\u201cI should have an asthma action plan for worsening symptoms.\u201d"],
+  correct:[0,2,4],
+  rationale:"Effective asthma management includes trigger avoidance, peak flow monitoring, and having an action plan. Controller medications (often inhaled corticosteroids) are essential for daily prevention, not optional in favor of rescue inhalers alone. Exercise is generally encouraged with proper management (e.g., pre-treatment with a bronchodilator if needed), not avoided entirely." },
+
+{ id:"rs6", cat:"Respiratory", type:"calc",
+  difficulty:2,
+  stem:"A client's peak flow meter reading is 320 L/min. Their personal best is 400 L/min. What percentage of their personal best is this reading?",
+  unit:"%",
+  correctValue:80,
+  tolerance:0,
+  rationale:"320 \u00f7 400 = 0.80, or 80% of personal best \u2014 typically the boundary of the 'yellow zone' (caution) in standard asthma action plans." },
+
+// --- ARDS ---
+{ id:"rs7", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client who developed ARDS following sepsis. Which finding is characteristic of this condition?",
+  options:["Improved oxygenation despite increasing supplemental oxygen.","Severe hypoxemia refractory to supplemental oxygen, with bilateral infiltrates on chest X-ray.","Normal chest X-ray with mild hypoxemia.","Hypoxemia that resolves quickly with low-flow oxygen."],
+  correct:[1],
+  rationale:"ARDS is characterized by severe, refractory hypoxemia (oxygenation doesn't improve adequately even with high supplemental oxygen) due to diffuse alveolar damage, along with bilateral infiltrates on imaging from non-cardiogenic pulmonary edema." },
+
+{ id:"rs8", cat:"Respiratory", type:"sata",
+  difficulty:5,
+  stem:"A nurse is caring for a client with ARDS who is mechanically ventilated using a lung-protective strategy. Which ventilator-related concepts are part of this approach? (Select all that apply.)",
+  options:["Using lower tidal volumes to prevent further lung injury.","Permitting a higher PaCO2 than normal (permissive hypercapnia) to avoid excessive pressures.","Using the highest possible tidal volumes to maximize oxygenation.","Applying PEEP (positive end-expiratory pressure) to improve oxygenation and prevent alveolar collapse.","Avoiding any prone positioning regardless of oxygenation status."],
+  correct:[0,1,3],
+  rationale:"Lung-protective ventilation in ARDS uses LOWER tidal volumes (not higher, which would worsen lung injury), tolerates higher CO2 levels to avoid excessive airway pressure, and applies PEEP to keep alveoli open. Prone positioning is actually a recommended strategy in severe ARDS to improve oxygenation, not something to avoid." },
+
+// --- Pulmonary Embolism ---
+{ id:"rs9", cat:"Respiratory", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a postoperative client who suddenly develops sharp chest pain, dyspnea, and anxiety. SpO2 has dropped from 98% to 90%. What is the nurse's priority action?",
+  options:["Encourage the client to take slow, deep breaths and reassess in 30 minutes.","Notify the HCP immediately and prepare for possible pulmonary embolism workup.","Document the findings as expected post-operative anxiety.","Administer a PRN anxiolytic and continue routine monitoring."],
+  correct:[1],
+  rationale:"Sudden chest pain, dyspnea, and desaturation in a postoperative client are classic for pulmonary embolism, a medical emergency requiring immediate notification and workup, not reassurance, anxiolytics, or routine monitoring." },
+
+{ id:"rs10", cat:"Respiratory", type:"sata",
+  difficulty:4,
+  stem:"A nurse is assessing a client for risk factors of pulmonary embolism. Which factors increase risk? (Select all that apply.)",
+  options:["Recent prolonged immobility (e.g., long surgery or travel).","Active malignancy.","Regular daily ambulation.","Use of estrogen-containing oral contraceptives.","Recent major surgery."],
+  correct:[0,1,3,4],
+  rationale:"Immobility, malignancy, estrogen-containing medications, and recent surgery are all well-established VTE/PE risk factors (components of Virchow's triad: stasis, hypercoagulability, vessel injury). Regular ambulation is protective, not a risk factor." },
+
+// --- Pneumothorax ---
+{ id:"rs11", cat:"Respiratory", type:"mc",
+  difficulty:3,
+  stem:"A nurse is assessing a client with a suspected pneumothorax. Which finding would the nurse expect on the affected side?",
+  options:["Increased breath sounds and hyperresonance to percussion.","Absent or diminished breath sounds and hyperresonance to percussion.","Crackles and dullness to percussion.","Wheezing with normal percussion findings."],
+  correct:[1],
+  rationale:"Pneumothorax (air in the pleural space) causes absent or diminished breath sounds on the affected side, along with hyperresonance (a more hollow sound) to percussion, since the air-filled pleural space doesn't transmit sound normally and the trapped air produces an exaggerated percussion note." },
+
+{ id:"rs12", cat:"Respiratory", type:"mc",
+  difficulty:5,
+  stem:"A nurse is caring for a client who develops sudden severe dyspnea, absent breath sounds on the left, tracheal deviation to the right, and hypotension. What is the nurse's priority concern?",
+  options:["A simple, stable pneumothorax requiring routine monitoring.","Tension pneumothorax, a life-threatening emergency requiring immediate needle decompression.","A normal variant requiring no intervention.","Pleural effusion managed with elective thoracentesis."],
+  correct:[1],
+  rationale:"Tracheal deviation away from the affected side, combined with absent breath sounds, severe dyspnea, and hypotension, indicates a tension pneumothorax \u2014 increasing pressure is compressing the mediastinum and great vessels, compromising venous return. This requires emergency needle decompression, not routine monitoring or elective procedures." },
+
+// --- Hemothorax ---
+{ id:"rs13", cat:"Respiratory", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client with a hemothorax following blunt chest trauma. Which finding would the nurse expect, distinguishing this from a simple pneumothorax?",
+  options:["Hyperresonance to percussion on the affected side.","Dullness to percussion on the affected side, along with signs of blood loss (tachycardia, hypotension).","Tracheal deviation away from the affected side only.","No change in breath sounds."],
+  correct:[1],
+  rationale:"Hemothorax (blood in the pleural space) causes dullness to percussion (fluid/blood doesn't resonate like air does) and often presents with systemic signs of blood loss like tachycardia and hypotension, distinguishing it clinically from a simple pneumothorax, which causes hyperresonance instead." },
+
+// --- Chest tube troubleshooting ---
+{ id:"rs14", cat:"Respiratory", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client with a chest tube connected to a water seal drainage system. The nurse notes continuous bubbling in the water seal chamber. What does this finding indicate?",
+  options:["Normal functioning of the system.","An air leak somewhere in the system.","The lung has fully re-expanded.","The suction is disconnected."],
+  correct:[1],
+  rationale:"Continuous bubbling in the water seal chamber indicates an air leak in the chest tube system (either at a connection point or from the client), not normal function. Intermittent bubbling that tapers off over time is the expected, reassuring finding as the lung re-expands." },
+
+{ id:"rs15", cat:"Respiratory", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client with a chest tube. Which findings require immediate nursing action? (Select all that apply.)",
+  options:["Sudden cessation of fluctuation (tidaling) in the water seal chamber, with no other explanation.","Gentle fluctuation of fluid in the tubing with respiration.","More than 100 mL of bright red drainage in a short period.","The chest tube becomes accidentally disconnected from the drainage system.","Mild discomfort at the insertion site."],
+  correct:[0,2,3],
+  rationale:"Sudden cessation of tidaling (could mean obstruction or full lung re-expansion \u2014 needs evaluation to determine which), significant bright red drainage (active bleeding), and accidental disconnection (risk of pneumothorax/air entry) all require immediate action. Gentle fluctuation with breathing and mild site discomfort are expected, reassuring findings." },
+
+{ id:"rs16", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  stem:"A client's chest tube becomes accidentally disconnected from the drainage system. What is the nurse's immediate priority action?",
+  options:["Clamp the chest tube immediately and call for help.","Submerge the end of the tube in sterile water or saline, or apply an occlusive dressing, while seeking immediate assistance.","Reconnect the tube without any other action needed.","Remove the chest tube entirely since it is no longer connected."],
+  correct:[1],
+  rationale:"If a chest tube disconnects, the priority is preventing air from entering the pleural space \u2014 submerging the tube end in sterile water/saline (recreating a water seal) or applying an occlusive dressing, while getting help to reconnect properly. Clamping is generally avoided in this scenario as it can cause a tension pneumothorax if the lung is still leaking air; removing the tube is not appropriate." },
+
+// --- ABG interpretation ---
+{ id:"rs17", cat:"Respiratory", type:"mc",
+  difficulty:3,
+  stem:"A client's ABG results are: pH 7.30, PaCO2 55 mmHg, HCO3 26 mEq/L. How should the nurse interpret this result?",
+  options:["Respiratory alkalosis, uncompensated.","Respiratory acidosis, partially compensated.","Metabolic acidosis, uncompensated.","Metabolic alkalosis, fully compensated."],
+  correct:[1],
+  rationale:"A low pH (acidic) with an elevated PaCO2 indicates respiratory acidosis. The HCO3 is also elevated (above normal 22-26 is borderline/slightly high), suggesting the kidneys are starting to compensate by retaining bicarbonate \u2014 but since pH hasn't fully normalized, this is partial, not full, compensation." },
+
+{ id:"rs18", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  stem:"A client's ABG results are: pH 7.48, PaCO2 30 mmHg, HCO3 23 mEq/L. Which condition is most consistent with this result?",
+  options:["Metabolic acidosis.","Respiratory alkalosis, likely from hyperventilation.","Respiratory acidosis.","Metabolic alkalosis."],
+  correct:[1],
+  rationale:"An elevated pH (alkalotic) with a LOW PaCO2 indicates respiratory alkalosis, commonly caused by hyperventilation (blowing off too much CO2). The HCO3 remains essentially normal, indicating this is an acute, not yet metabolically compensated, picture." },
+
+{ id:"rs19", cat:"Respiratory", type:"mc",
+  difficulty:2,
+  stem:"Which ABG value primarily reflects the respiratory component of acid-base balance?",
+  options:["pH.","PaCO2.","HCO3.","Base excess only."],
+  correct:[1],
+  rationale:"PaCO2 (partial pressure of carbon dioxide) is regulated by the lungs/respiratory rate and reflects the respiratory component of acid-base balance, while HCO3 reflects the metabolic/renal component." },
+
+// --- Ventilator alarms ---
+{ id:"rs20", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  stem:"A nurse hears the high-pressure alarm sounding on a mechanically ventilated client. What is the nurse's priority action?",
+  options:["Silence the alarm and continue with other tasks.","Quickly assess the client first, then check for causes such as secretions, biting the tube, or coughing.","Immediately disconnect the client from the ventilator.","Increase the ventilator's pressure limit setting without further assessment."],
+  correct:[1],
+  rationale:"High-pressure alarms indicate increased resistance to ventilation (e.g., secretions, biting the ET tube, coughing, bronchospasm). The priority is to quickly assess the client's status first, then identify and address the cause \u2014 not silence the alarm without assessing, disconnect immediately without cause, or simply adjust settings without understanding why the alarm fired." },
+
+{ id:"rs21", cat:"Respiratory", type:"mc",
+  difficulty:5,
+  stem:"A nurse hears the LOW-pressure alarm sounding on a mechanically ventilated client, and notes the client's SpO2 is rapidly dropping. What is the nurse's priority concern?",
+  options:["This is a benign alarm requiring no urgent action.","Possible ventilator disconnection or a leak in the circuit/cuff, requiring immediate assessment of the airway and circuit.","The client needs increased sedation.","This indicates the client is ready for extubation."],
+  correct:[1],
+  rationale:"A low-pressure alarm combined with dropping SpO2 suggests the client is not receiving adequate ventilation \u2014 commonly from a disconnection, circuit leak, or cuff leak. This requires immediate assessment of the entire ventilator circuit and the client's airway, as inadequate ventilation can rapidly become life-threatening." },
+
+// --- Oxygen delivery devices ---
+{ id:"rs22", cat:"Respiratory", type:"mc",
+  difficulty:2,
+  stem:"A nurse is selecting an oxygen delivery device for a client who needs a higher, more precise FiO2 than a nasal cannula can reliably provide, but does not require mechanical ventilation. Which device is most appropriate?",
+  options:["Simple nasal cannula at 2 L/min.","Venturi mask (also called an air-entrainment mask).","Non-rebreather mask only.","No supplemental oxygen device is needed."],
+  correct:[1],
+  rationale:"A Venturi mask delivers a precise, consistent FiO2 regardless of the client's breathing pattern, making it ideal when accurate oxygen concentration matters most (e.g., in COPD clients needing controlled oxygen delivery) \u2014 more precise than a standard nasal cannula, and more controlled/lower-range than a non-rebreather, which delivers very high concentrations for acute, severe hypoxemia." },
+
+{ id:"rs23", cat:"Respiratory", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client in acute respiratory distress requiring the highest possible FiO2 without intubation. Which device is most appropriate?",
+  options:["Simple nasal cannula.","Simple face mask.","Non-rebreather mask with reservoir bag.","Venturi mask."],
+  correct:[2],
+  rationale:"A non-rebreather mask with a reservoir bag can deliver the highest FiO2 (up to nearly 100% with a proper seal and adequate flow) among non-invasive devices, making it the appropriate choice for acute, severe respiratory distress before considering intubation." },
+
+{ id:"rs24", cat:"Respiratory", type:"sata",
+  difficulty:3,
+  stem:"A nurse is teaching a client about home oxygen safety. Which instructions are appropriate? (Select all that apply.)",
+  options:["Keep oxygen tanks at least 5-10 feet away from open flames or heat sources.","No smoking is allowed in the home while oxygen is in use.","Oxygen tanks can be stored lying on their side without securing them.","Post 'oxygen in use' signage at home entrances.","Petroleum-based products (e.g., Vaseline) are safe to use near the oxygen tubing/face."],
+  correct:[0,1,3],
+  rationale:"Oxygen safety includes distance from flame/heat sources, no smoking, and signage to alert visitors/emergency responders. Tanks should be secured upright (not loose on their side, which risks tipping/damage), and petroleum-based products are flammable and should be avoided near oxygen equipment \u2014 water-based products are used instead." },
+
+{ id:"rs25", cat:"Respiratory", type:"calc",
+  difficulty:2,
+  stem:"A client is prescribed oxygen via nasal cannula. The order specifies titrating to keep SpO2 between 90-94%. The client's current SpO2 is 96% on 3 L/min. By how many L/min should the nurse reduce the flow to target the upper end of the ordered range, assuming each 1 L/min change shifts SpO2 by approximately 2%?",
+  unit:"L/min reduction",
+  correctValue:1,
+  tolerance:0,
+  rationale:"Current SpO2 is 96%, target upper range is 94% \u2014 a 2% reduction needed. At approximately 2% change per 1 L/min, reducing the flow by 1 L/min (to 2 L/min) should bring the SpO2 to approximately the target range." },
+
+// ================================================================
+// RESPIRATORY NGN CASE STUDY 1 — COPD exacerbation unfolding case
+// ================================================================
+{ id:"rs_case1_q1", cat:"Respiratory", type:"mc",
+  difficulty:3,
+  caseContext:"A 68-year-old client with a 30-year history of COPD presents to the ED with increased dyspnea, productive cough with green sputum, and fatigue over the past 3 days. Vital signs: Temp 100.8\u00b0F, HR 104, RR 26, BP 138/86, SpO2 88% on room air. The client is using pursed-lip breathing and sitting forward.",
+  casePart: 1, caseTotal: 3,
+  stem:"Recognize Cues: Which finding is most significant in suggesting an infectious component to this exacerbation?",
+  options:["RR of 26.","Green (purulent) sputum and fever.","SpO2 of 88%.","Use of pursed-lip breathing."],
+  correct:[1],
+  rationale:"A change in sputum color to green/purulent, combined with fever, suggests a bacterial infection triggering this COPD exacerbation, which would influence treatment (likely requiring antibiotics in addition to standard exacerbation management). The other findings reflect the respiratory distress itself, not specifically an infectious cause." },
+
+{ id:"rs_case1_q2", cat:"Respiratory", type:"sata",
+  difficulty:4,
+  caseContext:"A 68-year-old client with COPD presents with dyspnea, purulent sputum, fever, RR 26, SpO2 88% on room air. The HCP orders oxygen therapy, bronchodilators, corticosteroids, and antibiotics.",
+  casePart: 2, caseTotal: 3,
+  stem:"Generate Solutions: As the nurse implements the oxygen order, which considerations are most important for this specific client? (Select all that apply.)",
+  options:["Titrate oxygen carefully, starting low and increasing gradually while monitoring response.","Target a slightly lower SpO2 goal (often around 88-92%) rather than a normal 95-100% target.","Administer the highest flow rate available immediately to correct hypoxemia as fast as possible.","Monitor closely for signs of worsening hypercapnia (e.g., increasing lethargy, confusion) as oxygen is titrated.","Avoid any supplemental oxygen since this client has COPD."],
+  correct:[0,1,3],
+  rationale:"Chronic COPD clients often have a target SpO2 range lower than the general population (around 88-92%) because of their reliance on hypoxic drive and risk of CO2 retention; oxygen should be titrated carefully and gradually, with close monitoring for hypercapnia signs as it's adjusted. Withholding oxygen entirely or giving the maximum flow rate immediately are both inappropriate extremes." },
+
+{ id:"rs_case1_q3", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  caseContext:"A 68-year-old client with COPD exacerbation has been receiving titrated oxygen, bronchodilators, corticosteroids, and antibiotics for 6 hours. Current vitals: RR 20, SpO2 91% on 2L oxygen, HR 88, the client reports feeling 'much easier to breathe' and is sitting back comfortably rather than leaning forward.",
+  casePart: 3, caseTotal: 3,
+  stem:"Evaluate Outcomes: Based on this reassessment, how should the nurse interpret the client's response to treatment?",
+  options:["The client is not improving and treatment should be escalated immediately.","The client is showing objective and subjective improvement, consistent with effective treatment so far.","The findings are unrelated to the interventions provided.","The client should be weaned off all oxygen immediately given this improvement."],
+  correct:[1],
+  rationale:"Decreased respiratory rate, improved SpO2 even on lower supplemental oxygen, decreased heart rate, the subjective report of easier breathing, and improved positioning (no longer needing to lean forward) all together indicate genuine, multi-parameter improvement \u2014 a good evaluation requires looking at this whole picture together, not jumping to extremes like immediate escalation or immediately discontinuing oxygen." },
+
+// ================================================================
+// RESPIRATORY NGN CASE STUDY 2 — Tension pneumothorax unfolding case
+// ================================================================
+{ id:"rs_case2_q1", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  caseContext:"A 24-year-old client is brought to the ED after a motorcycle accident with a suspected rib fracture on the left side. Initial vitals: HR 96, RR 22, BP 124/80, SpO2 95% on room air. Twenty minutes later, the nurse reassesses and finds the client now severely short of breath, HR 132, BP 88/56, SpO2 84%, with absent breath sounds on the left and visible tracheal deviation to the right.",
+  casePart: 1, caseTotal: 3,
+  stem:"Recognize Cues: What does the change between the initial assessment and the reassessment most strongly suggest?",
+  options:["Normal anxiety response to the trauma, worsening over time.","Rapid development of a tension pneumothorax.","An expected, stable rib fracture pain response.","A vasovagal reaction to pain medication."],
+  correct:[1],
+  rationale:"The rapid deterioration \u2014 new severe dyspnea, tachycardia, hypotension, absent breath sounds, and tracheal deviation \u2014 over a short time window in a client with chest trauma is the classic unfolding presentation of a tension pneumothorax developing from the initial rib fracture/chest injury. This is a critical pattern-recognition skill: a stable-appearing trauma patient who suddenly decompensates." },
+
+{ id:"rs_case2_q2", cat:"Respiratory", type:"sata",
+  difficulty:5,
+  caseContext:"The client now has severe dyspnea, HR 132, BP 88/56, SpO2 84%, absent left breath sounds, and tracheal deviation to the right, consistent with tension pneumothorax.",
+  casePart: 2, caseTotal: 3,
+  stem:"Prioritize Hypotheses / Take Action: Which actions are appropriate as the team prepares for emergency intervention? (Select all that apply.)",
+  options:["Prepare for immediate needle decompression of the affected side.","Apply high-flow oxygen while preparing for the procedure.","Reassure the client and wait for a chest X-ray to confirm before any action.","Prepare for chest tube placement following decompression.","Position the client flat and still to avoid further injury, delaying any intervention."],
+  correct:[0,1,3],
+  rationale:"Tension pneumothorax is a clinical diagnosis requiring immediate action \u2014 needle decompression should not wait for imaging confirmation given the life-threatening, rapidly progressing nature of this condition. High-flow oxygen supports the client during the emergency, and chest tube placement typically follows decompression for ongoing management. Waiting for X-ray confirmation or delaying intervention would risk the client's life given how quickly this condition can become fatal." },
+
+{ id:"rs_case2_q3", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  caseContext:"Following needle decompression and chest tube placement, the nurse reassesses the client 30 minutes later: HR 98, BP 116/74, SpO2 97% on 4L oxygen, breath sounds now present bilaterally, trachea midline.",
+  casePart: 3, caseTotal: 3,
+  stem:"Evaluate Outcomes: How should the nurse interpret this reassessment?",
+  options:["The intervention was ineffective and further decompression is needed.","The intervention was effective, shown by normalized vital signs, return of breath sounds, and midline trachea.","These findings are unrelated to the pneumothorax treatment.","The client needs immediate re-intubation based on these findings."],
+  correct:[1],
+  rationale:"The return to near-normal vital signs, presence of bilateral breath sounds, and a midline trachea (no longer deviated) together demonstrate that the tension pneumothorax has been successfully relieved by the decompression and chest tube \u2014 a textbook example of using multiple converging data points to evaluate treatment effectiveness." },
+
+// ================================================================
+// RESPIRATORY NGN CASE STUDY 3 — Pulmonary embolism unfolding case
+// ================================================================
+{ id:"rs_case3_q1", cat:"Respiratory", type:"mc",
+  difficulty:3,
+  caseContext:"A 58-year-old client is post-op day 2 following a total knee replacement. The client has been reluctant to ambulate due to pain. The nurse notes new onset of sudden right-sided chest pain and shortness of breath while the client was sitting in a chair.",
+  casePart: 1, caseTotal: 3,
+  stem:"Recognize Cues: Which combination of factors in this scenario should most raise the nurse's suspicion for pulmonary embolism?",
+  options:["Chest pain alone, which is common after any surgery.","Recent major orthopedic surgery, prolonged immobility, and sudden-onset chest pain with dyspnea.","The client's age of 58.","Sitting in a chair, which is a normal post-operative activity."],
+  correct:[1],
+  rationale:"The combination of known VTE/PE risk factors (recent major surgery, especially orthopedic, and immobility from pain avoidance) together with the sudden, acute onset of chest pain and dyspnea is what should raise strong suspicion \u2014 recognizing how risk factors combine with new symptoms is the key skill, not evaluating any single piece alone." },
+
+{ id:"rs_case3_q2", cat:"Respiratory", type:"sata",
+  difficulty:4,
+  caseContext:"The client has sudden chest pain and dyspnea on post-op day 2 after knee replacement, with known immobility risk factors. Vitals: HR 118, RR 28, SpO2 89%, BP 110/70.",
+  casePart: 2, caseTotal: 3,
+  stem:"Analyze Cues: Which additional assessment findings, if present, would further support a diagnosis of pulmonary embolism? (Select all that apply.)",
+  options:["Unilateral leg swelling and tenderness (possible DVT source).","Sudden anxiety or sense of impending doom.","Bradycardia.","Hemoptysis (coughing up blood).","Improvement in symptoms with rest alone."],
+  correct:[0,1,3],
+  rationale:"Unilateral leg swelling/tenderness (suggesting the DVT source), sudden anxiety/doom sensation, and hemoptysis are all classic associated findings with PE. Tachycardia (not bradycardia) is expected as a compensatory response, and PE symptoms don't typically improve with simple rest alone since the underlying clot remains." },
+
+{ id:"rs_case3_q3", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  caseContext:"PE is confirmed via CT angiography. The client is started on IV heparin therapy. Six hours later, the nurse reassesses: HR 92, RR 20, SpO2 95% on 2L oxygen, client reports decreased chest pain and anxiety.",
+  casePart: 3, caseTotal: 3,
+  stem:"Evaluate Outcomes: What should the nurse's NEXT priority assessment be, even with this reassuring improvement?",
+  options:["No further monitoring is needed since the client is clearly improving.","Continue monitoring for bleeding complications related to anticoagulant therapy.","Discontinue the heparin infusion since symptoms have improved.","Encourage immediate strenuous ambulation to test the client's tolerance."],
+  correct:[1],
+  rationale:"While the improving vital signs and symptoms are reassuring regarding the PE itself, anticoagulant therapy (heparin) carries its own risk of bleeding complications that require ongoing, separate monitoring (e.g., aPTT levels, signs of bleeding) \u2014 clinical improvement in one area doesn't eliminate the need to monitor for treatment-related risks in another." },
+
+// ================================================================
+// RESPIRATORY NGN CASE STUDY 4 — Asthma/status asthmaticus unfolding case
+// ================================================================
+{ id:"rs_case4_q1", cat:"Respiratory", type:"mc",
+  difficulty:3,
+  caseContext:"A 16-year-old client with a history of asthma is brought to the ED by a parent after a rescue inhaler provided no relief over the past hour. The client is sitting upright, speaking in short, broken phrases, with audible wheezing and a RR of 32.",
+  casePart: 1, caseTotal: 3,
+  stem:"Recognize Cues: Which finding is most concerning regarding the severity of this asthma attack?",
+  options:["The client is sitting upright.","The client can only speak in short, broken phrases.","Audible wheezing is present.","The parent brought the client in promptly."],
+  correct:[1],
+  rationale:"The ability to only speak in short phrases (rather than full sentences) is a key clinical indicator of attack severity, reflecting significant respiratory distress and reduced air movement \u2014 a more specific severity marker than wheezing alone or general positioning." },
+
+{ id:"rs_case4_q2", cat:"Respiratory", type:"sata",
+  difficulty:4,
+  caseContext:"The client's symptoms continue to worsen despite repeated nebulizer treatments. Thirty minutes later, the nurse notes the wheezing has become harder to hear, the client appears more fatigued, and is now using accessory muscles heavily, with RR 38 and SpO2 86%.",
+  casePart: 2, caseTotal: 3,
+  stem:"Analyze Cues / Prioritize Hypotheses: Which interpretation of these new findings is correct? (Select all that apply.)",
+  options:["Decreasing wheeze volume with worsening distress suggests a 'silent chest,' an ominous sign of severe obstruction, not improvement.","This presentation suggests impending respiratory failure requiring immediate escalation.","The client is clearly improving since the wheezing is quieter.","Accessory muscle use and fatigue suggest the client is tiring from the work of breathing.","No further intervention is needed; continue current treatment only."],
+  correct:[0,1,3],
+  rationale:"This is the classic 'silent chest' trap \u2014 quieter wheezing in a worsening clinical picture means dangerously little air is moving, not that the attack is resolving. Combined with fatigue and accessory muscle use, this strongly suggests impending respiratory failure requiring immediate escalation (e.g., preparing for possible intubation, calling for additional support), not continuation of the current treatment plan alone." },
+
+{ id:"rs_case4_q3", cat:"Respiratory", type:"mc",
+  difficulty:5,
+  caseContext:"Given the impending respiratory failure presentation, the team escalates care: IV magnesium sulfate and IV corticosteroids are added, and the client is moved to a higher level of care for close monitoring, with intubation equipment at the bedside.",
+  casePart: 3, caseTotal: 3,
+  stem:"Take Action: What is the nursing priority rationale for having intubation equipment readily available at this point, even though the client is not yet intubated?",
+  options:["Intubation is required immediately regardless of further assessment.","Status asthmaticus with impending respiratory failure can deteriorate to the point of needing emergency airway management with little warning, so equipment should be ready proactively.","Intubation equipment is a routine precaution unrelated to this client's specific condition.","The equipment is needed only for staff comfort, not clinical necessity."],
+  correct:[1],
+  rationale:"This reflects an important clinical judgment principle: anticipating a possible rapid decline and preparing proactively (having equipment ready) is appropriate and standard for impending respiratory failure, even before the client meets criteria for immediate intubation \u2014 it's not that intubation must happen right now, but that the team must be ready if the trajectory continues to worsen." },
+
+// ================================================================
+// RESPIRATORY NGN CASE STUDY 5 — ARDS unfolding case
+// ================================================================
+{ id:"rs_case5_q1", cat:"Respiratory", type:"mc",
+  difficulty:4,
+  caseContext:"A 45-year-old client was admitted 2 days ago with severe pneumonia and sepsis. Today, the client's oxygenation has worsened despite increasing FiO2. Chest X-ray shows new bilateral diffuse infiltrates. ABG: pH 7.32, PaO2 58 mmHg on FiO2 0.6, PaCO2 42 mmHg.",
+  casePart: 1, caseTotal: 3,
+  stem:"Recognize Cues: Which combination of findings is most consistent with the development of ARDS in this client?",
+  options:["The client's age of 45.","Worsening oxygenation despite increasing FiO2, with new bilateral infiltrates, following a known ARDS risk factor (sepsis).","A PaCO2 of 42 mmHg, which is within normal range.","The 2-day timeline since admission alone."],
+  correct:[1],
+  rationale:"The combination of a known ARDS-triggering condition (sepsis/severe pneumonia), refractory hypoxemia (PaO2 not improving despite escalating FiO2), and new bilateral infiltrates together fit the clinical definition of ARDS \u2014 recognizing this specific combination, in the context of a known risk factor, is the key skill, not any single isolated data point." },
+
+{ id:"rs_case5_q2", cat:"Respiratory", type:"sata",
+  difficulty:5,
+  caseContext:"ARDS is confirmed. The client is intubated and placed on mechanical ventilation with a lung-protective strategy. Current settings include low tidal volume and PEEP of 12.",
+  casePart: 2, caseTotal: 3,
+  stem:"Generate Solutions: Which additional nursing considerations are appropriate for this ventilated ARDS client? (Select all that apply.)",
+  options:["Monitor closely for signs of barotrauma (e.g., sudden desaturation, asymmetric chest movement) given the PEEP level.","Consider prone positioning if oxygenation remains severely impaired despite optimized ventilator settings.","Allow PaCO2 to rise somewhat above normal (permissive hypercapnia) as part of the lung-protective strategy.","Increase tidal volume significantly to improve oxygenation as the first response to any desaturation.","Monitor hemodynamic status closely, as high PEEP can reduce venous return and cardiac output."],
+  correct:[0,1,2,4],
+  rationale:"High PEEP carries barotrauma risk requiring close monitoring; prone positioning is an evidence-based strategy for severe, refractory ARDS hypoxemia; permissive hypercapnia is intentional in lung-protective ventilation; and high PEEP can impair venous return, requiring hemodynamic monitoring. Increasing tidal volume significantly would contradict the lung-protective strategy and risk further lung injury \u2014 it is not the appropriate first response to desaturation in this context." },
+
+{ id:"rs_case5_q3", cat:"Respiratory", type:"mc",
+  difficulty:5,
+  caseContext:"After 24 hours of lung-protective ventilation and a trial of prone positioning, the nurse reassesses: PaO2 78 mmHg on FiO2 0.5 (improved from PaO2 58 on FiO2 0.6), and the client's hemodynamic status remains stable.",
+  casePart: 3, caseTotal: 3,
+  stem:"Evaluate Outcomes: How should the nurse interpret this change in PaO2 and FiO2 together?",
+  options:["No real improvement has occurred since PaO2 only increased slightly.","This represents meaningful improvement in oxygenation efficiency, since PaO2 increased while FiO2 (the oxygen support needed to achieve it) decreased.","The client's condition has worsened based on these numbers.","These two values cannot be meaningfully compared to each other."],
+  correct:[1],
+  rationale:"Evaluating oxygenation in ARDS requires looking at PaO2 relative to the FiO2 needed to achieve it (the P/F ratio concept), not PaO2 alone. Here, the client achieved a HIGHER PaO2 on a LOWER FiO2 \u2014 meaning the lungs are using oxygen more efficiently, a genuinely positive sign of improving lung function, even though the raw PaO2 numbers might look like a modest change at first glance." }
 
 ];
 
@@ -1910,6 +2554,15 @@ function renderQuestion() {
     document.getElementById("q-progress").textContent = "Question " + (state.current + 1) + " of " + state.questions.length;
   }
   document.getElementById("q-stem").textContent = q.stem;
+
+  const caseCtxEl = document.getElementById("q-case-context");
+  if (q.caseContext) {
+    const partLabel = q.casePart ? ("Case Study \u2014 Part " + q.casePart + (q.caseTotal ? " of " + q.caseTotal : "")) : "Case Study";
+    caseCtxEl.innerHTML = '<span class="case-label">' + partLabel + '</span>' + q.caseContext;
+    caseCtxEl.classList.remove("hidden");
+  } else {
+    caseCtxEl.classList.add("hidden");
+  }
 
   const instr = document.getElementById("q-instruction");
   if (q.type === "sata") {
