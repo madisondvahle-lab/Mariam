@@ -297,6 +297,50 @@
   }
   .flag-btn.active { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
 
+  .ability-gauge { margin: 10px 0 16px; }
+  .ability-gauge-track {
+    position: relative;
+    height: 14px;
+    background: linear-gradient(to right, var(--brick-light), var(--amber-light), var(--teal-light));
+    border-radius: 7px;
+    border: 1px solid var(--line);
+  }
+  .ability-gauge-fill { display: none; }
+  .ability-gauge-marker {
+    position: absolute;
+    top: -4px;
+    width: 4px;
+    height: 22px;
+    background: var(--teal-dark);
+    border-radius: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: left 0.4s ease;
+  }
+  .ability-gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+  .ability-value {
+    font-family: Arial, sans-serif;
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--teal-dark);
+    text-align: center;
+  }
+  .ability-sub {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 2px;
+    margin-bottom: 8px;
+  }
+
   /* ===== RESULTS SCREEN ===== */
   .results-card {
     background: white;
@@ -407,6 +451,17 @@
   .review-item.wrong { border-left: 3px solid var(--brick); }
   .review-item.right { border-left: 3px solid var(--sage); }
 
+  .mode-explainer {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--teal-light);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
   .empty-note {
     font-family: Arial, sans-serif;
     font-size: 13px;
@@ -471,6 +526,10 @@
       <div class="pill-group" id="mode-pills">
         <div class="pill active" data-mode="practice">Practice (instant rationale)</div>
         <div class="pill" data-mode="timed">Timed test (review at end)</div>
+        <div class="pill" data-mode="adaptive">Adaptive (CAT-style)</div>
+      </div>
+      <div class="mode-explainer hidden" id="adaptive-explainer">
+        In Adaptive mode, each question's difficulty depends on your previous answer \u2014 get one right and the next gets harder, get one wrong and the next gets easier, similar in spirit to the real NCLEX. The exam ends early once your ability estimate is clear, or after the question count below as a maximum. This is a simplified practice approximation, not the official NCSBN scoring algorithm.
       </div>
     </div>
 
@@ -506,7 +565,7 @@
       </div>
     </div>
 
-    <div class="navigator">
+    <div class="navigator" id="navigator-panel">
       <div class="nav-title">Question navigator</div>
       <div class="nav-grid" id="nav-grid"></div>
       <div class="nav-legend">
@@ -515,6 +574,22 @@
         <div class="row"><span class="swatch" style="background:var(--bone)"></span>Unanswered</div>
       </div>
       <button class="btn primary" id="btn-finish" style="width:100%; margin-top:14px;">Finish exam</button>
+    </div>
+
+    <div class="navigator hidden" id="ability-panel">
+      <div class="nav-title">Ability estimate</div>
+      <div class="ability-gauge">
+        <div class="ability-gauge-track">
+          <div class="ability-gauge-fill" id="ability-gauge-fill"></div>
+          <div class="ability-gauge-marker" id="ability-gauge-marker"></div>
+        </div>
+        <div class="ability-gauge-labels"><span>1.0</span><span>3.0</span><span>5.0</span></div>
+      </div>
+      <div class="ability-value" id="ability-value-display">3.0</div>
+      <div class="ability-sub" id="ability-sub-display">Starting estimate</div>
+      <div class="nav-legend" style="margin-top:18px;">
+        <div class="row" style="line-height:1.5;">This is a simplified practice approximation of adaptive testing, not the official NCSBN scoring algorithm.</div>
+      </div>
     </div>
   </div>
 
@@ -558,36 +633,42 @@ const BANK = [
 
 // ---------------- MED-SURG ----------------
 { id:"ms1", cat:"Med-Surg", type:"mc",
+  difficulty:2,
   stem:"A client is 18 hours post below-the-knee amputation. Which nursing action is most important?",
   options:["Notify the HCP of increased drainage.","Elevate the residual limb on a pillow.","Encourage the client to lie in a prone position.","Perform active ROM on the unaffected leg daily."],
   correct:[2],
   rationale:"After the first 24 hours, the priority shifts to preventing hip flexion contracture. Prone positioning extends the hip and counteracts the flexed position the limb tends to fall into. Elevation on a pillow is only appropriate in the first 24 hours; beyond that it increases contracture risk." },
 
 { id:"ms2", cat:"Med-Surg", type:"sata",
+  difficulty:4,
   stem:"A client with diabetes mellitus and asthma takes high-dose corticosteroids. Which dermatologic complications will the nurse assess for? (Select all that apply.)",
   options:["Delayed wound healing.","Skin pigmentation changes.","Alopecia.","Erythematous plaques on legs.","Decreased subcutaneous fat over extremities."],
   correct:[0,1,4],
   rationale:"Corticosteroids impair collagen synthesis and immune response, causing delayed wound healing. They also cause skin thinning with pigmentation changes and redistribute fat away from the extremities toward the trunk and face. Alopecia and erythematous plaques are not typical corticosteroid skin effects." },
 
 { id:"ms3", cat:"Med-Surg", type:"mc",
+  difficulty:3,
   stem:"The nurse is caring for a client with a chest tube. The water seal chamber shows continuous bubbling. What does this indicate?",
   options:["Normal functioning of the chest tube.","An air leak in the system.","The lung has fully re-expanded.","The suction is set too high."],
   correct:[1],
   rationale:"Continuous bubbling in the water seal chamber indicates an air leak somewhere in the system, not normal lung re-expansion. Intermittent bubbling that decreases over time is the expected, normal finding as the lung re-expands." },
 
 { id:"ms4", cat:"Med-Surg", type:"mc",
+  difficulty:2,
   stem:"A client with a new colostomy asks the nurse when stool output is expected to begin. What is the nurse's best response?",
   options:["\u201cWithin the first 24 hours after surgery.\u201d","\u201cTypically 2 to 4 days after surgery.\u201d","\u201cNot until you resume a full solid diet.\u201d","\u201cOnly after the staples are removed.\u201d"],
   correct:[1],
   rationale:"Bowel motility is slowed after abdominal surgery; colostomy output typically begins 2 to 4 days postoperatively as peristalsis returns, not immediately." },
 
 { id:"ms5", cat:"Med-Surg", type:"sata",
+  difficulty:4,
   stem:"A nurse is assessing a client for early signs of compartment syndrome following a tibial fracture. Which findings are consistent with this complication? (Select all that apply.)",
   options:["Pain unrelieved by opioids.","Paresthesia distal to the injury.","Bounding pedal pulses.","Pallor of the affected limb.","Warmth and redness over the fracture site."],
   correct:[0,1,3],
   rationale:"Compartment syndrome classically presents with the 5 P's: pain out of proportion (unrelieved by opioids), paresthesia, pallor, pulselessness (not bounding pulses), and paralysis. Warmth and redness suggest infection or inflammation, not compartment syndrome." },
 
 { id:"ms6", cat:"Med-Surg", type:"calc",
+  difficulty:2,
   stem:"A client is prescribed an IV infusion of 1,000 mL of normal saline to run over 8 hours. The drop factor is 15 gtt/mL. Calculate the drip rate in gtt/min.",
   unit:"gtt/min",
   correctValue:31.25,
@@ -595,6 +676,7 @@ const BANK = [
   rationale:"Flow rate = (Volume \u00d7 Drop factor) \u00f7 Time in minutes. (1,000 mL \u00d7 15 gtt/mL) \u00f7 480 min = 15,000 \u00f7 480 = 31.25, rounded to 31 gtt/min." },
 
 { id:"ms7", cat:"Med-Surg", type:"mc",
+  difficulty:3,
   stem:"A client recovering from a CVA has expressive aphasia. Which communication strategy is most appropriate?",
   options:["Finish the client's sentences to reduce frustration.","Ask only open-ended questions.","Allow extra time and use yes/no questions when needed.","Speak loudly and slowly to ensure understanding."],
   correct:[2],
@@ -602,18 +684,21 @@ const BANK = [
 
 // ---------------- PHARMACOLOGY ----------------
 { id:"ph1", cat:"Pharmacology", type:"mc",
+  difficulty:2,
   stem:"A client taking warfarin has an INR of 6.0. Which medication should the nurse anticipate administering?",
   options:["Protamine sulfate.","Vitamin K (phytonadione).","Vitamin B12.","Calcium gluconate."],
   correct:[1],
   rationale:"Vitamin K is the reversal agent for warfarin toxicity. Protamine sulfate reverses heparin, not warfarin." },
 
 { id:"ph2", cat:"Pharmacology", type:"sata",
+  difficulty:4,
   stem:"A nurse is teaching a client newly prescribed lithium. Which statements indicate a need for further teaching? (Select all that apply.)",
   options:["\u201cI will reduce my salt intake while taking this medication.\u201d","\u201cI should drink plenty of water throughout the day.\u201d","\u201cI can take ibuprofen as needed for headaches.\u201d","\u201cI will have my blood levels checked regularly.\u201d","\u201cI should stop the medication immediately if I have diarrhea.\u201d"],
   correct:[0,2],
   rationale:"Reducing sodium intake increases lithium reabsorption and risk of toxicity \u2014 sodium intake should stay consistent, not reduced. NSAIDs like ibuprofen decrease renal lithium clearance and increase toxicity risk, so they should be avoided. Adequate hydration, regular blood level monitoring, and reporting diarrhea (a toxicity sign) promptly are all correct teaching points." },
 
 { id:"ph3", cat:"Pharmacology", type:"calc",
+  difficulty:2,
   stem:"A child weighing 22 lbs is prescribed amoxicillin 40 mg/kg/day divided into 3 doses. How many mg should the child receive per dose?",
   unit:"mg/dose",
   correctValue:133.3,
@@ -621,18 +706,21 @@ const BANK = [
   rationale:"22 lbs \u00f7 2.2 = 10 kg. 10 kg \u00d7 40 mg/kg/day = 400 mg/day. 400 mg \u00f7 3 doses = 133.3 mg per dose." },
 
 { id:"ph4", cat:"Pharmacology", type:"mc",
+  difficulty:4,
   stem:"A client receiving IV vancomycin develops flushing, a rash on the upper body, and hypotension during the infusion. What is the nurse's priority action?",
   options:["Administer diphenhydramine and continue the infusion.","Slow the infusion rate and notify the HCP.","Stop the infusion and assess the client.","Increase the infusion rate to finish it quickly."],
   correct:[2],
   rationale:"These are signs of \u201cRed Man Syndrome,\u201d caused by rapid vancomycin infusion histamine release. The priority is to stop the infusion and assess the client first, then notify the HCP \u2014 not to continue or speed it up." },
 
 { id:"ph5", cat:"Pharmacology", type:"mc",
+  difficulty:2,
   stem:"A client taking levothyroxine should be taught to take the medication:",
   options:["With food to reduce stomach upset.","At bedtime with a snack.","On an empty stomach, 30-60 minutes before breakfast.","With calcium or iron supplements for better absorption."],
   correct:[2],
   rationale:"Levothyroxine absorption is significantly reduced by food and by calcium or iron supplements. It should be taken on an empty stomach, 30-60 minutes before food or other medications." },
 
 { id:"ph6", cat:"Pharmacology", type:"sata",
+  difficulty:3,
   stem:"A nurse is caring for a client receiving heparin therapy. Which assessment findings require immediate notification of the HCP? (Select all that apply.)",
   options:["Platelet count of 90,000/mm\u00b3.","Blood in the urine.","aPTT of 65 seconds (therapeutic range 60-80).","Bruising at the injection site.","Sudden onset of back pain and hypotension."],
   correct:[0,1,4],
@@ -640,18 +728,21 @@ const BANK = [
 
 // ---------------- PEDIATRICS ----------------
 { id:"pd1", cat:"Pediatrics", type:"mc",
+  difficulty:2,
   stem:"A 6-month-old is brought to the clinic for a routine visit. Which developmental milestone should the nurse expect this infant to have achieved?",
   options:["Walking independently.","Sitting without support.","Saying first words.","Pincer grasp."],
   correct:[1],
   rationale:"Sitting without support is an expected milestone around 6 months. Walking independently (12-15 months), first words (around 12 months), and pincer grasp (9-10 months) occur later." },
 
 { id:"pd2", cat:"Pediatrics", type:"sata",
+  difficulty:3,
   stem:"A nurse is assessing an infant for signs of dehydration. Which findings indicate dehydration? (Select all that apply.)",
   options:["Sunken fontanel.","Capillary refill less than 2 seconds.","Decreased urine output.","Moist mucous membranes.","Tachycardia."],
   correct:[0,2,4],
   rationale:"Sunken fontanel, decreased urine output, and tachycardia are classic signs of dehydration in infants. Capillary refill under 2 seconds and moist mucous membranes are normal, hydrated findings." },
 
 { id:"pd3", cat:"Pediatrics", type:"calc",
+  difficulty:1,
   stem:"A child weighing 15 kg is prescribed acetaminophen 15 mg/kg per dose. How many mg is the correct single dose?",
   unit:"mg",
   correctValue:225,
@@ -659,12 +750,14 @@ const BANK = [
   rationale:"15 kg \u00d7 15 mg/kg = 225 mg per dose." },
 
 { id:"pd4", cat:"Pediatrics", type:"mc",
+  difficulty:4,
   stem:"The nurse is caring for a child with suspected epiglottitis. Which action should the nurse avoid?",
   options:["Keeping the child in an upright position.","Preparing for possible emergency intubation.","Inspecting the throat with a tongue depressor.","Allowing the parent to remain with the child."],
   correct:[2],
   rationale:"Examining the throat or attempting to visualize the epiglottis directly can trigger complete airway obstruction in a child with epiglottitis. This should be avoided; airway management equipment should be ready instead." },
 
 { id:"pd5", cat:"Pediatrics", type:"mc",
+  difficulty:3,
   stem:"A toddler is diagnosed with intussusception. Which assessment finding is most consistent with this diagnosis?",
   options:["Currant jelly-like stools.","Projectile vomiting after every feeding.","Olive-shaped mass in the right upper quadrant.","Ribbon-like stools."],
   correct:[0],
@@ -672,24 +765,28 @@ const BANK = [
 
 // ---------------- OB / MATERNITY ----------------
 { id:"ob1", cat:"OB / Maternity", type:"mc",
+  difficulty:4,
   stem:"A client at 32 weeks gestation reports a sudden gush of clear fluid. Fetal heart rate is 90 bpm. What is the nurse's first action?",
   options:["Document the finding and continue monitoring.","Perform a sterile speculum exam to confirm rupture.","Reposition the client and reassess fetal heart rate.","Prepare the client for immediate discharge teaching."],
   correct:[2],
   rationale:"A fetal heart rate of 90 bpm is a sign of fetal distress, possibly from cord compression after rupture of membranes. The priority is to reposition the client (often to relieve cord compression) and reassess the FHR immediately, rather than documentation or exams that can wait." },
 
 { id:"ob2", cat:"OB / Maternity", type:"sata",
+  difficulty:4,
   stem:"A nurse is caring for a postpartum client at risk for hemorrhage. Which findings indicate excessive bleeding? (Select all that apply.)",
   options:["Boggy, poorly contracted uterus.","Saturating a pad within 15 minutes.","Fundus firm and at the level of the umbilicus.","Heart rate increasing from 80 to 120 bpm.","Lochia rubra with small clots on day 1."],
   correct:[0,1,3],
   rationale:"A boggy uterus, rapid pad saturation, and rising heart rate (a compensatory sign of blood loss) all indicate excessive bleeding. A firm fundus at the umbilicus and lochia rubra with small clots on day 1 are both normal postpartum findings." },
 
 { id:"ob3", cat:"OB / Maternity", type:"mc",
+  difficulty:3,
   stem:"A client in active labor has a fetal heart rate pattern showing late decelerations. What is the nurse's priority action?",
   options:["Increase the rate of oxytocin infusion.","Reposition the client to her left side and administer oxygen.","Document the finding and continue routine monitoring.","Prepare for immediate forceps-assisted delivery."],
   correct:[1],
   rationale:"Late decelerations suggest uteroplacental insufficiency. The priority is to improve oxygenation and placental perfusion \u2014 repositioning to the left side and administering oxygen \u2014 and to discontinue, not increase, oxytocin." },
 
 { id:"ob4", cat:"OB / Maternity", type:"mc",
+  difficulty:3,
   stem:"A newborn is noted to have a yellow tint to the skin and sclera at 18 hours of life. What is the nurse's priority action?",
   options:["Document as a normal newborn finding.","Notify the HCP, as jaundice in the first 24 hours is abnormal.","Increase the frequency of breastfeeding only.","Apply a warming light to the newborn's skin."],
   correct:[1],
@@ -697,30 +794,35 @@ const BANK = [
 
 // ---------------- MENTAL HEALTH ----------------
 { id:"mh1", cat:"Mental Health", type:"mc",
+  difficulty:4,
   stem:"A client with major depressive disorder who was withdrawn and tearful suddenly appears calm and is giving away personal belongings. What should the nurse do first?",
   options:["Document the improved mood and continue routine care.","Assess the client directly for suicidal ideation and a plan.","Allow the client privacy to organize their belongings.","Encourage the client to attend group therapy immediately."],
   correct:[1],
   rationale:"A sudden, unexplained lift in mood combined with giving away possessions can indicate the client has made a decision to end their life and feels relief. This requires an immediate, direct suicide risk assessment, not reassurance that the mood has improved." },
 
 { id:"mh2", cat:"Mental Health", type:"sata",
+  difficulty:4,
   stem:"A nurse is caring for a client experiencing alcohol withdrawal. Which findings require immediate intervention? (Select all that apply.)",
   options:["Blood pressure 168/100 mmHg.","Visual hallucinations.","Heart rate of 128 bpm.","Mild hand tremors.","Seizure activity."],
   correct:[0,1,2,4],
   rationale:"Elevated blood pressure, hallucinations, tachycardia, and seizures are signs of severe alcohol withdrawal (including delirium tremens) and require immediate intervention. Mild tremors are an expected, lower-severity withdrawal symptom." },
 
 { id:"mh3", cat:"Mental Health", type:"mc",
+  difficulty:4,
   stem:"A client with borderline personality disorder frequently tells the nurse, \u201cYou're the only one who understands me; the other nurses don't care.\u201d What is the nurse's best response?",
   options:["\u201cThank you, I do care about you a lot.\u201d","\u201cI'm one of several nurses on the team who are here to help you.\u201d","\u201cThe other nurses are very busy with other clients.\u201d","\u201cLet's not discuss the other staff right now.\u201d"],
   correct:[1],
   rationale:"This statement reflects splitting, a common defense mechanism in borderline personality disorder. The nurse should maintain consistent boundaries and avoid being drawn into an idealized role, instead reinforcing that care is provided by the whole team." },
 
 { id:"mh4", cat:"Mental Health", type:"mc",
+  difficulty:3,
   stem:"A client with schizophrenia states, \u201cThe television is sending me secret messages.\u201d Which response by the nurse is most therapeutic?",
   options:["\u201cThat's not possible, televisions can't send messages.\u201d","\u201cWhat kind of messages is the television sending you?\u201d","\u201cI don't see how that could be happening, but it sounds frightening.\u201d","\u201cLet's turn off the television so it stops.\u201d"],
   correct:[2],
   rationale:"The therapeutic approach acknowledges the client's feelings without validating the delusion or directly arguing against it, which can increase defensiveness. Stating the nurse doesn't experience the same thing while validating the emotional impact maintains trust." },
 
 { id:"mh5", cat:"Mental Health", type:"sata",
+  difficulty:4,
   stem:"A nurse is planning care for a client with anorexia nervosa who is being medically stabilized. Which interventions are appropriate? (Select all that apply.)",
   options:["Monitor for refeeding syndrome during nutritional rebuilding.","Allow the client to exercise freely to manage anxiety.","Supervise the client during and after meals.","Weigh the client at the same time each day, same clothing.","Discuss calorie counts openly with the client at each meal."],
   correct:[0,2,3],
@@ -728,18 +830,21 @@ const BANK = [
 
 // ---------------- MED-SURG (additional) ----------------
 { id:"ms8", cat:"Med-Surg", type:"mc",
+  difficulty:3,
   stem:"A client with COPD has an oxygen saturation of 88% on room air. The HCP orders supplemental oxygen. What is the most appropriate initial flow rate for this client?",
   options:["2 L/min via nasal cannula.","6 L/min via nasal cannula.","10 L/min via simple face mask.","15 L/min via non-rebreather mask."],
   correct:[0],
   rationale:"Clients with COPD rely on a hypoxic drive to breathe. Low-flow oxygen (1-2 L/min) is used initially to avoid suppressing this drive, which could worsen hypoventilation and CO2 retention." },
 
 { id:"ms9", cat:"Med-Surg", type:"sata",
+  difficulty:3,
   stem:"A nurse is caring for a client with suspected acute appendicitis. Which assessment findings are consistent with this diagnosis? (Select all that apply.)",
   options:["Pain that migrates to McBurney's point.","Rebound tenderness in the right lower quadrant.","Pain relief with knees drawn to chest.","Low-grade fever.","Diarrhea with visible blood."],
   correct:[0,1,3],
   rationale:"Classic appendicitis presents with pain migrating to McBurney's point, rebound tenderness, and low-grade fever. Pain relief with knees drawn up is more typical of peritonitis in a different context; bloody diarrhea suggests a different GI process such as IBD." },
 
 { id:"ms10", cat:"Med-Surg", type:"calc",
+  difficulty:2,
   stem:"A client is to receive 2 L of D5W over 24 hours. The drop factor is 10 gtt/mL. Calculate the infusion rate in gtt/min.",
   unit:"gtt/min",
   correctValue:13.9,
@@ -747,18 +852,21 @@ const BANK = [
   rationale:"(2,000 mL \u00d7 10 gtt/mL) \u00f7 1,440 min (24 hours) = 20,000 \u00f7 1,440 = 13.9 gtt/min." },
 
 { id:"ms11", cat:"Med-Surg", type:"mc",
+  difficulty:4,
   stem:"A client returns from a cardiac catheterization via the right femoral artery. Which assessment finding requires immediate intervention?",
   options:["Pedal pulse 2+ bilaterally.","Slight bruising at the insertion site.","Cool, pale right foot with absent pedal pulse.","Client reports mild soreness at the insertion site."],
   correct:[2],
   rationale:"A cool, pale extremity with an absent pulse distal to the catheterization site suggests arterial occlusion or hematoma compressing blood flow \u2014 a vascular emergency requiring immediate notification and intervention." },
 
 { id:"ms12", cat:"Med-Surg", type:"sata",
+  difficulty:4,
   stem:"A nurse is caring for a client immediately following a thyroidectomy. Which assessments are priorities in the immediate postoperative period? (Select all that apply.)",
   options:["Monitor for signs of laryngeal nerve damage (voice changes, stridor).","Assess for Chvostek's and Trousseau's signs.","Encourage immediate ambulation within the first hour.","Keep the head of bed flat at all times.","Have emergency tracheostomy equipment available at the bedside."],
   correct:[0,1,4],
   rationale:"Post-thyroidectomy priorities include monitoring for airway compromise (laryngeal nerve damage, hematoma causing tracheal compression) and hypocalcemia from accidental parathyroid removal (Chvostek's/Trousseau's signs). Emergency airway equipment should be at the bedside. The head of bed should be elevated, not flat, to reduce swelling, and ambulation is not an immediate priority over airway/calcium monitoring." },
 
 { id:"ms13", cat:"Med-Surg", type:"mc",
+  difficulty:3,
   stem:"A client with a long history of type 2 diabetes presents with confusion, fruity breath odor, and rapid deep breathing. Blood glucose is 420 mg/dL. The nurse should anticipate which finding on arterial blood gas?",
   options:["Respiratory alkalosis.","Metabolic alkalosis.","Metabolic acidosis with compensatory hyperventilation.","Respiratory acidosis."],
   correct:[2],
@@ -766,18 +874,21 @@ const BANK = [
 
 // ---------------- PHARMACOLOGY (additional) ----------------
 { id:"ph7", cat:"Pharmacology", type:"mc",
+  difficulty:3,
   stem:"A client is prescribed digoxin. Which finding should prompt the nurse to hold the dose and notify the HCP?",
   options:["Heart rate of 68 bpm.","Potassium level of 3.0 mEq/L.","Digoxin level of 1.0 ng/mL.","Blood pressure of 128/76 mmHg."],
   correct:[1],
   rationale:"Hypokalemia significantly increases the risk of digoxin toxicity, even at a therapeutic digoxin level. A potassium of 3.0 mEq/L (low) should prompt the nurse to hold the dose and notify the HCP. The other findings are within normal or therapeutic ranges." },
 
 { id:"ph8", cat:"Pharmacology", type:"sata",
+  difficulty:4,
   stem:"A nurse is teaching a client about a new prescription for an ACE inhibitor. Which statements should be included in the teaching? (Select all that apply.)",
   options:["\u201cReport any swelling of your face, lips, or tongue immediately.\u201d","\u201cA dry, persistent cough is a possible side effect.\u201d","\u201cAvoid potassium-rich foods and salt substitutes.\u201d","\u201cThis medication is safe to take during pregnancy.\u201d","\u201cChange positions slowly to prevent dizziness.\u201d"],
   correct:[0,1,2,4],
   rationale:"ACE inhibitors carry risk of angioedema (facial/airway swelling, a medical emergency), a characteristic dry cough, and hyperkalemia (so potassium-rich foods/substitutes should be limited). Orthostatic hypotension is common, so slow position changes are advised. ACE inhibitors are contraindicated in pregnancy due to fetal harm." },
 
 { id:"ph9", cat:"Pharmacology", type:"calc",
+  difficulty:2,
   stem:"A client is prescribed 0.125 mg of digoxin daily. The pharmacy supplies tablets at 0.25 mg each. How many tablets should the nurse administer per dose?",
   unit:"tablet(s)",
   correctValue:0.5,
@@ -785,18 +896,21 @@ const BANK = [
   rationale:"0.125 mg \u00f7 0.25 mg = 0.5 tablet." },
 
 { id:"ph10", cat:"Pharmacology", type:"mc",
+  difficulty:3,
   stem:"A client receiving chemotherapy has a white blood cell count of 1,800/mm\u00b3. Which instruction is most important for the nurse to provide?",
   options:["\u201cIncrease your intake of fresh fruits and vegetables.\u201d","\u201cAvoid crowds and people who are sick.\u201d","\u201cTake your temperature only if you feel unwell.\u201d","\u201cIt's fine to receive live vaccines during this time.\u201d"],
   correct:[1],
   rationale:"A WBC of 1,800/mm\u00b3 indicates significant neutropenia, putting the client at high infection risk. Avoiding crowds and sick contacts is a priority. Fresh, unwashed produce can carry bacteria and should be avoided; temperature should be monitored regularly, not only when symptomatic; live vaccines are contraindicated in immunosuppressed clients." },
 
 { id:"ph11", cat:"Pharmacology", type:"sata",
+  difficulty:4,
   stem:"A nurse is administering insulin to a client. Which actions are appropriate? (Select all that apply.)",
   options:["Rotate injection sites within the same general body region.","Massage the injection site after administration.","Verify blood glucose prior to administration.","Administer regular insulin IV push for rapid correction if ordered.","Mix NPH and regular insulin by drawing up regular insulin first."],
   correct:[0,2,3,4],
   rationale:"Site rotation within a region maintains consistent absorption; checking blood glucose before dosing is standard safety practice; regular insulin (only) can be given IV in specific situations; when mixing, regular (clear) insulin is drawn up before NPH (cloudy) to avoid contaminating the regular insulin vial. Massaging the site is avoided as it can speed absorption unpredictably." },
 
 { id:"ph12", cat:"Pharmacology", type:"mc",
+  difficulty:3,
   stem:"A client taking phenytoin for seizure control has a level of 35 mcg/mL (therapeutic range 10-20 mcg/mL). Which finding would the nurse expect?",
   options:["No symptoms, as levels above range are still safe.","Nystagmus, ataxia, and slurred speech.","Increased seizure threshold and improved control.","Hypertension and tachycardia."],
   correct:[1],
@@ -804,18 +918,21 @@ const BANK = [
 
 // ---------------- PEDIATRICS (additional) ----------------
 { id:"pd6", cat:"Pediatrics", type:"mc",
+  difficulty:2,
   stem:"A nurse is assessing a 2-year-old. Which finding should be reported as a developmental concern?",
   options:["Vocabulary of approximately 50 words.","Unable to walk up stairs while holding a rail.","No two-word phrases or combinations.","Parallel play with peers."],
   correct:[2],
   rationale:"By age 2, toddlers are typically expected to combine words into simple two-word phrases (\u201cmore juice,\u201d \u201cgo bye-bye\u201d). The absence of any two-word combinations is a developmental red flag. A 50-word vocabulary, parallel play, and needing a rail for stairs are all expected at this age." },
 
 { id:"pd7", cat:"Pediatrics", type:"sata",
+  difficulty:4,
   stem:"A nurse is caring for a child diagnosed with Kawasaki disease. Which findings are consistent with this diagnosis? (Select all that apply.)",
   options:["Fever lasting 5 or more days.","Bilateral conjunctival redness without discharge.","Strawberry tongue.","Symmetrical joint pain only, no skin changes.","Peeling of the skin on hands and feet."],
   correct:[0,1,2,4],
   rationale:"Kawasaki disease presents with prolonged fever, bilateral non-exudative conjunctivitis, strawberry tongue, rash, and later desquamation (peeling) of the hands and feet. Isolated symmetrical joint pain without other features is not a defining characteristic." },
 
 { id:"pd8", cat:"Pediatrics", type:"calc",
+  difficulty:1,
   stem:"A child weighing 18 kg is prescribed ibuprofen 10 mg/kg per dose. What is the correct single dose in mg?",
   unit:"mg",
   correctValue:180,
@@ -823,12 +940,14 @@ const BANK = [
   rationale:"18 kg \u00d7 10 mg/kg = 180 mg." },
 
 { id:"pd9", cat:"Pediatrics", type:"mc",
+  difficulty:2,
   stem:"A nurse is caring for an infant diagnosed with respiratory syncytial virus (RSV) bronchiolitis. Which intervention is most appropriate?",
   options:["Administer routine antibiotics as RSV is bacterial.","Provide supportive care including suctioning, hydration, and oxygen as needed.","Encourage frequent oral feedings regardless of respiratory status.","Place the infant in a supine, flat position for comfort."],
   correct:[1],
   rationale:"RSV is a viral infection, so antibiotics are not indicated unless a secondary bacterial infection develops. Treatment is supportive: suctioning secretions, maintaining hydration, and supplemental oxygen as needed. Feeding should be modified if respiratory distress is present, and positioning should support breathing (elevated, not flat)." },
 
 { id:"pd10", cat:"Pediatrics", type:"mc",
+  difficulty:3,
   stem:"A 4-year-old is admitted with suspected nephrotic syndrome. Which assessment finding is most consistent with this diagnosis?",
   options:["Hypertension and hematuria.","Generalized edema and frothy, protein-rich urine.","Polyuria and excessive thirst.","Petechiae and joint swelling."],
   correct:[1],
@@ -836,24 +955,28 @@ const BANK = [
 
 // ---------------- OB / MATERNITY (additional) ----------------
 { id:"ob5", cat:"OB / Maternity", type:"mc",
+  difficulty:5,
   stem:"A nurse is caring for a client 6 hours postpartum. The fundus is firm but has risen from the umbilicus to 2 cm above and is deviated to the right. The client has not voided since delivery. What should the nurse do first?",
   options:["Begin vigorous fundal massage.","Assist the client to the bathroom to void, or prepare for catheterization if unable.","Notify the HCP of suspected uterine atony.","Document as an expected postpartum finding."],
   correct:[1],
   rationale:"A fundus that rises above the umbilicus and deviates to one side, especially with no voiding since delivery, indicates bladder distension displacing the uterus \u2014 not atony. The appropriate action is addressing the full bladder, not massaging an already-firm fundus." },
 
 { id:"ob6", cat:"OB / Maternity", type:"sata",
+  difficulty:4,
   stem:"A nurse is assessing a client for signs of magnesium sulfate toxicity during treatment for preeclampsia. Which findings indicate toxicity? (Select all that apply.)",
   options:["Respiratory rate of 10/min.","Absent deep tendon reflexes.","Urine output of 50 mL/hour.","Serum magnesium level of 9 mEq/L.","Maternal heart rate of 88 bpm."],
   correct:[0,1,3],
   rationale:"Respiratory depression (RR below 12), absent DTRs, and a magnesium level well above therapeutic range (typically 4-7 mEq/L) all indicate toxicity. Adequate urine output and a normal heart rate are reassuring, not concerning, findings." },
 
 { id:"ob7", cat:"OB / Maternity", type:"mc",
+  difficulty:5,
   stem:"A client 3 days postpartum following a cesarean birth reports sudden onset of sharp chest pain and shortness of breath. RR 28, HR 124, SpO2 91%. What is the nurse's priority action?",
   options:["Reposition to high Fowler's and reassess in 10 minutes.","Administer the client's scheduled pain medication.","Notify the rapid response team; suspect pulmonary embolism.","Encourage slow breathing and offer reassurance."],
   correct:[2],
   rationale:"Sudden chest pain with tachypnea, tachycardia, and hypoxia in a postpartum/post-surgical client is a classic presentation of pulmonary embolism \u2014 a life-threatening emergency requiring immediate escalation, not monitoring or symptom management alone." },
 
 { id:"ob8", cat:"OB / Maternity", type:"mc",
+  difficulty:3,
   stem:"A nurse is evaluating the effectiveness of oxytocin and fundal massage given for postpartum hemorrhage 20 minutes ago. Which finding indicates the interventions were effective?",
   options:["Fundus remains soft and boggy with heavy lochia.","Fundus firm at the umbilicus with moderate lochia.","Client's anxiety has decreased.","Client reports the IV site no longer hurts."],
   correct:[1],
@@ -861,24 +984,28 @@ const BANK = [
 
 // ---------------- MENTAL HEALTH (additional) ----------------
 { id:"mh6", cat:"Mental Health", type:"mc",
+  difficulty:2,
   stem:"A client newly diagnosed with generalized anxiety disorder is prescribed buspirone. The client asks the nurse when they can expect relief. What is the nurse's best response?",
   options:["\u201cYou should feel better within the first few hours.\u201d","\u201cIt may take 2 to 4 weeks to feel the full effect.\u201d","\u201cThis medication only works if taken as needed during panic episodes.\u201d","\u201cYou'll need to double the dose if you don't feel relief in 2 days.\u201d"],
   correct:[1],
   rationale:"Unlike benzodiazepines, buspirone does not provide immediate relief and is not used PRN. It typically takes 2 to 4 weeks of consistent dosing to reach full therapeutic effect, which is important patient teaching to set realistic expectations." },
 
 { id:"mh7", cat:"Mental Health", type:"sata",
+  difficulty:3,
   stem:"A nurse is caring for a client experiencing acute mania. Which interventions are appropriate? (Select all that apply.)",
   options:["Provide a low-stimulation environment.","Engage the client in competitive group activities.","Offer finger foods that can be eaten while moving.","Set clear, consistent limits on behavior.","Encourage the client to make major financial decisions during this time."],
   correct:[0,2,3],
   rationale:"Clients in acute mania benefit from reduced stimulation, portable nutrition options since they may not sit still to eat, and firm consistent limits. Competitive activities can increase agitation, and major decisions should be deferred until the episode resolves due to impaired judgment." },
 
 { id:"mh8", cat:"Mental Health", type:"mc",
+  difficulty:3,
   stem:"A client with PTSD reports recurring nightmares and hypervigilance since a traumatic car accident 6 months ago. Which nursing approach is most appropriate?",
   options:["Encourage the client to avoid discussing the accident to prevent distress.","Use a trauma-informed approach, allowing the client to share at their own pace.","Insist the client describe the accident in detail during the first session.","Tell the client the symptoms will resolve on their own without treatment."],
   correct:[1],
   rationale:"Trauma-informed care prioritizes client control and pacing, avoiding re-traumatization. Forcing detailed recounting can be harmful, while avoidance entirely is not therapeutic either \u2014 the balance is allowing the client to lead the process safely." },
 
 { id:"mh9", cat:"Mental Health", type:"mc",
+  difficulty:4,
   stem:"A client with major depressive disorder is started on an SSRI. The nurse should monitor most closely for which finding during the first 1-2 weeks of treatment?",
   options:["Improved mood and energy.","Increased risk of suicidal ideation, especially with improved energy but unresolved hopelessness.","Significant weight gain.","Resolution of all depressive symptoms."],
   correct:[1],
@@ -886,42 +1013,49 @@ const BANK = [
 
 // ---------------- FUNDAMENTALS & SAFETY (new category) ----------------
 { id:"fs1", cat:"Fundamentals & Safety", type:"mc",
+  difficulty:2,
   stem:"A nurse is preparing to administer medications. Which action best supports the \u201cright client\u201d check, one of the rights of medication administration?",
   options:["Asking the client to state their name and date of birth, then verifying against the MAR and ID band.","Asking the client, \u201cAre you Mr. Smith?\u201d","Checking the room number against the medication list.","Relying on staff identification of the client from a previous shift."],
   correct:[0],
   rationale:"The correct method uses two identifiers (name and date of birth) stated by the client, verified against the MAR and ID band \u2014 not yes/no questions (clients may answer incorrectly), room numbers (clients can be moved), or secondhand identification." },
 
 { id:"fs2", cat:"Fundamentals & Safety", type:"sata",
+  difficulty:3,
   stem:"A nurse is implementing fall precautions for a high-risk client. Which interventions are appropriate? (Select all that apply.)",
   options:["Keep the bed in the lowest position with brakes locked.","Ensure the call light is within reach.","Restrain the client in bed to prevent any movement.","Use non-slip footwear during ambulation.","Place frequently used items within easy reach."],
   correct:[0,1,3,4],
   rationale:"Appropriate fall precautions include low bed position, accessible call light, non-slip footwear, and keeping items within reach to reduce unnecessary reaching/standing. Restraints are a last resort, not a routine fall precaution, and carry their own significant risks and legal/ethical considerations." },
 
 { id:"fs3", cat:"Fundamentals & Safety", type:"mc",
+  difficulty:2,
   stem:"A nurse finds a client on the floor next to the bed. The client is alert and reports no pain. What should the nurse do first?",
   options:["Immediately assist the client back into bed.","Assess the client for injury before moving them.","Call the family to inform them of the fall.","Document the event and continue with other tasks."],
   correct:[1],
   rationale:"The priority after finding a client on the floor is to assess for injury (e.g., fractures, head injury) before attempting to move them, since moving an injured client improperly can cause further harm." },
 
 { id:"fs4", cat:"Fundamentals & Safety", type:"sata",
+  difficulty:2,
   stem:"A nurse is identifying clients at risk for pressure injuries. Which factors increase this risk? (Select all that apply.)",
   options:["Immobility.","Adequate nutritional intake.","Incontinence.","Decreased sensory perception.","Frequent repositioning every 2 hours."],
   correct:[0,2,3],
   rationale:"Immobility, incontinence (moisture on skin), and decreased sensory perception (inability to feel pressure and reposition) are all major risk factors for pressure injury. Adequate nutrition and frequent repositioning are protective factors, not risk factors." },
 
 { id:"fs5", cat:"Fundamentals & Safety", type:"mc",
+  difficulty:2,
   stem:"A nurse is delegating tasks to a nursing assistant (NA). Which task is appropriate to delegate?",
   options:["Assessing a new client's vital signs for the first time.","Teaching a client about a new medication.","Assisting a stable client with ambulation.","Developing the client's plan of care."],
   correct:[2],
   rationale:"Assisting a stable client with ambulation is within the scope of a nursing assistant. Initial assessments, client teaching, and care planning require nursing judgment and licensure, and cannot be delegated to unlicensed personnel." },
 
 { id:"fs6", cat:"Fundamentals & Safety", type:"mc",
+  difficulty:3,
   stem:"A nurse notices a colleague consistently skips hand hygiene between clients but seems overwhelmed with a high patient load. What is the most appropriate first action?",
   options:["Report the colleague to administration immediately without discussion.","Privately and respectfully address the observation with the colleague directly.","Say nothing since patient assignments are not the nurse's responsibility.","Wait until a patient develops an infection before taking action."],
   correct:[1],
   rationale:"Patient safety advocacy calls for direct, respectful communication first, giving a colleague the opportunity to correct behavior, rather than immediate escalation or ignoring a safety concern." },
 
 { id:"fs7", cat:"Fundamentals & Safety", type:"sata",
+  difficulty:3,
   stem:"A nurse is preparing to transfer a client using a mechanical lift. Which actions ensure safe use of the lift? (Select all that apply.)",
   options:["Check the weight limit of the lift against the client's weight.","Lock the wheels of the lift during transfer.","Use the lift alone without additional staff present.","Ensure the sling is positioned correctly before lifting.","Lower the client slowly and smoothly."],
   correct:[0,1,3,4],
@@ -929,99 +1063,100 @@ const BANK = [
 
 // ---------------- MATERNAL-NEWBORN (new category, deepened beyond OB/Maternity) ----------------
 { id:"mn1", cat:"Maternal-Newborn", type:"mc",
+  difficulty:3,
   stem:"A nurse is assessing a newborn 2 hours after birth. Which finding requires immediate notification of the HCP?",
   options:["Acrocyanosis of the hands and feet.","Respiratory rate of 68/min with mild grunting and nasal flaring.","Heart rate of 140 bpm.","Jaundice appearing at 36 hours of age."],
   correct:[1],
   rationale:"Grunting, nasal flaring, and a respiratory rate this elevated suggest respiratory distress and require prompt evaluation. Acrocyanosis is a normal newborn finding, 140 bpm is within normal newborn HR range, and jaundice appearing after 24 hours (not within the first 24) is more typical of physiologic jaundice." },
 
 { id:"mn2", cat:"Maternal-Newborn", type:"sata",
+  difficulty:4,
   stem:"A nurse is caring for a client at 34 weeks gestation with a diagnosis of placenta previa. Which actions are appropriate? (Select all that apply.)",
   options:["Avoid performing vaginal exams.","Monitor for vaginal bleeding.","Encourage ambulation as tolerated.","Have blood products available/typed and crossed.","Perform a sterile speculum exam to confirm diagnosis."],
   correct:[0,1,3],
   rationale:"With placenta previa, vaginal exams (digital or speculum) are avoided due to risk of triggering severe hemorrhage. Monitoring for bleeding and having blood products ready are essential given hemorrhage risk. Activity is often restricted, not encouraged, depending on severity and bleeding history." },
 
 { id:"mn3", cat:"Maternal-Newborn", type:"mc",
+  difficulty:3,
   stem:"A client at 38 weeks gestation reports decreased fetal movement over the last 24 hours. What is the nurse's priority action?",
   options:["Reassure the client this is normal as term approaches.","Instruct the client to return in 48 hours if movement doesn't improve.","Arrange for immediate fetal heart rate monitoring and further assessment.","Tell the client to increase fluid intake and recheck tomorrow."],
   correct:[2],
   rationale:"Decreased fetal movement is a potential warning sign of fetal compromise and requires prompt evaluation with fetal heart rate monitoring (such as a non-stress test), not reassurance or delay." },
 
 { id:"mn4", cat:"Maternal-Newborn", type:"mc",
+  difficulty:4,
   stem:"A nurse is caring for a client in active labor. The fetal heart rate tracing shows late decelerations with each contraction. What is the priority nursing action?",
   options:["Increase the oxytocin infusion rate.","Reposition the client to her left side and administer oxygen.","Continue routine monitoring and document the finding.","Prepare for immediate forceps delivery."],
   correct:[1],
   rationale:"Late decelerations suggest uteroplacental insufficiency. The priority is improving oxygenation and perfusion \u2014 repositioning to the left side and giving oxygen \u2014 and discontinuing (not increasing) oxytocin, which can worsen the underlying problem." },
 
 { id:"mn5", cat:"Maternal-Newborn", type:"sata",
+  difficulty:4,
   stem:"A nurse is teaching a postpartum client about signs of postpartum depression versus expected \u201cbaby blues.\u201d Which statements indicate a need for further evaluation, suggesting depression rather than baby blues? (Select all that apply.)",
   options:["\u201cI cried a few times this week but feel better after.\u201d","\u201cI haven't felt any connection to my baby in 3 weeks.\u201d","\u201cI'm having thoughts of hurting myself or the baby.\u201d","\u201cI feel exhausted but excited about being a new mom.\u201d","\u201cI've lost interest in things I used to enjoy, and it's been a month.\u201d"],
   correct:[1,2,4],
   rationale:"Baby blues are mild, transient mood changes resolving within about 2 weeks. Persistent lack of bonding, intrusive harmful thoughts, and prolonged loss of interest extending beyond 2 weeks are red flags for postpartum depression or a more serious condition requiring prompt evaluation." },
 
 { id:"mn6", cat:"Maternal-Newborn", type:"mc",
+  difficulty:3,
   stem:"A nurse is caring for a newborn whose mother has poorly controlled gestational diabetes. The nurse should monitor the newborn closely for which complication in the first hours of life?",
   options:["Hyperglycemia.","Hypoglycemia.","Polycythemia only.","Hypercalcemia."],
   correct:[1],
   rationale:"Newborns of mothers with poorly controlled diabetes are at high risk for hypoglycemia after birth. In utero, the fetus produces extra insulin in response to maternal hyperglycemia; once the maternal glucose supply is cut off at birth, the newborn's continued high insulin level can cause a sharp glucose drop." },
 
 { id:"mn7", cat:"Maternal-Newborn", type:"mc",
+  difficulty:2,
   stem:"A client who is Rh-negative delivers an Rh-positive infant. What should the nurse anticipate administering to the mother?",
   options:["Rho(D) immune globulin (RhoGAM) within 72 hours postpartum.","Vitamin K to the mother immediately.","An Rh-positive blood transfusion.","No intervention is needed since the infant is unaffected by this pregnancy."],
   correct:[0],
   rationale:"Rh-negative mothers who deliver Rh-positive infants should receive RhoGAM within 72 hours to prevent sensitization, which could cause hemolytic disease of the newborn in future pregnancies. Vitamin K is given to the newborn, not the mother, for clotting factor support." },
 
 { id:"mn8", cat:"Maternal-Newborn", type:"calc",
+  difficulty:1,
   stem:"A newborn weighs 3,400 grams. The HCP orders a medication dosed at 2 mg/kg. What is the correct dose in mg?",
   unit:"mg",
   correctValue:6.8,
   tolerance:0.1,
   rationale:"3,400 g = 3.4 kg. 3.4 kg \u00d7 2 mg/kg = 6.8 mg." },
 
-// ---------------- TODAY'S LIVE SESSION QUESTIONS ----------------
-{ id:"live1", cat:"Pharmacology", type:"mc",
-  stem:"A client receiving IV vancomycin develops flushing, a rash on the upper body, and hypotension during the infusion. What is the nurse's priority action?",
-  options:["Administer diphenhydramine and continue the infusion.","Slow the infusion rate and notify the HCP.","Stop the infusion and assess the client.","Increase the infusion rate to finish it quickly."],
-  correct:[2],
-  rationale:"These findings describe \u201cRed Man Syndrome,\u201d a histamine reaction from infusing vancomycin too quickly. The priority sequence is always stop first, then assess, then notify \u2014 not continue with a medication on board, not slow down while still infusing, and never speed up." },
-
-{ id:"live2", cat:"Med-Surg", type:"mc",
-  stem:"A client is 18 hours post below-the-knee amputation. Which nursing action is most important?",
-  options:["Notify the HCP of increased drainage.","Elevate the residual limb on a pillow.","Encourage the client to lie in a prone position.","Perform active ROM on the unaffected leg daily."],
-  correct:[2],
-  rationale:"By 18 hours post-op, the priority has shifted from edema control to preventing hip flexion contracture. Prone positioning extends the hip and counteracts the limb's tendency to fall into flexion. Elevation is only appropriate in the first 24 hours \u2014 past that window it increases contracture risk rather than helping, which is the trap in this question." },
-
 // ---------------- CARDIAC (new category) ----------------
 { id:"cv1", cat:"Cardiac", type:"mc",
+  difficulty:4,
   stem:"A nurse is assessing a client 2 hours after a myocardial infarction. The client suddenly becomes confused, BP drops from 128/78 to 84/52, and skin becomes cool and clammy. What is the nurse's priority concern?",
   options:["Normal post-MI anxiety response.","Cardiogenic shock.","Vasovagal response to pain medication.","Expected medication side effect."],
   correct:[1],
   rationale:"Sudden hypotension, confusion, and cool/clammy skin following an MI are classic signs of cardiogenic shock \u2014 the heart's pumping ability has been critically compromised. This is a life-threatening emergency requiring immediate intervention, not a benign anxiety or medication response." },
 
 { id:"cv2", cat:"Cardiac", type:"sata",
+  difficulty:4,
   stem:"A nurse is caring for a client with heart failure. Which findings indicate worsening left-sided heart failure? (Select all that apply.)",
   options:["Crackles in the lung bases.","Jugular vein distension only.","Dyspnea on exertion.","Pink, frothy sputum.","Peripheral edema in the lower extremities only."],
   correct:[0,2,3],
   rationale:"Left-sided heart failure causes pulmonary congestion: crackles, dyspnea, and pink frothy sputum (a sign of pulmonary edema) are classic findings. Jugular vein distension and peripheral edema alone are more associated with right-sided heart failure (systemic congestion)." },
 
 { id:"cv3", cat:"Cardiac", type:"mc",
+  difficulty:3,
   stem:"A client's cardiac monitor shows a wide, bizarre QRS complex with no identifiable P waves at a rate of 160 bpm. The client is unresponsive with no pulse. What is the nurse's immediate action?",
   options:["Administer adenosine IV push.","Begin CPR and prepare for defibrillation.","Perform synchronized cardioversion.","Administer atropine IV push."],
   correct:[1],
   rationale:"A pulseless client with this rhythm (ventricular tachycardia/fibrillation pattern) is in cardiac arrest. CPR and defibrillation (unsynchronized) are required immediately \u2014 synchronized cardioversion and antiarrhythmics like adenosine are used for clients WITH a pulse, not pulseless arrest." },
 
 { id:"cv4", cat:"Cardiac", type:"mc",
+  difficulty:3,
   stem:"A nurse is caring for a client following an MI. The client says, \u201cI feel fine now, I think I can go back to my normal exercise routine like before.\u201d The nurse recognizes this statement reflects which underlying assumption that needs to be addressed?",
   options:["That cardiac rehabilitation is unnecessary if symptoms have resolved.","That the client wants to change medications.","That the client is non-compliant intentionally.","That exercise is contraindicated permanently after an MI."],
   correct:[0],
   rationale:"This client is assuming that feeling well means full recovery and a return to baseline activity is safe \u2014 a common and risky misconception. The nurse needs to address that cardiac healing and safe activity progression take time and require a structured rehab approach, regardless of how the client currently feels." },
 
 { id:"cv5", cat:"Cardiac", type:"sata",
+  difficulty:3,
   stem:"A nurse is caring for a client immediately after a cardiac catheterization via the femoral approach. Which assessments are priorities? (Select all that apply.)",
   options:["Assess the insertion site for bleeding or hematoma.","Check pedal pulses and color/temperature of the affected leg.","Encourage immediate ambulation to prevent stiffness.","Keep the affected leg straight as ordered.","Monitor for back pain, which could indicate retroperitoneal bleeding."],
   correct:[0,1,3,4],
   rationale:"Post-catheterization priorities include site assessment, distal circulation checks, keeping the leg straight to prevent bleeding at the access site, and monitoring for retroperitoneal bleeding (back pain is a key sign). Immediate ambulation is contraindicated; clients typically remain flat with the leg straight for a prescribed period." },
 
 { id:"cv6", cat:"Cardiac", type:"calc",
+  difficulty:3,
   stem:"A client is prescribed a dopamine infusion at 5 mcg/kg/min. The client weighs 70 kg. The pharmacy supplies a premixed bag of 400 mg dopamine in 250 mL D5W. What is the infusion rate in mL/hr? (Round to the nearest whole number.)",
   unit:"mL/hr",
   correctValue:13,
@@ -1029,18 +1164,21 @@ const BANK = [
   rationale:"Dose needed: 5 mcg/kg/min \u00d7 70 kg = 350 mcg/min. Concentration: 400 mg in 250 mL = 1,600 mcg/mL. Rate (mL/min) = 350 \u00f7 1,600 = 0.21875 mL/min. Convert to mL/hr: 0.21875 \u00d7 60 = 13.1, rounds to 13 mL/hr." },
 
 { id:"cv7", cat:"Cardiac", type:"mc",
+  difficulty:4,
   stem:"A nurse reviews a client's ECG showing peaked T waves and a widened QRS. The client's most recent potassium level is 7.2 mEq/L. What should the nurse anticipate as the FIRST intervention?",
   options:["Administer sodium polystyrene sulfonate (Kayexalate) orally.","Administer IV calcium gluconate to stabilize the cardiac membrane.","Restrict dietary potassium intake.","Schedule the client for dialysis later in the day."],
   correct:[1],
   rationale:"With ECG changes present (peaked T waves, widened QRS) from severe hyperkalemia, the immediate priority is stabilizing the cardiac membrane with IV calcium gluconate. This acts fast to protect the heart, while other treatments (Kayexalate, dietary changes, dialysis) work over a longer timeframe to actually lower the potassium level." },
 
 { id:"cv8", cat:"Cardiac", type:"mc",
+  difficulty:3,
   stem:"A telemetry nurse notes a client's rhythm has changed from sinus rhythm to atrial fibrillation with a rate of 140 bpm. The client reports feeling \u201cfluttery\u201d but is alert with a BP of 118/76. What is the nurse's priority action?",
   options:["Prepare for immediate defibrillation.","Notify the HCP and continue to monitor the client closely.","Administer epinephrine per protocol.","Reassure the client this is not significant and continue routine care."],
   correct:[1],
   rationale:"A stable client (alert, adequate BP) with new-onset rapid atrial fibrillation needs prompt HCP notification and close monitoring, but this is not an immediate defibrillation situation since the client has a pulse and is hemodynamically stable. This is also not a finding to dismiss as insignificant \u2014 new-onset afib requires evaluation and likely treatment." },
 
 { id:"cv9", cat:"Cardiac", type:"mc",
+  difficulty:3,
   stem:"A nurse is evaluating the effectiveness of furosemide given to a client with heart failure and pulmonary edema 2 hours ago. Which finding best indicates the medication was effective?",
   options:["Client reports decreased appetite.","Urine output of 800 mL since the dose, with decreased crackles on lung auscultation.","Client's heart rate has increased from 88 to 100 bpm.","Client reports feeling thirsty."],
   correct:[1],
@@ -1048,30 +1186,35 @@ const BANK = [
 
 // ---------------- RENAL (new category) ----------------
 { id:"rn1", cat:"Renal", type:"mc",
+  difficulty:2,
   stem:"A nurse is caring for a client with acute kidney injury. Urine output has been 15 mL/hour for the past 3 hours. Which phase of AKI is this client most likely experiencing?",
   options:["Onset phase.","Oliguric phase.","Diuretic phase.","Recovery phase."],
   correct:[1],
   rationale:"Urine output this low (under 400 mL/day, or roughly under 20 mL/hr sustained) is characteristic of the oliguric phase of AKI, where the kidneys are significantly failing to filter and excrete fluid." },
 
 { id:"rn2", cat:"Renal", type:"sata",
+  difficulty:4,
   stem:"A nurse is caring for a client in the oliguric phase of acute kidney injury. Which findings require close monitoring due to risk of complications? (Select all that apply.)",
   options:["Serum potassium of 6.2 mEq/L.","Serum potassium of 4.0 mEq/L.","Fluid overload with crackles in lung bases.","Decreased BUN and creatinine.","Metabolic acidosis."],
   correct:[0,2,4],
   rationale:"In the oliguric phase, the kidneys cannot excrete potassium, fluid, or acid effectively, so hyperkalemia, fluid overload, and metabolic acidosis are expected complications requiring close monitoring. A normal potassium and decreasing BUN/creatinine would be reassuring, not concerning, findings." },
 
 { id:"rn3", cat:"Renal", type:"mc",
+  difficulty:3,
   stem:"A client receiving hemodialysis returns from a dialysis session. Which finding requires immediate nursing intervention?",
   options:["Mild fatigue after the session.","BP of 88/56, down from a pre-dialysis BP of 142/88.","Slight soreness at the vascular access site.","Client reports feeling cold."],
   correct:[1],
   rationale:"A significant BP drop after dialysis may indicate intradialytic hypotension from excessive fluid removal, requiring prompt intervention. Mild fatigue, soreness, and feeling cold are common, expected post-dialysis experiences." },
 
 { id:"rn4", cat:"Renal", type:"mc",
+  difficulty:2,
   stem:"A nurse is assessing a client's arteriovenous (AV) fistula used for hemodialysis. Which finding indicates the fistula is patent and functioning?",
   options:["Absence of a bruit on auscultation.","A palpable thrill and audible bruit over the site.","Cool, pale skin distal to the fistula.","Significant swelling and pain at the site."],
   correct:[1],
   rationale:"A palpable thrill (vibration) and audible bruit (whooshing sound) over an AV fistula indicate adequate blood flow and patency. Their absence would suggest possible clotting or occlusion, which is an emergency requiring prompt evaluation." },
 
 { id:"rn5", cat:"Renal", type:"calc",
+  difficulty:1,
   stem:"A client with chronic kidney disease is prescribed a fluid restriction of 1,500 mL/day. The client has already had 200 mL of juice, 350 mL of coffee, and 100 mL of soup today. How many more mL of fluid can the client have for the rest of the day?",
   unit:"mL",
   correctValue:850,
@@ -1079,24 +1222,28 @@ const BANK = [
   rationale:"200 + 350 + 100 = 650 mL consumed so far. 1,500 \u2013 650 = 850 mL remaining for the day." },
 
 { id:"rn6", cat:"Renal", type:"mc",
+  difficulty:2,
   stem:"A nurse is caring for a client newly diagnosed with nephrotic syndrome. The client asks why their legs are so swollen. What is the best explanation for the nurse to provide?",
   options:["\u201cYour kidneys are filtering too much protein out of your blood, causing fluid to leak into your tissues.\u201d","\u201cThis is caused by too much salt in your diet recently.\u201d","\u201cThis swelling is unrelated to your kidney condition.\u201d","\u201cThis is a normal side effect of your blood pressure medication.\u201d"],
   correct:[0],
   rationale:"Nephrotic syndrome causes massive proteinuria, lowering blood oncotic pressure and allowing fluid to shift into tissues (edema). This is the pathophysiology the nurse should explain, connecting the kidney process directly to the visible symptom." },
 
 { id:"rn7", cat:"Renal", type:"mc",
+  difficulty:4,
   stem:"A client post-renal transplant develops a fever, decreased urine output, and tenderness over the graft site 5 days after surgery. What is the nurse's priority concern?",
   options:["Normal post-surgical healing process.","Acute graft rejection.","Expected immunosuppressant side effect.","Urinary tract infection only, no further concern needed."],
   correct:[1],
   rationale:"Fever, decreased urine output, and graft site tenderness in the early post-transplant period are classic signs of acute rejection \u2014 a serious complication requiring immediate evaluation, not a normal or low-priority finding." },
 
 { id:"rn8", cat:"Renal", type:"sata",
+  difficulty:2,
   stem:"A nurse is teaching a client with chronic kidney disease about dietary modifications. Which foods should the nurse instruct the client to limit? (Select all that apply.)",
   options:["Bananas.","White bread.","Oranges.","Processed deli meats.","Potatoes."],
   correct:[0,2,3,4],
   rationale:"CKD clients typically need to limit high-potassium foods (bananas, oranges, potatoes) and high-sodium/high-phosphorus processed foods (deli meats). White bread is comparatively lower in potassium, phosphorus, and sodium and is not a primary restriction target in most CKD diets." },
 
 { id:"rn9", cat:"Renal", type:"mc",
+  difficulty:3,
   stem:"A nurse is caring for a client immediately following a kidney biopsy. Which assessment finding requires immediate notification of the HCP?",
   options:["Mild bruising at the biopsy site.","Gross hematuria with a drop in blood pressure.","Microscopic hematuria expected for 24 hours.","Mild discomfort at the biopsy site."],
   correct:[1],
@@ -1104,48 +1251,56 @@ const BANK = [
 
 // ---------------- LEADERSHIP & DELEGATION (new category) ----------------
 { id:"ld1", cat:"Leadership & Delegation", type:"mc",
+  difficulty:3,
   stem:"A charge nurse is making client assignments for the shift. Which client should be assigned to the most experienced RN on the unit?",
   options:["A stable client scheduled for discharge teaching.","A client who is 2 days post-op from an appendectomy with no complications.","A client with multiple comorbidities who is hemodynamically unstable.","A client requesting routine pain medication."],
   correct:[2],
   rationale:"Assignments should match client acuity and complexity with nurse experience level. The hemodynamically unstable client with multiple comorbidities requires the most advanced clinical judgment and should go to the most experienced RN, while more stable clients can be appropriately assigned to less experienced staff." },
 
 { id:"ld2", cat:"Leadership & Delegation", type:"sata",
+  difficulty:4,
   stem:"A nurse is delegating tasks to a licensed practical nurse (LPN) on the team. Which tasks are appropriate to delegate to the LPN? (Select all that apply.)",
   options:["Administering oral medications to a stable client.","Performing the initial admission assessment.","Reinforcing previously taught education with a client.","Developing the client's initial plan of care.","Changing a stable client's wound dressing per protocol."],
   correct:[0,2,4],
   rationale:"LPNs can administer many medications, reinforce existing teaching, and perform routine procedures like dressing changes within their scope. Initial assessments and care plan development require the broader scope and critical thinking of an RN and cannot be delegated to an LPN." },
 
 { id:"ld3", cat:"Leadership & Delegation", type:"mc",
+  difficulty:3,
   stem:"A new graduate nurse asks an experienced nurse for help prioritizing four assigned clients at the start of the shift. Which client should the nurse address FIRST?",
   options:["A client requesting a scheduled pain medication that is due in 30 minutes.","A client who just returned from surgery 1 hour ago with stable vital signs.","A client reporting new-onset shortness of breath and chest tightness.","A client awaiting discharge paperwork to go home today."],
   correct:[2],
   rationale:"New-onset shortness of breath and chest tightness could indicate a life-threatening event (PE, MI, etc.) and must be assessed immediately. The other three clients have time-flexible or already-stable needs that can wait briefly." },
 
 { id:"ld4", cat:"Leadership & Delegation", type:"mc",
+  difficulty:3,
   stem:"A nurse manager learns that a staff nurse made a medication error that did not harm the client. What is the most appropriate FIRST action for the manager?",
   options:["Terminate the nurse immediately to prevent future errors.","Complete an incident report and review the error with the nurse in a non-punitive, educational manner.","Avoid discussing it to prevent embarrassing the nurse.","Report the nurse to the state board immediately without internal review."],
   correct:[1],
   rationale:"Modern just-culture approaches to error management emphasize non-punitive review focused on system and process improvement, paired with proper incident documentation. Immediate termination or state board reporting without due process, or ignoring the error entirely, are not appropriate first responses for a non-harmful error." },
 
 { id:"ld5", cat:"Leadership & Delegation", type:"sata",
+  difficulty:3,
   stem:"A nurse is identifying which clients can be appropriately assigned to a nursing assistant (NA). Which tasks fall within the NA's scope? (Select all that apply.)",
   options:["Obtaining routine vital signs on a stable client.","Assisting a stable client with bathing and hygiene.","Administering a scheduled IV antibiotic.","Ambulating a stable post-op client per care plan.","Assessing a new client's pain level for the first time."],
   correct:[0,1,3],
   rationale:"Vital signs, hygiene assistance, and ambulation of stable clients are within an NA's scope of practice. Medication administration and initial assessments require licensed nursing judgment and cannot be delegated to unlicensed assistive personnel." },
 
 { id:"ld6", cat:"Leadership & Delegation", type:"mc",
+  difficulty:2,
   stem:"A nurse overhears a colleague making a disparaging comment about a client's weight within earshot of other clients. What is the most appropriate action?",
   options:["Ignore it since it doesn't directly affect patient care.","Address the colleague privately and remind them of professional standards.","Report the colleague to administration without speaking to them first.","Join in the conversation to maintain rapport with the colleague."],
   correct:[1],
   rationale:"Professional accountability calls for direct, private feedback first when addressing a colleague's behavior, giving them a chance to correct it, before escalating. Ignoring unprofessional behavior or participating in it are both inappropriate, and skipping direct communication in favor of immediate reporting is usually not the first step for a non-emergent professionalism issue." },
 
 { id:"ld7", cat:"Leadership & Delegation", type:"mc",
+  difficulty:4,
   stem:"A charge nurse must reassign clients because a staff nurse called in sick. Which client is most appropriate to reassign to a float nurse unfamiliar with the specialty unit?",
   options:["A client with a complex, evolving cardiac arrhythmia.","A stable client who is 1 day post-op with routine recovery needs.","A client requiring frequent neuro checks after a head injury.","A client receiving a titrating vasoactive medication drip."],
   correct:[1],
   rationale:"A float nurse unfamiliar with the specialty unit should be assigned the most stable, routine client to minimize risk. Complex, evolving, or high-acuity clients (arrhythmias, frequent neuro checks, titrating drips) require staff already familiar with the unit's specific protocols and equipment." },
 
 { id:"ld8", cat:"Leadership & Delegation", type:"sata",
+  difficulty:3,
   stem:"A nurse is using SBAR to hand off a client to the oncoming shift. Which elements should be included? (Select all that apply.)",
   options:["Situation: current status and reason for concern.","Background: relevant history and context.","Assessment: nurse's clinical interpretation of the data.","Recommendation: suggested next steps or actions needed.","The off-going nurse's personal opinion of the client's family."],
   correct:[0,1,2,3],
@@ -1153,46 +1308,302 @@ const BANK = [
 
 // ---------------- IMMUNE / INFECTIOUS DISEASE (new category) ----------------
 { id:"im1", cat:"Immune & Infectious Disease", type:"mc",
+  difficulty:2,
   stem:"A nurse is caring for a client in airborne precautions for suspected tuberculosis. Which action is most important for the nurse to take before entering the room?",
   options:["Apply a standard surgical mask.","Don an N95 respirator that has been fit-tested.","Apply gloves only, as TB is not airborne.","Wear a gown and gloves, no mask needed."],
   correct:[1],
   rationale:"Tuberculosis requires airborne precautions, which mandate a fit-tested N95 respirator (or higher level of protection), not a standard surgical mask, to filter the very small airborne particles that transmit TB." },
 
 { id:"im2", cat:"Immune & Infectious Disease", type:"sata",
+  difficulty:3,
   stem:"A nurse is caring for a client with neutropenia following chemotherapy. Which interventions are appropriate? (Select all that apply.)",
   options:["Restrict fresh flowers and plants from the room.","Encourage visits from anyone who wants to see the client.","Avoid invasive procedures unless absolutely necessary.","Ensure all staff and visitors perform hand hygiene before entry.","Serve the client raw fruits and vegetables to maintain a healthy diet."],
   correct:[0,2,3],
   rationale:"Neutropenic precautions include avoiding plants/flowers (which can harbor mold/bacteria), minimizing invasive procedures, and strict hand hygiene. Visitors should be screened for illness, not unrestricted, and raw/unwashed produce carries infection risk and should generally be avoided or thoroughly washed." },
 
 { id:"im3", cat:"Immune & Infectious Disease", type:"mc",
+  difficulty:3,
   stem:"A client with HIV has a CD4 count of 180 cells/mm\u00b3. The nurse should prioritize teaching about prevention of which complication?",
   options:["Seasonal allergies.","Opportunistic infections such as Pneumocystis pneumonia.","Routine dental caries.","Common cold symptoms only."],
   correct:[1],
   rationale:"A CD4 count below 200 cells/mm\u00b3 indicates significant immunosuppression and high risk for opportunistic infections like Pneumocystis pneumonia, which is a priority teaching and prevention focus at this level of immune compromise." },
 
 { id:"im4", cat:"Immune & Infectious Disease", type:"mc",
+  difficulty:4,
   stem:"A nurse is caring for a client with a systemic lupus erythematosus (SLE) flare. Which finding requires the most immediate follow-up?",
   options:["Joint pain in the hands.","Butterfly-shaped facial rash.","New onset of confusion and decreased urine output.","Fatigue and mild low-grade fever."],
   correct:[2],
   rationale:"New confusion and decreased urine output in an SLE client suggest possible lupus nephritis or CNS involvement, both serious complications requiring immediate evaluation. Joint pain, the classic facial rash, and fatigue are expected lupus symptoms that, while important, are not acute emergencies on their own." },
 
 { id:"im5", cat:"Immune & Infectious Disease", type:"sata",
+  difficulty:4,
   stem:"A nurse is teaching a client newly prescribed a biologic immunosuppressant (e.g., a TNF inhibitor) for rheumatoid arthritis. Which statements should be included in teaching? (Select all that apply.)",
   options:["\u201cReport any signs of infection, such as fever, right away.\u201d","\u201cYou should receive any live vaccines you're due for right after starting this medication.\u201d","\u201cYou will need TB screening before starting this medication.\u201d","\u201cAvoid close contact with people who are currently sick.\u201d","\u201cThis medication has no effect on your immune system.\u201d"],
   correct:[0,2,3],
   rationale:"TNF inhibitors suppress the immune system, increasing infection risk (including reactivation of latent TB, hence pre-treatment screening) and requiring vigilance for infection signs and avoiding sick contacts. Live vaccines are contraindicated during treatment with these medications, and the medication absolutely does affect immune function \u2014 that's its mechanism." },
 
 { id:"im6", cat:"Immune & Infectious Disease", type:"mc",
+  difficulty:2,
   stem:"A nurse is caring for a client recently diagnosed with C. difficile infection. Which type of precautions should the nurse implement?",
   options:["Airborne precautions with an N95 respirator.","Standard precautions only, no additional measures needed.","Contact precautions with gown and gloves, using soap and water for hand hygiene.","Droplet precautions with a surgical mask."],
   correct:[2],
   rationale:"C. diff spreads via spores on surfaces and hands, requiring contact precautions (gown, gloves) and importantly, soap and water hand hygiene rather than alcohol-based sanitizer, since alcohol does not effectively kill C. diff spores." },
 
 { id:"im7", cat:"Immune & Infectious Disease", type:"mc",
+  difficulty:4,
   stem:"A client received an organ transplant 3 months ago and takes tacrolimus for immunosuppression. The client calls the clinic reporting a low-grade fever and mild cough for 2 days. What is the nurse's priority instruction?",
   options:["\u201cThis is likely just a common cold; rest and fluids should help.\u201d","\u201cCome in to be evaluated today, since even mild symptoms can signal serious infection given your immunosuppression.\u201d","\u201cTake an over-the-counter cold medication and call back if it worsens.\u201d","\u201cThis is an expected side effect of tacrolimus and doesn't need evaluation.\u201d"],
   correct:[1],
-  rationale:"Immunosuppressed transplant clients can have blunted, atypical, or rapidly progressing infections. Even mild symptoms warrant prompt evaluation rather than the watch-and-wait approach appropriate for a non-immunosuppressed person." }
+  rationale:"Immunosuppressed transplant clients can have blunted, atypical, or rapidly progressing infections. Even mild symptoms warrant prompt evaluation rather than the watch-and-wait approach appropriate for a non-immunosuppressed person." },
+
+// ---------------- GASTROINTESTINAL & GENITOURINARY (new category) ----------------
+{ id:"gi1", cat:"GI & GU", type:"mc",
+  difficulty:1,
+  stem:"A nurse is caring for a client with a new colostomy. Which finding should the nurse expect as normal?",
+  options:["Stoma that is dusky or blue in color.","Stoma that is red/pink and slightly moist.","Complete absence of any stool output by day 2.","Severe, worsening pain at the stoma site."],
+  correct:[1],
+  rationale:"A healthy stoma is red/pink (well-perfused) and slightly moist, similar to the inside of the mouth. Dusky/blue coloring suggests poor perfusion, an emergency." },
+
+{ id:"gi2", cat:"GI & GU", type:"mc",
+  difficulty:3,
+  stem:"A client with cirrhosis develops confusion, asterixis, and a rising ammonia level. What is the nurse's priority concern?",
+  options:["Normal progression of liver disease, no action needed.","Hepatic encephalopathy.","Expected side effect of pain medication.","Dehydration only."],
+  correct:[1],
+  rationale:"Confusion with asterixis (flapping tremor) and elevated ammonia in a client with cirrhosis are classic signs of hepatic encephalopathy, caused by the liver's inability to clear ammonia. This requires prompt intervention, not routine monitoring." },
+
+{ id:"gi3", cat:"GI & GU", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client with acute pancreatitis. Which findings are consistent with this diagnosis? (Select all that apply.)",
+  options:["Severe epigastric pain radiating to the back.","Elevated serum lipase and amylase.","Pain that improves when lying flat.","Grey-blue discoloration at the flank (Turner's sign) in severe cases.","Decreased pain with oral food intake."],
+  correct:[0,1,3],
+  rationale:"Acute pancreatitis classically presents with epigastric pain radiating to the back, elevated lipase/amylase, and in severe hemorrhagic cases, Turner's sign. Pain typically worsens (not improves) lying flat or after eating, since this stimulates pancreatic enzyme release." },
+
+{ id:"gi4", cat:"GI & GU", type:"mc",
+  difficulty:5,
+  stem:"A client is 6 hours post-op following a bowel resection. The nurse notes the abdomen is rigid and board-like, with absent bowel sounds and the client reports sudden severe pain that has changed in character from the expected post-op pain. Vital signs show HR 124, BP 92/58, temp 101.8\u00b0F. What is the nurse's priority concern?",
+  options:["Expected post-operative ileus.","Normal incisional pain requiring routine analgesia.","Anastomotic leak with possible peritonitis.","Constipation from opioid pain medication."],
+  correct:[2],
+  rationale:"A rigid, board-like abdomen with a sudden CHANGE in pain character, fever, tachycardia, and hypotension after bowel surgery is concerning for anastomotic leak and peritonitis \u2014 a surgical emergency. This is distinguished from expected post-op ileus or routine pain by the rigidity, fever, and hemodynamic instability together." },
+
+{ id:"gi5", cat:"GI & GU", type:"mc",
+  difficulty:2,
+  stem:"A nurse is teaching a client about preventing complications of GERD. Which instruction is appropriate?",
+  options:["\u201cLie down immediately after eating to aid digestion.\u201d","\u201cAvoid eating for 2-3 hours before lying down.\u201d","\u201cEat large meals to reduce frequency of reflux episodes.\u201d","\u201cIncrease caffeine intake to stimulate digestion.\u201d"],
+  correct:[1],
+  rationale:"Avoiding food for 2-3 hours before lying down reduces reflux by allowing the stomach to empty before a recumbent position increases reflux risk. Lying down right after eating, large meals, and caffeine all worsen GERD symptoms." },
+
+{ id:"gi6", cat:"GI & GU", type:"calc",
+  difficulty:2,
+  stem:"A client with a nasogastric tube has 240 mL of gastric output in 4 hours. At this rate, how many mL would the nurse expect over a full 24-hour period?",
+  unit:"mL",
+  correctValue:1440,
+  tolerance:0,
+  rationale:"240 mL \u00f7 4 hours = 60 mL/hour. 60 mL/hr \u00d7 24 hours = 1,440 mL." },
+
+{ id:"gi7", cat:"GI & GU", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client with a urinary tract infection who is being treated with phenazopyridine. The client should be taught to expect which finding?",
+  options:["Urine will turn orange or red-orange in color.","Urine output will significantly decrease.","Urine will have a strong ammonia smell.","Urine will appear cloudy and white."],
+  correct:[0],
+  rationale:"Phenazopyridine is a urinary analgesic that characteristically turns urine orange/red-orange. This is an expected, harmless effect the client should be told about in advance to prevent alarm." },
+
+{ id:"gi8", cat:"GI & GU", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client with a suspected ruptured ovarian cyst. Which findings support this diagnosis? (Select all that apply.)",
+  options:["Sudden, sharp unilateral lower abdominal pain.","Pain that began gradually over several weeks.","Vaginal bleeding or spotting.","Rebound tenderness on abdominal exam.","Pain that resolves completely with rest."],
+  correct:[0,2,3],
+  rationale:"A ruptured ovarian cyst typically presents with sudden, sharp, unilateral pain, possible vaginal bleeding, and rebound tenderness if peritoneal irritation is present. Gradual onset over weeks and pain that fully resolves with rest are inconsistent with an acute rupture." },
+
+{ id:"gi9", cat:"GI & GU", type:"mc",
+  difficulty:3,
+  stem:"A client post-transurethral resection of the prostate (TURP) has continuous bladder irrigation running. The nurse notes the urine output is bright red with large clots, and the irrigation bag is nearly empty. What is the nurse's priority action?",
+  options:["Slow the irrigation rate to reduce bladder irritation.","Increase the irrigation rate and notify the HCP.","Clamp the catheter until the bag can be replaced.","Disconnect the irrigation system entirely."],
+  correct:[1],
+  rationale:"Bright red urine with large clots suggests active bleeding. The priority is to increase irrigation to flush clots and prevent catheter obstruction, while notifying the HCP \u2014 not slowing, clamping (which would allow clot retention and obstruction), or disconnecting irrigation entirely." },
+
+{ id:"gi10", cat:"GI & GU", type:"mc",
+  difficulty:2,
+  stem:"A nurse is caring for a client newly diagnosed with celiac disease. Which food choice indicates the client understood dietary teaching?",
+  options:["Whole wheat toast.","Rice and corn-based cereal.","Regular barley soup.","Standard wheat pasta."],
+  correct:[1],
+  rationale:"Celiac disease requires strict avoidance of gluten, found in wheat, barley, and rye. Rice and corn-based products are gluten-free and appropriate choices." },
+
+// ---------------- MUSCULOSKELETAL (new category) ----------------
+{ id:"mk1", cat:"Musculoskeletal", type:"mc",
+  difficulty:1,
+  stem:"A nurse is caring for a client in a new plaster cast. Which instruction should the nurse provide?",
+  options:["Cover the cast completely to keep it warm while drying.","Allow the cast to air dry uncovered, and avoid resting it on hard surfaces.","Apply lotion to the skin near the cast edges immediately.","Expect the cast to be fully dry and hard within 1 hour."],
+  correct:[1],
+  rationale:"Plaster casts need to air dry uncovered, which can take 24-72 hours, and should not rest on hard surfaces that could cause dents while wet, which could create pressure points on the skin underneath." },
+
+{ id:"mk2", cat:"Musculoskeletal", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client 2 hours after application of a tight cast on the lower leg. The client reports increasing pain unrelieved by prescribed analgesics, numbness in the toes, and the toes are pale and cool to touch. What is the nurse's priority action?",
+  options:["Administer the next dose of pain medication early.","Elevate the leg higher and apply ice.","Notify the HCP immediately of suspected compartment syndrome.","Reassure the client this is expected after a new cast."],
+  correct:[2],
+  rationale:"Pain unrelieved by medication, numbness, pallor, and coolness distal to a cast are signs of compartment syndrome \u2014 a limb-threatening emergency requiring immediate notification, not simply more pain medication or routine elevation/ice." },
+
+{ id:"mk3", cat:"Musculoskeletal", type:"sata",
+  difficulty:3,
+  stem:"A nurse is teaching a client recovering from a total hip replacement about movement precautions. Which instructions are appropriate? (Select all that apply.)",
+  options:["Avoid crossing the legs.","Avoid bending the hip past 90 degrees.","Use a raised toilet seat.","Sleep on the operative side as desired.","Avoid internal rotation of the affected leg."],
+  correct:[0,1,2,4],
+  rationale:"Hip precautions after total hip replacement include avoiding leg crossing, avoiding hip flexion past 90 degrees, using raised seating to maintain this restriction, and avoiding internal rotation \u2014 all of which reduce dislocation risk. Sleeping on the operative side is typically restricted, not freely allowed, especially early in recovery." },
+
+{ id:"mk4", cat:"Musculoskeletal", type:"mc",
+  difficulty:3,
+  stem:"A client with osteoporosis asks why weight-bearing exercise is recommended. What is the nurse's best explanation?",
+  options:["\u201cWeight-bearing exercise has no real effect on bone density.\u201d","\u201cWeight-bearing exercise stimulates bone formation and helps slow bone loss.\u201d","\u201cExercise is only helpful for muscle strength, not bone health.\u201d","\u201cOnly swimming and water-based exercise are recommended for osteoporosis.\u201d"],
+  correct:[1],
+  rationale:"Weight-bearing exercise stimulates osteoblast activity and helps maintain or slow the loss of bone density, which is why it's specifically recommended (over non-weight-bearing exercise like swimming alone) for osteoporosis management." },
+
+{ id:"mk5", cat:"Musculoskeletal", type:"mc",
+  difficulty:5,
+  stem:"A nurse is caring for a client 4 hours after a long bone fracture repair. The client suddenly develops confusion, tachypnea, and a petechial rash across the chest. SpO2 has dropped from 98% to 89%. What is the nurse's priority concern?",
+  options:["Normal post-operative anxiety response.","Fat embolism syndrome.","Allergic reaction to surgical dressing materials.","Expected pain response requiring more analgesia."],
+  correct:[1],
+  rationale:"The triad of confusion, respiratory distress, and petechial rash following a long bone fracture is classic for fat embolism syndrome, a serious complication where fat globules enter the bloodstream. This requires immediate recognition and intervention, not reassurance or routine pain management." },
+
+{ id:"mk6", cat:"Musculoskeletal", type:"calc",
+  difficulty:2,
+  stem:"A client is prescribed traction with 15 lbs of weight. The weights available are 5 lb and 2.5 lb increments. How many total weights are needed to reach exactly 15 lbs using the fewest weights possible?",
+  unit:"weights",
+  correctValue:3,
+  tolerance:0,
+  rationale:"Three 5 lb weights (5+5+5=15) is the fewest weights needed to reach exactly 15 lbs." },
+
+{ id:"mk7", cat:"Musculoskeletal", type:"mc",
+  difficulty:2,
+  stem:"A nurse is assessing a client in skeletal traction. Which finding requires follow-up?",
+  options:["Weights hanging freely without touching the floor.","Pin sites with mild serous drainage.","Pin sites with purulent drainage and surrounding redness.","Client positioned in proper body alignment."],
+  correct:[2],
+  rationale:"Purulent drainage with redness at pin sites suggests infection, requiring follow-up and likely intervention. Mild serous drainage is an expected, normal finding; freely hanging weights and proper alignment are correct traction setup, not concerns." },
+
+{ id:"mk8", cat:"Musculoskeletal", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client with rheumatoid arthritis. Which findings are consistent with this diagnosis as opposed to osteoarthritis? (Select all that apply.)",
+  options:["Symmetrical joint involvement.","Morning stiffness lasting more than 1 hour.","Joint pain that worsens with activity and improves with rest.","Systemic symptoms such as fatigue and low-grade fever.","Pain primarily in weight-bearing joints only."],
+  correct:[0,1,3],
+  rationale:"Rheumatoid arthritis is characterized by symmetrical joint involvement, prolonged morning stiffness (over an hour), and systemic symptoms like fatigue and fever, reflecting its autoimmune/inflammatory nature. Pain worsening with activity and improving with rest, and a pattern limited to weight-bearing joints, are more typical of osteoarthritis." },
+
+{ id:"mk9", cat:"Musculoskeletal", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client immediately following a below-elbow cast application for a fractured radius. Which assessment finding requires the most immediate follow-up?",
+  options:["Mild swelling of the fingers.","Capillary refill of less than 2 seconds in the fingers.","Inability to move the fingers and severe pain unrelieved by medication.","Client reports the cast feels heavy."],
+  correct:[2],
+  rationale:"Inability to move the fingers combined with unrelieved severe pain suggests possible compartment syndrome or nerve compression \u2014 a limb-threatening emergency requiring immediate action, unlike the other expected, lower-concern findings." },
+
+// ---------------- ADDITIONAL CARDIAC (deepening) ----------------
+{ id:"cv10", cat:"Cardiac", type:"mc",
+  difficulty:1,
+  stem:"A nurse is auscultating a client's heart sounds. Where is the best location to auscultate the mitral valve?",
+  options:["Second intercostal space, right sternal border.","Second intercostal space, left sternal border.","Fifth intercostal space, left midclavicular line.","Fourth intercostal space, left sternal border."],
+  correct:[2],
+  rationale:"The mitral valve (apex) is best auscultated at the fifth intercostal space, left midclavicular line \u2014 also known as the apical or PMI (point of maximal impulse) location." },
+
+{ id:"cv11", cat:"Cardiac", type:"mc",
+  difficulty:5,
+  stem:"A nurse is caring for a client with a new diagnosis of infective endocarditis. The client develops sudden left-sided weakness, facial droop, and slurred speech. The nurse recognizes this is most likely caused by which mechanism?",
+  options:["A primary stroke unrelated to the cardiac condition.","Septic embolization from cardiac vegetations to the cerebral circulation.","An expected side effect of IV antibiotic therapy.","Anxiety related to the new diagnosis."],
+  correct:[1],
+  rationale:"In infective endocarditis, vegetations on heart valves can break off and embolize systemically. When they travel to the brain, they cause stroke-like symptoms via septic embolization \u2014 a well-known and serious complication requiring the nurse to connect the new neuro symptoms to the underlying cardiac diagnosis rather than treating them as unrelated." },
+
+{ id:"cv12", cat:"Cardiac", type:"sata",
+  difficulty:4,
+  stem:"A nurse is caring for a client immediately after pericardiocentesis for cardiac tamponade. Which findings indicate the procedure was effective? (Select all that apply.)",
+  options:["Blood pressure increasing toward normal range.","Muffled heart sounds remaining unchanged.","Jugular vein distension decreasing.","Pulsus paradoxus resolving.","Heart rate continuing to climb higher than pre-procedure."],
+  correct:[0,2,3],
+  rationale:"Effective pericardiocentesis relieves the pressure on the heart, improving BP, reducing JVD, and resolving pulsus paradoxus. Muffled heart sounds remaining unchanged or HR continuing to climb would suggest the tamponade has not been adequately relieved." },
+
+// ---------------- ADDITIONAL PEDIATRICS (deepening) ----------------
+{ id:"pd11", cat:"Pediatrics", type:"mc",
+  difficulty:1,
+  stem:"A nurse is assessing a 9-month-old infant. Which finding would the nurse expect?",
+  options:["Anterior fontanel fully closed and firm.","Anterior fontanel still open, soft, and flat.","Posterior fontanel still open and soft.","Closure of both fontanels completed."],
+  correct:[1],
+  rationale:"The posterior fontanel typically closes by 2-3 months of age, while the anterior fontanel remains open until 12-18 months. At 9 months, the nurse should expect the anterior fontanel to still be open, soft, and flat \u2014 not yet closed." },
+
+{ id:"pd12", cat:"Pediatrics", type:"sata",
+  difficulty:4,
+  stem:"A nurse is assessing a 5-year-old for signs of suspected child abuse. Which findings raise concern? (Select all that apply.)",
+  options:["Bruises in various stages of healing in unusual locations (back, buttocks).","A single bruise on the shin consistent with the child's reported fall.","A spiral fracture in a non-ambulatory infant.","Caregiver provides a clear, consistent explanation matching the injury.","Child appears overly watchful and fearful of the caregiver."],
+  correct:[0,2,4],
+  rationale:"Bruises in unusual locations and varying healing stages, fractures inconsistent with developmental ability (a non-ambulatory infant can't generate a spiral fracture through their own activity), and a fearful/watchful demeanor around a caregiver are all concerning for abuse. A single explainable bruise and a consistent caregiver explanation matching the injury are reassuring, not concerning, findings." },
+
+{ id:"pd13", cat:"Pediatrics", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a child admitted with suspected meningitis. Which assessment finding is most concerning and requires immediate action?",
+  options:["Nuchal rigidity.","Photophobia.","Decreasing level of consciousness and bulging fontanel (in an infant).","Fever of 101\u00b0F."],
+  correct:[2],
+  rationale:"While all of these findings can occur with meningitis, a decreasing level of consciousness combined with a bulging fontanel suggests rising intracranial pressure \u2014 a sign of clinical deterioration requiring immediate escalation, beyond the expected baseline meningitis symptoms of nuchal rigidity, photophobia, and fever." },
+
+// ---------------- ADDITIONAL MENTAL HEALTH (deepening) ----------------
+{ id:"mh10", cat:"Mental Health", type:"mc",
+  difficulty:2,
+  stem:"A nurse is caring for a client newly prescribed lorazepam for severe anxiety. Which instruction is most important?",
+  options:["\u201cThis medication is safe to combine with alcohol.\u201d","\u201cAvoid driving or operating machinery until you know how this affects you.\u201d","\u201cYou can stop this medication abruptly at any time.\u201d","\u201cThis medication has no risk of dependence.\u201d"],
+  correct:[1],
+  rationale:"Benzodiazepines like lorazepam cause sedation and impaired coordination, making driving/machinery operation unsafe until effects are known. They should never be combined with alcohol, should not be stopped abruptly (risk of withdrawal/seizures), and do carry dependence risk with prolonged use." },
+
+{ id:"mh11", cat:"Mental Health", type:"sata",
+  difficulty:5,
+  stem:"A nurse is assessing a client with suspected serotonin syndrome after a recent dose increase of an SSRI combined with a newly added migraine medication. Which findings support this diagnosis? (Select all that apply.)",
+  options:["Hyperthermia.","Bradycardia and hypotension.","Agitation and confusion.","Muscle rigidity and clonus.","Decreased bowel sounds with constipation."],
+  correct:[0,2,3],
+  rationale:"Serotonin syndrome presents with hyperthermia, agitation/confusion, and neuromuscular findings like rigidity and clonus \u2014 not bradycardia/hypotension (more typically tachycardia and hypertension occur) or decreased bowel sounds (hyperactive bowel sounds/diarrhea are more typical). Recognizing this drug interaction pattern (SSRI plus certain migraine medications like triptans) is a higher-level pharmacology and pattern-recognition skill." },
+
+{ id:"mh12", cat:"Mental Health", type:"mc",
+  difficulty:3,
+  stem:"A client in an inpatient psychiatric unit states, \u201cI don't deserve to be helped, I should just disappear.\u201d What is the nurse's most appropriate initial response?",
+  options:["\u201cDon't talk like that, things will get better.\u201d","\u201cIt sounds like you're in a lot of pain right now. Are you having thoughts of harming yourself?\u201d","\u201cLet's talk about something more positive.\u201d","\u201cI'll let your doctor know you said that.\u201d"],
+  correct:[1],
+  rationale:"This statement requires direct exploration of suicidal ideation \u2014 validating the client's pain while asking the direct safety question. Dismissing the statement, changing the subject, or deferring entirely to report later (without addressing safety in the moment) all fail to address an immediate possible safety concern." },
+
+// ---------------- ADDITIONAL RENAL (deepening, high difficulty) ----------------
+{ id:"rn10", cat:"Renal", type:"mc",
+  difficulty:5,
+  stem:"A nurse is caring for a client with chronic kidney disease who develops sudden confusion, a pericardial friction rub on auscultation, and a BUN of 110 mg/dL (baseline 45 mg/dL). What is the nurse's priority concern?",
+  options:["Expected progression of chronic kidney disease requiring no new action.","Uremic pericarditis requiring urgent dialysis evaluation.","Common cold causing the friction rub sound.","Routine fluid overload managed with diuretics alone."],
+  correct:[1],
+  rationale:"A pericardial friction rub combined with markedly elevated BUN and new confusion in a CKD client suggests uremic pericarditis \u2014 a serious complication often requiring urgent dialysis, not routine management or diuretics alone, which would not address the underlying uremia." },
+
+// ---------------- ADDITIONAL MATERNAL-NEWBORN (deepening) ----------------
+{ id:"mn9", cat:"Maternal-Newborn", type:"mc",
+  difficulty:5,
+  stem:"A nurse is caring for a client in labor who suddenly develops respiratory distress, hypotension, and the fetal monitor shows a sudden bradycardia. The client was undergoing a difficult labor with strong contractions. What is the nurse's priority concern?",
+  options:["Normal response to labor pain.","Amniotic fluid embolism.","Expected hyperventilation from anxiety.","Routine epidural side effect."],
+  correct:[1],
+  rationale:"Sudden respiratory distress, hypotension, and fetal bradycardia during labor, especially with strong contractions, is the classic and life-threatening presentation of amniotic fluid embolism \u2014 a rare but catastrophic obstetric emergency requiring immediate recognition and resuscitation, not reassurance or routine monitoring." },
+
+{ id:"mn10", cat:"Maternal-Newborn", type:"sata",
+  difficulty:4,
+  stem:"A nurse is assessing a newborn for signs of neonatal abstinence syndrome (NAS) in a mother with a history of opioid use during pregnancy. Which findings are consistent with NAS? (Select all that apply.)",
+  options:["High-pitched, excessive crying.","Decreased muscle tone and lethargy.","Tremors and hyperactive reflexes.","Poor feeding with strong, coordinated sucking.","Sweating and temperature instability."],
+  correct:[0,2,4],
+  rationale:"NAS presents with CNS irritability: high-pitched crying, tremors, hyperactive reflexes, and autonomic instability like sweating and temperature swings. Decreased tone/lethargy and strong coordinated feeding are inconsistent with NAS, which typically causes increased tone, irritability, and poor/disorganized feeding." },
+
+// ---------------- ADDITIONAL FUNDAMENTALS & SAFETY (deepening) ----------------
+{ id:"fs8", cat:"Fundamentals & Safety", type:"mc",
+  difficulty:1,
+  stem:"A nurse is about to administer medication to a client. Which is one of the standard \u201crights\u201d of medication administration?",
+  options:["Right diagnosis.","Right time.","Right insurance coverage.","Right family member present."],
+  correct:[1],
+  rationale:"Right time is one of the standard rights of medication administration, alongside right client, right medication, right dose, and right route." },
+
+{ id:"fs9", cat:"Fundamentals & Safety", type:"mc",
+  difficulty:5,
+  stem:"A nurse discovers that a colleague has been diverting controlled substances by documenting administration of pain medication that was not actually given to clients. Several clients have reported inadequate pain control during this colleague's shifts. What is the nurse's priority obligation?",
+  options:["Confront the colleague privately and let them handle it without further action.","Say nothing since reporting could end the colleague's career.","Report the suspected diversion through appropriate channels (e.g., supervisor, compliance) given the direct patient safety and harm implications.","Wait to gather more extensive evidence personally before saying anything."],
+  correct:[2],
+  rationale:"Suspected medication diversion has direct, ongoing patient safety implications (clients receiving inadequate pain control) and legal/regulatory reporting obligations. This rises above a private peer conversation \u2014 it requires reporting through appropriate official channels promptly, not personal investigation or silence to protect a colleague." },
+
+// ---------------- ADDITIONAL LEADERSHIP & DELEGATION (deepening) ----------------
+{ id:"ld9", cat:"Leadership & Delegation", type:"mc",
+  difficulty:1,
+  stem:"Which member of the healthcare team is responsible for developing the initial nursing plan of care?",
+  options:["Nursing assistant.","Licensed practical nurse.","Registered nurse.","Unit secretary."],
+  correct:[2],
+  rationale:"Developing the initial nursing plan of care requires the assessment and clinical judgment scope of a registered nurse and cannot be delegated to LPNs or unlicensed personnel." }
 
 ];
 
@@ -1226,7 +1637,13 @@ let state = {
   answers: {},      // qid -> {selected: [...], calcValue, correct: bool}
   flagged: new Set(),
   finished: false,
-  seenIds: loadSeenIds()
+  seenIds: loadSeenIds(),
+  // Adaptive-mode-only fields
+  adaptivePool: [],        // remaining candidate questions not yet asked this session
+  abilityEstimate: 3.0,    // running estimate, 1-5 scale, starts at midpoint
+  abilityHistory: [],      // estimate after each question, for end-of-test display
+  consecutiveCorrect: 0,
+  consecutiveIncorrect: 0
 };
 
 // ========================================================================
@@ -1284,13 +1701,86 @@ document.querySelectorAll("#mode-pills .pill").forEach(p => {
     document.querySelectorAll("#mode-pills .pill").forEach(x => x.classList.remove("active"));
     p.classList.add("active");
     state.mode = p.dataset.mode;
+    document.getElementById("adaptive-explainer").classList.toggle("hidden", state.mode !== "adaptive");
   };
 });
+
+// ========================================================================
+// ADAPTIVE (CAT-STYLE) ALGORITHM
+// ========================================================================
+// Simplified ability-tracking model, NOT the real NCSBN psychometric algorithm.
+// Ability estimate runs 1.0-5.0, matching question difficulty tags.
+// After each answer: correct -> estimate moves up; incorrect -> estimate moves down.
+// Step size shrinks as the test progresses (settles toward a stable estimate).
+// Next question is the closest-difficulty unseen question from the selected pool.
+
+function pickNextAdaptiveQuestion() {
+  if (state.adaptivePool.length === 0) return null;
+  const target = state.abilityEstimate;
+  // Find the question(s) closest in difficulty to current estimate
+  let best = null;
+  let bestDist = Infinity;
+  state.adaptivePool.forEach(q => {
+    const dist = Math.abs(q.difficulty - target);
+    if (dist < bestDist) { bestDist = dist; best = q; }
+  });
+  // If multiple questions tie on closeness, pick randomly among the closest few
+  const closeCandidates = state.adaptivePool.filter(q => Math.abs(q.difficulty - target) <= bestDist + 0.5);
+  const chosen = closeCandidates[Math.floor(Math.random() * closeCandidates.length)];
+  // Remove chosen from pool
+  state.adaptivePool = state.adaptivePool.filter(q => q.id !== chosen.id);
+  return chosen;
+}
+
+function updateAbilityEstimate(wasCorrect, questionsAnsweredSoFar) {
+  // Step size shrinks over time: starts at 0.8, settles toward 0.2 by question ~15
+  const baseStep = 0.8;
+  const minStep = 0.2;
+  const decayRate = 0.12;
+  const step = Math.max(minStep, baseStep - decayRate * questionsAnsweredSoFar);
+
+  if (wasCorrect) {
+    state.abilityEstimate = Math.min(5.0, state.abilityEstimate + step);
+    state.consecutiveCorrect++;
+    state.consecutiveIncorrect = 0;
+  } else {
+    state.abilityEstimate = Math.max(1.0, state.abilityEstimate - step);
+    state.consecutiveIncorrect++;
+    state.consecutiveCorrect = 0;
+  }
+  state.abilityHistory.push(state.abilityEstimate);
+}
+
+function shouldStopAdaptive(questionsAnsweredSoFar, minQuestions, maxQuestions) {
+  if (questionsAnsweredSoFar >= maxQuestions) return true;
+  if (questionsAnsweredSoFar < minQuestions) return false;
+  // Stop early if the last 5 estimates have settled within a narrow band (confident estimate)
+  if (state.abilityHistory.length >= 5) {
+    const recent = state.abilityHistory.slice(-5);
+    const range = Math.max(...recent) - Math.min(...recent);
+    if (range <= 0.3) return true;
+  }
+  return false;
+}
+
+function abilityToReadinessLabel(estimate) {
+  // Passing standard approximated at difficulty level 3.0 (midpoint), matching real CAT logic
+  // where the algorithm targets the passing standard as its threshold.
+  if (estimate >= 3.6) return { label: "Strong \u2014 estimated ability well above passing standard", tag: "strong" };
+  if (estimate >= 3.0) return { label: "Likely passing \u2014 estimated ability at or above passing standard", tag: "strong" };
+  if (estimate >= 2.5) return { label: "Borderline \u2014 estimated ability near passing standard, keep practicing", tag: "moderate" };
+  return { label: "Below passing standard \u2014 needs more review before testing", tag: "needs-work" };
+}
 
 document.getElementById("start-btn").onclick = () => {
   const pool = BANK.filter(q => state.selectedCats.has(q.cat));
   if (pool.length === 0) {
     document.getElementById("setup-warning").textContent = "Select at least one category to continue.";
+    return;
+  }
+
+  if (state.mode === "adaptive") {
+    startAdaptiveExam(pool);
     return;
   }
 
@@ -1333,9 +1823,52 @@ document.getElementById("start-btn").onclick = () => {
 };
 
 // ========================================================================
-// EXAM SCREEN
+// ADAPTIVE EXAM STARTUP
 // ========================================================================
+function startAdaptiveExam(pool) {
+  // Adaptive mode draws from ALL selected questions regardless of seen status,
+  // since the point is testing current ability, not avoiding repeats.
+  state.adaptivePool = [...pool];
+  state.abilityEstimate = 3.0;
+  state.abilityHistory = [];
+  state.consecutiveCorrect = 0;
+  state.consecutiveIncorrect = 0;
+  state.answers = {};
+  state.flagged = new Set();
+  state.finished = false;
+  state.current = 0;
+
+  const firstQ = pickNextAdaptiveQuestion();
+  if (!firstQ) {
+    document.getElementById("setup-warning").textContent = "Not enough questions in this selection to run an adaptive test.";
+    return;
+  }
+  state.questions = [firstQ];
+  state.questions.forEach(q => state.seenIds.add(q.id));
+  saveSeenIds(state.seenIds);
+
+  document.getElementById("screen-setup").classList.add("hidden");
+  document.getElementById("screen-exam").classList.remove("hidden");
+  document.getElementById("header-sub").textContent = "Adaptive mode \u00b7 question 1 (length adjusts as you go)";
+  renderNav();
+  renderQuestion();
+}
+
+
 function renderNav() {
+  const navPanel = document.getElementById("navigator-panel");
+  const abilityPanel = document.getElementById("ability-panel");
+
+  if (state.mode === "adaptive") {
+    navPanel.classList.add("hidden");
+    abilityPanel.classList.remove("hidden");
+    updateAbilityGauge();
+    return;
+  }
+
+  navPanel.classList.remove("hidden");
+  abilityPanel.classList.add("hidden");
+
   const grid = document.getElementById("nav-grid");
   grid.innerHTML = "";
   state.questions.forEach((q, i) => {
@@ -1350,12 +1883,32 @@ function renderNav() {
   });
 }
 
+function updateAbilityGauge() {
+  const pct = ((state.abilityEstimate - 1) / 4) * 100; // map 1-5 range to 0-100%
+  document.getElementById("ability-gauge-marker").style.left = pct + "%";
+  document.getElementById("ability-value-display").textContent = state.abilityEstimate.toFixed(1);
+  const answeredCount = Object.keys(state.answers).length;
+  if (answeredCount === 0) {
+    document.getElementById("ability-sub-display").textContent = "Starting estimate";
+  } else {
+    const trend = state.consecutiveCorrect > 0 ? "Trending up" : state.consecutiveIncorrect > 0 ? "Trending down" : "Stabilizing";
+    document.getElementById("ability-sub-display").textContent = trend + " \u00b7 " + answeredCount + " answered";
+  }
+}
+
 function renderQuestion() {
   const q = state.questions[state.current];
   const existing = state.answers[q.id];
 
   document.getElementById("q-category").textContent = q.cat;
-  document.getElementById("q-progress").textContent = "Question " + (state.current + 1) + " of " + state.questions.length;
+  if (state.mode === "adaptive") {
+    const answeredCount = Object.keys(state.answers).length;
+    const estDisplay = state.abilityEstimate.toFixed(1);
+    document.getElementById("q-progress").textContent =
+      "Question " + state.questions.length + " \u00b7 ability estimate: " + estDisplay + " / 5.0";
+  } else {
+    document.getElementById("q-progress").textContent = "Question " + (state.current + 1) + " of " + state.questions.length;
+  }
   document.getElementById("q-stem").textContent = q.stem;
 
   const instr = document.getElementById("q-instruction");
@@ -1399,26 +1952,43 @@ function renderQuestion() {
   const submitBtn = document.getElementById("btn-submit");
   const nextBtn = document.getElementById("btn-next");
 
-  if (existing && state.mode === "practice") {
+  if (existing && (state.mode === "practice" || state.mode === "adaptive")) {
     showRationale(q, existing);
     submitBtn.classList.add("hidden");
     nextBtn.classList.remove("hidden");
+    if (state.mode === "adaptive") {
+      const answeredCount = Object.keys(state.answers).length;
+      const minQ = Math.min(10, state.count);
+      const maxQ = state.count;
+      const isLast = state.current === state.questions.length - 1 && shouldStopAdaptive(answeredCount, minQ, maxQ);
+      nextBtn.textContent = isLast ? "See my results \u2192" : "Next \u2192";
+    } else {
+      nextBtn.textContent = "Next \u2192";
+    }
   } else if (existing && state.mode === "timed") {
     rationaleEl.classList.add("hidden");
     submitBtn.classList.add("hidden");
     nextBtn.classList.remove("hidden");
+    nextBtn.textContent = "Next \u2192";
   } else {
     rationaleEl.classList.add("hidden");
     submitBtn.classList.remove("hidden");
     nextBtn.classList.add("hidden");
   }
 
-  // flag button state
+  // flag button state - disabled entirely in adaptive mode (no backtracking, like real CAT)
   const flagBtn = document.getElementById("btn-flag");
-  flagBtn.classList.toggle("active", state.flagged.has(q.id));
-  flagBtn.innerHTML = (state.flagged.has(q.id) ? "&#9873; Flagged" : "&#9872; Flag for review");
-
-  document.getElementById("btn-prev").disabled = state.current === 0;
+  const prevBtn = document.getElementById("btn-prev");
+  if (state.mode === "adaptive") {
+    flagBtn.style.display = "none";
+    prevBtn.style.display = "none";
+  } else {
+    flagBtn.style.display = "";
+    prevBtn.style.display = "";
+    flagBtn.classList.toggle("active", state.flagged.has(q.id));
+    flagBtn.innerHTML = (state.flagged.has(q.id) ? "&#9873; Flagged" : "&#9872; Flag for review");
+    prevBtn.disabled = state.current === 0;
+  }
 }
 
 let pendingSelection = [];
@@ -1469,11 +2039,36 @@ document.getElementById("btn-submit").onclick = () => {
 
   state.answers[q.id] = answerRecord;
   pendingSelection = [];
+
+  if (state.mode === "adaptive") {
+    const answeredCount = Object.keys(state.answers).length;
+    updateAbilityEstimate(answerRecord.correct, answeredCount);
+    const minQ = Math.min(10, state.count);
+    const maxQ = state.count;
+    if (!shouldStopAdaptive(answeredCount, minQ, maxQ)) {
+      const nextQ = pickNextAdaptiveQuestion();
+      if (nextQ) {
+        state.questions.push(nextQ);
+        state.seenIds.add(nextQ.id);
+        saveSeenIds(state.seenIds);
+      }
+    }
+  }
+
   renderNav();
   renderQuestion();
 };
 
 document.getElementById("btn-next").onclick = () => {
+  if (state.mode === "adaptive" && state.current === state.questions.length - 1) {
+    const answeredCount = Object.keys(state.answers).length;
+    const minQ = Math.min(10, state.count);
+    const maxQ = state.count;
+    if (shouldStopAdaptive(answeredCount, minQ, maxQ)) {
+      showResults();
+      return;
+    }
+  }
   if (state.current < state.questions.length - 1) {
     state.current++;
     pendingSelection = [];
@@ -1541,7 +2136,14 @@ function showResults() {
 
   const readinessEl = document.getElementById("result-readiness");
   let readinessLabel = "";
-  if (pct >= 75) {
+
+  if (state.mode === "adaptive") {
+    const r = abilityToReadinessLabel(state.abilityEstimate);
+    readinessEl.className = "readiness " + r.tag;
+    readinessLabel = r.label;
+    document.getElementById("result-pct").textContent = state.abilityEstimate.toFixed(1) + " / 5.0";
+    document.getElementById("result-frac").textContent = correctCount + " / " + total + " correct \u00b7 final ability estimate";
+  } else if (pct >= 75) {
     readinessEl.className = "readiness strong";
     readinessLabel = "Strong \u2014 likely NCLEX-ready territory";
   } else if (pct >= 60) {
@@ -1553,6 +2155,7 @@ function showResults() {
   }
   readinessEl.textContent = readinessLabel;
   state.lastResult.readinessLabel = readinessLabel;
+  state.lastResult.abilityEstimate = state.mode === "adaptive" ? state.abilityEstimate : null;
 
   const breakdownEl = document.getElementById("breakdown-rows");
   breakdownEl.innerHTML = "";
@@ -1608,6 +2211,10 @@ function buildReportText() {
   lines.push("=".repeat(40));
   lines.push("");
   lines.push("SCORE: " + r.pct + "%  (" + r.correctCount + " / " + r.total + " correct)");
+  if (r.abilityEstimate !== null && r.abilityEstimate !== undefined) {
+    lines.push("Mode: Adaptive (CAT-style, simplified practice approximation)");
+    lines.push("Final ability estimate: " + r.abilityEstimate.toFixed(1) + " / 5.0  (passing standard approximated at 3.0)");
+  }
   lines.push("Readiness: " + r.readinessLabel);
   lines.push("");
   lines.push("PERFORMANCE BY CATEGORY");
