@@ -2247,7 +2247,199 @@ const BANK = [
   stem:"Evaluate Outcomes: How should the nurse interpret this change in PaO2 and FiO2 together?",
   options:["No real improvement has occurred since PaO2 only increased slightly.","This represents meaningful improvement in oxygenation efficiency, since PaO2 increased while FiO2 (the oxygen support needed to achieve it) decreased.","The client's condition has worsened based on these numbers.","These two values cannot be meaningfully compared to each other."],
   correct:[1],
-  rationale:"Evaluating oxygenation in ARDS requires looking at PaO2 relative to the FiO2 needed to achieve it (the P/F ratio concept), not PaO2 alone. Here, the client achieved a HIGHER PaO2 on a LOWER FiO2 \u2014 meaning the lungs are using oxygen more efficiently, a genuinely positive sign of improving lung function, even though the raw PaO2 numbers might look like a modest change at first glance." }
+  rationale:"Evaluating oxygenation in ARDS requires looking at PaO2 relative to the FiO2 needed to achieve it (the P/F ratio concept), not PaO2 alone. Here, the client achieved a HIGHER PaO2 on a LOWER FiO2 \u2014 meaning the lungs are using oxygen more efficiently, a genuinely positive sign of improving lung function, even though the raw PaO2 numbers might look like a modest change at first glance." },
+
+// ================================================================
+// PRIORITIZATION (new standalone category)
+// ================================================================
+
+// --- ABCs (Airway, Breathing, Circulation) ---
+{ id:"pr1", cat:"Prioritization", type:"mc",
+  difficulty:2,
+  stem:"A nurse is assessing four clients at the start of the shift. Which client should be assessed FIRST?",
+  options:["A client reporting pain rated 6/10 from a surgical incision.","A client with new-onset stridor and difficulty speaking.","A client requesting their scheduled morning medications.","A client who needs help repositioning in bed."],
+  correct:[1],
+  rationale:"Airway always takes priority. Stridor combined with difficulty speaking suggests significant airway compromise, a life-threatening emergency that must be addressed before pain management, routine medications, or repositioning." },
+
+{ id:"pr2", cat:"Prioritization", type:"mc",
+  difficulty:2,
+  stem:"Using the ABC framework, which client should the nurse see first?",
+  options:["A client with a respiratory rate of 24 and mild wheezing.","A client with a blood pressure of 88/56 and cool, clammy skin.","A client who is alert, breathing comfortably, with stable vital signs but reports anxiety.","A client with a productive cough and oxygen saturation of 95%."],
+  correct:[1],
+  rationale:"While this question presents multiple options that could each warrant attention, circulation compromise (hypotension with poor perfusion signs) in the absence of clear airway/breathing emergencies in the other choices makes this the priority \u2014 the client with mild wheezing and adequate saturation, or stable vital signs with anxiety, are both currently less urgent." },
+
+{ id:"pr3", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A nurse is caring for a client who suddenly becomes unresponsive with no palpable pulse. What is the nurse's FIRST action?",
+  options:["Call the HCP to report the change in status.","Begin chest compressions and call for help/activate the emergency response system.","Check the client's blood glucose level.","Document the finding in the chart."],
+  correct:[1],
+  rationale:"A pulseless, unresponsive client requires immediate CPR initiation and activation of the emergency response system \u2014 this takes priority over notification, further assessment, or documentation, all of which can and should happen after life-saving action begins." },
+
+// --- Stable vs. Unstable / Acute vs. Chronic ---
+{ id:"pr4", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A nurse is prioritizing care for four clients. Which client represents the highest priority?",
+  options:["A client with chronic, stable heart failure reporting their usual mild ankle swelling.","A client with a history of asthma who is now experiencing acute, worsening shortness of breath that started 20 minutes ago.","A client with well-controlled type 2 diabetes due for a routine glucose check.","A client recovering well from surgery 3 days ago, ambulating independently."],
+  correct:[1],
+  rationale:"A new, acute change in condition (worsening dyspnea with sudden onset) takes priority over chronic, stable, or routine/improving conditions. The skill being tested is distinguishing baseline/chronic findings (expected, lower urgency) from acute changes (new, higher urgency) even when the chronic condition sounds serious on paper." },
+
+{ id:"pr5", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"Which client change in condition should the nurse identify as the MOST urgent to report to the HCP?",
+  options:["A client's chronic lower back pain remains unchanged from yesterday.","A previously alert and oriented client is now confused and difficult to arouse.","A client's incision continues to have the same scant serosanguineous drainage noted yesterday.","A client's appetite remains poor, similar to previous days."],
+  correct:[1],
+  rationale:"A new change in mental status (previously alert, now confused/difficult to arouse) is the most urgent finding here, since it could indicate a serious new problem (e.g., neurological event, sepsis, metabolic derangement). The other findings are all described as unchanged from baseline, making them lower priority by comparison." },
+
+{ id:"pr6", cat:"Prioritization", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for two clients. Client A has a temperature of 102.5\u00b0F, unchanged from 4 hours ago, and is alert with stable vital signs otherwise. Client B's temperature just increased from 98.6\u00b0F to 101.8\u00b0F in the last hour, with new tachycardia and mild confusion. Which client requires more immediate attention?",
+  options:["Client A, because their fever is higher in absolute terms.","Client B, because of the acute change and new accompanying symptoms.","Both require identical, simultaneous attention with no prioritization needed.","Neither requires attention since both fevers are below 103\u00b0F."],
+  correct:[1],
+  rationale:"This question tests whether the nurse prioritizes based on trend and trajectory, not just absolute numbers. Client B's NEW, rapid change with accompanying new symptoms (tachycardia, confusion) suggests an acutely evolving problem, which is more concerning than Client A's higher but stable, unchanged fever." },
+
+// --- Maslow's Hierarchy ---
+{ id:"pr7", cat:"Prioritization", type:"mc",
+  difficulty:2,
+  stem:"Using Maslow's hierarchy of needs, which client need should the nurse address FIRST?",
+  options:["A client expressing anxiety about an upcoming procedure.","A client who has not had a bowel movement in 2 days but is not in distress.","A client reporting they cannot breathe well while lying flat.","A client asking about visiting hours for family."],
+  correct:[2],
+  rationale:"Physiological needs (oxygenation/breathing) sit at the base of Maslow's hierarchy and take priority over safety/psychological needs (anxiety), lower-urgency physiological concerns (constipation without distress), or social/informational needs (visiting hours)." },
+
+{ id:"pr8", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A nurse is prioritizing care based on Maslow's hierarchy. Which need should be addressed before the others, all else being equal?",
+  options:["A client's request for a chaplain visit.","A client's report of feeling unsafe due to a roommate's behavior.","A client who has been NPO and reports significant thirst with dry mucous membranes.","A client's question about discharge planning."],
+  correct:[2],
+  rationale:"Physiological needs (hydration in this case) are foundational in Maslow's hierarchy and generally take priority over safety/security concerns (roommate behavior), and especially over higher-level needs like spiritual support or informational/planning questions \u2014 though in real practice, immediate safety threats would also need prompt attention; this question is testing the basic hierarchy logic." },
+
+// --- Multiple client prioritization ---
+{ id:"pr9", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A charge nurse is assigning a newly admitted client to one of four nurses. Which nurse's current assignment makes them most available to safely receive a new admission?",
+  options:["A nurse with a client actively experiencing chest pain.","A nurse with a client who just returned from a complex surgery 30 minutes ago.","A nurse with all stable clients, one of whom is being discharged within the hour.","A nurse currently performing a sterile dressing change on an unstable wound."],
+  correct:[2],
+  rationale:"A nurse whose current clients are stable, especially with one about to be discharged (freeing capacity), is best positioned to safely take on a new admission, compared to nurses actively managing emergent symptoms, a fresh complex post-op client, or a sterile procedure in progress." },
+
+{ id:"pr10", cat:"Prioritization", type:"mc",
+  difficulty:4,
+  stem:"A nurse has just received report on five clients at shift change. Which client should the nurse assess FIRST, before going room to room in order?",
+  options:["The client closest to the nurses' station.","The client who was reported as having a new finding of decreased urine output and confusion overnight.","The client scheduled for discharge later that morning.","The client who has a family member present requesting an update."],
+  correct:[1],
+  rationale:"A new overnight finding suggesting possible deterioration (decreased urine output with new confusion, which could indicate worsening renal function, sepsis, or another acute process) should be assessed first, regardless of room location, discharge timing, or family presence \u2014 prioritization should follow clinical urgency, not convenience or social factors." },
+
+// --- Assessment vs. action prioritization ---
+{ id:"pr11", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A nurse enters a client's room and finds the client on the floor, awake, and stating they fell while trying to reach the bathroom. What is the nurse's FIRST action?",
+  options:["Immediately help the client back into bed.","Assess the client for injury before attempting to move them.","Call the family to report the fall.","Complete an incident report before any client contact."],
+  correct:[1],
+  rationale:"Assessment for injury must come before moving a client who has fallen, since improper movement of an injured client (e.g., undetected fracture) could cause further harm. Notification and documentation are appropriate but come after the immediate safety assessment and any necessary first response." },
+
+{ id:"pr12", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A client tells the nurse, \u201cI don't think I can handle this diagnosis, I just want to give up.\u201d What is the nurse's FIRST priority action?",
+  options:["Change the subject to something more positive.","Directly assess for suicidal ideation and safety risk.","Document the statement and continue with the scheduled assessment.","Immediately call the client's family without further assessment."],
+  correct:[1],
+  rationale:"A statement like this requires direct, immediate exploration of safety risk (assessing for suicidal ideation) before any other action \u2014 this is a recurring NCLEX pattern: vague distress statements about giving up or not wanting to continue require direct safety assessment as the first step, not deflection, routine documentation, or jumping to notify others before assessing the client directly." },
+
+// --- Delegation-adjacent prioritization ---
+{ id:"pr13", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A nurse is managing care for several clients with the help of a nursing assistant (NA). Which task should the nurse prioritize completing personally, rather than delegating, given current findings?",
+  options:["Assisting a stable client with ambulation.","Performing a focused respiratory assessment on a client with new-onset shortness of breath.","Obtaining routine vital signs on a stable client.","Helping a client with hygiene needs."],
+  correct:[1],
+  rationale:"A focused assessment of a new, potentially serious symptom (new-onset shortness of breath) requires the nurse's clinical judgment and cannot be delegated to an NA, unlike routine, stable tasks like ambulation assistance, routine vitals, or hygiene care." },
+
+// --- Resource allocation / what to address first within one client ---
+{ id:"pr14", cat:"Prioritization", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client immediately post-op who has all of the following: pain rated 7/10, a slightly damp dressing with expected serosanguineous drainage, has not yet ambulated, and reports feeling anxious about going home. Which should the nurse address FIRST?",
+  options:["The client's anxiety about discharge.","The client's pain level of 7/10.","Encouraging the client to ambulate immediately.","Reinforcing the dressing, even though drainage is expected and minimal."],
+  correct:[1],
+  rationale:"Among these findings, all of which are relatively expected post-op concerns, significant unrelieved pain (7/10) is the most immediate priority to address, since uncontrolled pain affects the client's ability to participate in recovery (like ambulation) and their overall wellbeing \u2014 the other findings (expected minimal drainage, not yet ambulating immediately post-op, anticipatory anxiety) are lower urgency by comparison." },
+
+{ id:"pr15", cat:"Prioritization", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client with multiple new lab results just back. Which result should the nurse address FIRST?",
+  options:["Potassium of 4.2 mEq/L (normal).","Hemoglobin of 11.8 g/dL (mildly low, stable from baseline).","Potassium of 6.8 mEq/L (critically high, new finding).","Glucose of 110 mg/dL (normal)."],
+  correct:[2],
+  rationale:"A critically elevated, NEW potassium level poses immediate cardiac risk (arrhythmias) and requires urgent action \u2014 this clearly outranks normal values or a mildly abnormal but stable, unchanged finding like the hemoglobin." },
+
+// --- Time-sensitive prioritization ---
+{ id:"pr16", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A nurse has several tasks to complete in the next 30 minutes: administering a scheduled antibiotic that must be given on time, updating a care plan, restocking supplies, and returning a non-urgent phone call. Which should be the priority?",
+  options:["Restocking supplies for the next shift.","Returning the non-urgent phone call.","Administering the time-sensitive scheduled antibiotic.","Updating the care plan documentation."],
+  correct:[2],
+  rationale:"A time-sensitive medication, especially an antibiotic where timing affects therapeutic blood levels and effectiveness, should be prioritized over non-time-sensitive administrative or communication tasks that can be completed slightly later without clinical consequence." },
+
+{ id:"pr17", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A nurse is preparing to administer morning medications to multiple clients. Which medication should be prioritized to give FIRST?",
+  options:["A routine daily multivitamin.","An insulin dose for a client whose blood glucose was just verified as low-normal, timed with breakfast.","A stool softener for a client with mild constipation.","An as-needed (PRN) mild pain reliever for a client with minor discomfort."],
+  correct:[1],
+  rationale:"Insulin timed with food intake is time-sensitive and has real physiological consequences if delayed (risk of hypoglycemia if insulin/food timing is mismatched), making it the priority over a vitamin, a stool softener for mild symptoms, or a PRN medication for minor discomfort." },
+
+// --- Recognizing true emergencies vs. expected findings ---
+{ id:"pr18", cat:"Prioritization", type:"mc",
+  difficulty:2,
+  stem:"Which finding represents a TRUE emergency requiring the nurse's most immediate attention?",
+  options:["A client's surgical drain has 30 mL of expected serosanguineous output today.","A client reports their pain medication is due in 15 minutes.","A client suddenly grips their chest and says, \u2018Something is very wrong, I can't catch my breath.\u2019","A client's IV bag has about 100 mL remaining and will need to be changed soon."],
+  correct:[2],
+  rationale:"Sudden chest symptoms with breathing difficulty represent a possible cardiac or respiratory emergency requiring immediate assessment, clearly outranking expected drain output, a medication due soon (not yet overdue), or routine IV management that can wait a short time." },
+
+{ id:"pr19", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A nurse is assessing four post-operative clients. Which finding requires the most immediate follow-up?",
+  options:["Client A: temperature of 99.8\u00b0F on post-op day 1.","Client B: pain rated 4/10, improved from 7/10 with medication.","Client C: urinary catheter output of 20 mL over the last 2 hours, down from 200 mL over the previous 2 hours.","Client D: mild nausea, first episode, resolved with antiemetic."],
+  correct:[2],
+  rationale:"A significant, acute drop in urine output could indicate hypovolemia, bleeding, or kidney injury and requires immediate follow-up. The other findings (mild post-op fever, improving pain, single resolved nausea episode) are expected, reassuring, or already trending in a positive direction." },
+
+// --- Prioritizing within a single complex client (NGN-style single scenario) ---
+{ id:"pr20", cat:"Prioritization", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client with multiple co-occurring findings: BP 92/58 (baseline 130/80), HR 118, client reports mild itching at the IV site, and the client's family is asking when the HCP will round. Which finding is the priority for the nurse to act on first?",
+  options:["The family's question about HCP rounding.","The mild itching at the IV site.","The blood pressure and heart rate findings, suggesting a significant change from baseline.","Documenting all findings before taking any action."],
+  correct:[2],
+  rationale:"A significant drop in blood pressure with compensatory tachycardia, both notably different from the client's baseline, suggests a developing hemodynamic problem requiring prompt assessment and action \u2014 this outranks family questions, a minor and common IV-related symptom, or documentation-first approaches that would delay needed clinical action." },
+
+{ id:"pr21", cat:"Prioritization", type:"mc",
+  difficulty:5,
+  stem:"A nurse is caring for a client who states, \u201cI feel a little dizzy,\u201d while also having a new skin rash, a temperature of 100.9\u00b0F (up from 98.4\u00b0F two hours ago), and having just started a new IV antibiotic 15 minutes ago. What is the nurse's priority interpretation and action?",
+  options:["These findings are unrelated and should each be addressed in the order reported.","This cluster of findings, occurring shortly after starting a new medication, suggests a possible adverse drug reaction requiring the infusion be stopped and the client assessed immediately.","The dizziness alone is the priority; the rash and fever can be addressed later.","No action is needed since none of these findings are individually severe."],
+  correct:[1],
+  rationale:"This question tests pattern recognition across multiple findings rather than evaluating each in isolation: new dizziness, rash, and fever shortly after starting a new IV medication together strongly suggest a possible allergic or adverse drug reaction, requiring the nurse to stop the infusion and assess immediately \u2014 treating these as unrelated, isolated, individually-minor findings would miss the dangerous pattern they form together." },
+
+// --- Prioritization with documentation/communication ---
+{ id:"pr22", cat:"Prioritization", type:"mc",
+  difficulty:3,
+  stem:"A nurse identifies a critical lab value requiring immediate HCP notification, but is also in the middle of administering scheduled medications to other clients. What is the nurse's best course of action?",
+  options:["Finish all scheduled medications first, then report the critical value.","Pause to notify the HCP of the critical value promptly, then resume other tasks.","Have a unit secretary relay the critical value instead of the nurse.","Wait until the next routine rounding time to mention the value."],
+  correct:[1],
+  rationale:"Critical values require prompt nurse-to-HCP communication and shouldn't be delayed for routine tasks, delegated to non-clinical staff for clinical communication, or saved for later rounding \u2014 the nurse should pause other lower-urgency tasks briefly to ensure timely reporting." },
+
+{ id:"pr23", cat:"Prioritization", type:"mc",
+  difficulty:2,
+  stem:"At the start of a shift, a nurse reviews report on multiple clients. Which client should the nurse plan to assess FIRST during initial rounds?",
+  options:["A stable client who is sleeping comfortably.","A client who was reported as having an unstable change in condition near the end of the previous shift.","A client awaiting routine discharge paperwork.","A client who has no new concerns reported."],
+  correct:[1],
+  rationale:"A client with a recently reported unstable change in condition should be assessed first during initial rounds to confirm current status and ensure nothing has been missed in the handoff, taking priority over stable, sleeping, or routine/no-concern clients." },
+
+// --- Chronic disease management prioritization ---
+{ id:"pr24", cat:"Prioritization", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client with multiple chronic conditions who reports several concerns during the visit: occasional mild joint stiffness (longstanding), a new 10-lb unintentional weight loss over one month, and a question about an upcoming vaccine. Which concern should the nurse prioritize addressing further?",
+  options:["The vaccine question, since it's straightforward to answer.","The chronic joint stiffness, since it's the client's main complaint.","The new, unintentional weight loss, which could indicate an underlying new problem.","All three should be addressed in the exact order the client mentioned them."],
+  correct:[2],
+  rationale:"Unintentional, significant weight loss is a red-flag symptom that could indicate a new, potentially serious underlying condition (e.g., malignancy, metabolic disease) and warrants further assessment priority over a longstanding, stable chronic symptom or a simple informational question \u2014 new and unexplained findings should be prioritized over expected/chronic or low-stakes ones." },
+
+// --- Multi-step prioritization with intervention timing ---
+{ id:"pr25", cat:"Prioritization", type:"mc",
+  difficulty:4,
+  stem:"A nurse is caring for a client with a new prescription for a blood transfusion. Fifteen minutes into the transfusion, the client reports back pain, chills, and the nurse notes a temperature increase from 98.2\u00b0F to 101.5\u00b0F. What is the nurse's priority action?",
+  options:["Slow the transfusion rate and continue monitoring closely.","Stop the transfusion immediately, keep the IV line open with normal saline, and notify the HCP.","Administer an antipyretic and continue the transfusion as ordered.","Document the findings and reassess in 30 minutes."],
+  correct:[1],
+  rationale:"New back pain, chills, and fever during a transfusion are signs of a possible transfusion reaction \u2014 a potentially life-threatening event requiring the transfusion to be stopped immediately (not slowed or continued), the line kept open with saline for ongoing IV access, and prompt HCP notification, rather than delaying action with reassessment or symptom management alone." }
 
 ];
 
